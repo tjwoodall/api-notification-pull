@@ -16,24 +16,23 @@
 
 package uk.gov.hmrc.apinotificationpull.controllers
 
-import play.api.http.Status
-import play.api.test.FakeRequest
-import play.api.http.Status
-import play.api.test.FakeRequest
-import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.play.test.WithFakeApplication
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import javax.inject.Singleton
 
-class MicroserviceHelloWorldControllerSpec extends UnitSpec with WithFakeApplication{
+import play.api.mvc.Action
+import uk.gov.hmrc.apinotificationpull.config.AppContext
+import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import views.txt
 
-  val fakeRequest = FakeRequest("GET", "/")
+import scala.concurrent.Future
 
-  "GET /" should {
-    "return 200" in {
-      val controller = new MicroserviceHelloWorld()
-      val result = controller.hello()(fakeRequest)
-      status(result) shouldBe Status.OK
-    }
+@Singleton
+class DefinitionController(appContext: AppContext) extends BaseController {
+
+  def get() = Action.async {
+    Future.successful(Ok(txt.definition(appContext.apiScopeKey, appContext.apiContext)).withHeaders(CONTENT_TYPE -> JSON))
   }
 
+  def conf(version: String, file: String) = Action.async {
+    Future.successful(Ok(txt.application(appContext.apiContext)))
+  }
 }

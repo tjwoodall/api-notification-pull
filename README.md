@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/hmrc/api-notification-pull.svg)](https://travis-ci.org/hmrc/api-notification-pull) [ ![Download](https://api.bintray.com/packages/hmrc/releases/api-notification-pull/images/download.svg) ](https://bintray.com/hmrc/releases/api-notification-pull/_latestVersion)
 
-This is a placeholder README.md for a new repository
+This service allows third party developers to collect notificaitons.
 
 ### License
 
