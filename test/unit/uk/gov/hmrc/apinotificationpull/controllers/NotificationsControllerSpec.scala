@@ -23,14 +23,16 @@ import play.api.http.Status._
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 class NotificationsControllerSpec extends UnitSpec with WithFakeApplication {
-  "delete notification by id" should {
-    "return 200 OK response" in {
-      val notificationId = UUID.randomUUID()
-      val controller = new NotificationsController
+  "delete notification by id" when {
+    "notification does not exist" should {
+      "return 404 NOT_FOUND response" in {
+        val notificationId = UUID.randomUUID()
+        val controller = new NotificationsController
 
-      val result = controller.delete.apply(FakeRequest("DELETE", s"/$notificationId"))
+        val result = controller.delete(notificationId.toString).apply(FakeRequest("DELETE", s"/$notificationId"))
 
-      status(result) shouldBe OK
+        status(result) shouldBe NOT_FOUND
+      }
     }
   }
 }

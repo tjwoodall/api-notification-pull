@@ -43,7 +43,8 @@ lazy val test = Seq(
   "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % scope,
   "org.scalatest" %% "scalatest" % "2.2.6" % scope,
   "org.pegdown" % "pegdown" % "1.6.0" % scope,
-  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
+  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % scope
 )
 
 lazy val plugins: Seq[Plugins] = Seq.empty
