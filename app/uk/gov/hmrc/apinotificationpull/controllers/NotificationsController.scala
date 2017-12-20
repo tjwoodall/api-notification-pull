@@ -25,7 +25,7 @@ import scala.concurrent.Future
 
 @Singleton
 class NotificationsController extends BaseController {
-  def delete(): Action[AnyContent] = Action.async {
+  def delete(notificationId: String): Action[AnyContent] = Action.async {
     Future.successful(Ok)
   }
 }
