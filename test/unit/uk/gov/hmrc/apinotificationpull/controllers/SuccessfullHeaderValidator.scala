@@ -16,19 +16,17 @@
 
 package uk.gov.hmrc.apinotificationpull.controllers
 
-import javax.inject.{Inject, Singleton}
-
-import play.api.mvc._
+import play.api.mvc.{ActionBuilder, Request, Result}
 import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
 
 import scala.concurrent.Future
 
-@Singleton
-class NotificationsController @Inject()(headerValidator: HeaderValidator) extends BaseController {
-  def delete(notificationId: String): Action[AnyContent] =
-    (headerValidator.validateAcceptHeader andThen headerValidator.validateXClientIdHeader).async
-  {
-    Future.successful(NotFound)
+class SuccessfulHeaderValidator extends HeaderValidator {
+  override def validateAcceptHeader: ActionBuilder[Request] = new ActionBuilder[Request] {
+    override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = block(request)
+  }
+
+  override def validateXClientIdHeader: ActionBuilder[Request] = new ActionBuilder[Request] {
+    override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = block(request)
   }
 }

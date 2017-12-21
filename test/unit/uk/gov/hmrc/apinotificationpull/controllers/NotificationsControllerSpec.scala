@@ -18,18 +18,24 @@ package uk.gov.hmrc.apinotificationpull.controllers
 
 import java.util.UUID
 
-import play.api.test.FakeRequest
+import org.scalatest.mockito.MockitoSugar
+import play.api.http.HeaderNames._
 import play.api.http.Status._
+import play.api.test.FakeRequest
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
-class NotificationsControllerSpec extends UnitSpec with WithFakeApplication {
+class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with MockitoSugar {
   "delete notification by id" when {
+    val headerValidator = new SuccessfulHeaderValidator
+    val controller = new NotificationsController(headerValidator)
+    val notificationId = UUID.randomUUID()
+    val xClientId = "X-Client-ID"
+    val validRequest = FakeRequest("DELETE", s"/$notificationId").
+      withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientId -> "client-id")
+
     "notification does not exist" should {
       "return 404 NOT_FOUND response" in {
-        val notificationId = UUID.randomUUID()
-        val controller = new NotificationsController
-
-        val result = controller.delete(notificationId.toString).apply(FakeRequest("DELETE", s"/$notificationId"))
+        val result = controller.delete(notificationId.toString).apply(validRequest)
 
         status(result) shouldBe NOT_FOUND
       }
