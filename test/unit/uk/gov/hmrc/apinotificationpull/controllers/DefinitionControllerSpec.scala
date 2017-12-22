@@ -28,12 +28,12 @@ import views.txt
 
 class DefinitionControllerSpec extends UnitSpec with WithFakeApplication {
 
-  implicit val materializer: Materializer = fakeApplication.materializer
+  private implicit val materializer: Materializer = fakeApplication.materializer
 
-  val apiScope = "scope"
-  val apiContext = "context"
-  val appContext = new AppContext(Configuration("api.definition.api-scope" -> apiScope, "api.context" -> apiContext))
-  val controller = new DefinitionController(appContext)
+  private val apiScope = "scope"
+  private val apiContext = "context"
+  private val appContext = new AppContext(Configuration("api.definition.api-scope" -> apiScope, "api.context" -> apiContext))
+  private val controller = new DefinitionController(appContext)
 
   "DocumentationController.definition" should {
     lazy val result = getDefinition(controller)
