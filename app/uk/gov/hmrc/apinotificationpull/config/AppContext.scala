@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.apinotificationpull.config
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 
 import play.api.Configuration
 
 @Singleton
-class AppContext(configuration: Configuration) {
+class AppContext @Inject()(configuration: Configuration) {
   private val apiScopeConfigKey = "api.definition.api-scope"
   private val apiContextConfigKey = "api.context"
   private def apiConfigException(apiConfigKey: String) = new IllegalStateException(s"$apiConfigKey is not configured")
