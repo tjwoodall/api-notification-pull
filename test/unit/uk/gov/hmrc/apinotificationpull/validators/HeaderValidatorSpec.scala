@@ -24,14 +24,14 @@ import play.api.http.Status._
 import play.api.http.HeaderNames.ACCEPT
 
 class HeaderValidatorSpec extends UnitSpec {
-  val validator = new HeaderValidator
-  val expectedResult = Ok("")
+  private val validator = new HeaderValidator
+  private val expectedResult = Ok("")
 
-  val validateAccept: Action[AnyContent] = validator.validateAcceptHeader {
+  private val validateAccept: Action[AnyContent] = validator.validateAcceptHeader {
     expectedResult
   }
 
-  val validateXClientId: Action[AnyContent] = validator.validateXClientIdHeader {
+  private val validateXClientId: Action[AnyContent] = validator.validateXClientIdHeader {
     expectedResult
   }
 

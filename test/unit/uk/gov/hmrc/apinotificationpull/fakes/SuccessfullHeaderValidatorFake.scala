@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.apinotificationpull.controllers
+package uk.gov.hmrc.apinotificationpull.fakes
 
 import play.api.mvc.{ActionBuilder, Request, Result}
 import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
 
 import scala.concurrent.Future
 
-class SuccessfulHeaderValidator extends HeaderValidator {
+class SuccessfulHeaderValidatorFake extends HeaderValidator {
   override def validateAcceptHeader: ActionBuilder[Request] = new ActionBuilder[Request] {
     override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = block(request)
   }

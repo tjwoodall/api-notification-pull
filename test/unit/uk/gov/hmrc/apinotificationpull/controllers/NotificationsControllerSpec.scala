@@ -18,18 +18,19 @@ package uk.gov.hmrc.apinotificationpull.controllers
 
 import java.util.UUID
 
-import org.scalatest.mockito.MockitoSugar
 import play.api.http.HeaderNames._
 import play.api.http.Status._
 import play.api.test.FakeRequest
+import uk.gov.hmrc.apinotificationpull.fakes.SuccessfulHeaderValidatorFake
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
-class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with MockitoSugar {
+class NotificationsControllerSpec extends UnitSpec with WithFakeApplication {
+  private val headerValidator = new SuccessfulHeaderValidatorFake
+  private val controller = new NotificationsController(headerValidator)
+  private val notificationId = UUID.randomUUID()
+  private val xClientId = "X-Client-ID"
+
   "delete notification by id" when {
-    val headerValidator = new SuccessfulHeaderValidator
-    val controller = new NotificationsController(headerValidator)
-    val notificationId = UUID.randomUUID()
-    val xClientId = "X-Client-ID"
     val validRequest = FakeRequest("DELETE", s"/$notificationId").
       withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientId -> "client-id")
 
