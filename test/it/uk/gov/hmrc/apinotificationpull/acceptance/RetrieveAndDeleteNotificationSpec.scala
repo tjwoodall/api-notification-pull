@@ -4,12 +4,12 @@ import java.util.UUID
 
 import org.scalatest.{FeatureSpec, GivenWhenThen, Matchers}
 import org.scalatest.OptionValues._
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
+class RetrieveAndDeleteNotificationSpec extends FeatureSpec with GivenWhenThen with Matchers with GuiceOneAppPerTest {
 
-class RetrieveAndDeleteNotificationSpec extends FeatureSpec with GivenWhenThen with Matchers with GuiceOneAppPerSuite {
   feature("Retrieve a single message from the Pull Service (DELETE)") {
     info("As a 3rd Party")
     info("I want to successfully receive any notifications waiting for me")

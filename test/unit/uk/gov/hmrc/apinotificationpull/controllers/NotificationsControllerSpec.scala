@@ -25,14 +25,15 @@ import uk.gov.hmrc.apinotificationpull.fakes.SuccessfulHeaderValidatorFake
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 class NotificationsControllerSpec extends UnitSpec with WithFakeApplication {
+
   private val headerValidator = new SuccessfulHeaderValidatorFake
   private val controller = new NotificationsController(headerValidator)
   private val notificationId = UUID.randomUUID()
-  private val xClientId = "X-Client-ID"
+  private val xClientIdHeader = "X-Client-ID"
 
   "delete notification by id" when {
     val validRequest = FakeRequest("DELETE", s"/$notificationId").
-      withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientId -> "client-id")
+      withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> "client-id")
 
     "notification does not exist" should {
       "return 404 NOT_FOUND response" in {
@@ -42,4 +43,5 @@ class NotificationsControllerSpec extends UnitSpec with WithFakeApplication {
       }
     }
   }
+
 }
