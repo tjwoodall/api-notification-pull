@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,10 +40,6 @@ class DefinitionControllerSpec extends UnitSpec with WithFakeApplication {
 
     "return OK status" in {
       status(result) shouldBe OK
-    }
-
-    "have a JSON content type" in {
-      result.header.headers should contain (CONTENT_TYPE -> "application/json;charset=utf-8")
     }
 
     "return definition in the body" in {

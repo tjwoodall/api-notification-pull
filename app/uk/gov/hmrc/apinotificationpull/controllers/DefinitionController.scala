@@ -29,7 +29,8 @@ import scala.concurrent.Future
 class DefinitionController @Inject()(appContext: AppContext) extends BaseController {
 
   def get() = Action.async {
-    Future.successful(Ok(txt.definition(appContext.apiScopeKey, appContext.apiContext)).withHeaders(CONTENT_TYPE -> JSON))
+    Future.successful(
+      Ok(txt.definition(appContext.apiScopeKey, appContext.apiContext)).as(JSON))
   }
 
   def conf(version: String, file: String) = Action.async {
