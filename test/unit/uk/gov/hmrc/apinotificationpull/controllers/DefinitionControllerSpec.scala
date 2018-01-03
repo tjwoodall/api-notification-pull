@@ -42,6 +42,10 @@ class DefinitionControllerSpec extends UnitSpec with WithFakeApplication {
       status(result) shouldBe OK
     }
 
+    "have a JSON content type" in {
+      result.header.headers should contain (CONTENT_TYPE -> "application/json;charset=utf-8")
+    }
+
     "return definition in the body" in {
       jsonBodyOf(result) shouldBe Json.parse(txt.definition(apiScope, apiContext).toString())
     }
