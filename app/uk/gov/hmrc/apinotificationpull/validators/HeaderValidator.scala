@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import play.api.http.Status._
 import scala.concurrent.Future
 
 class HeaderValidator extends Results {
+
   private def validateHeader(rules: Option[String] => Boolean, headerName: String, error: Result): ActionBuilder[Request] =
     new ActionBuilder[Request] {
       override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
