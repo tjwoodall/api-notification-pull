@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,20 @@ class NotificationsControllerSpec extends UnitSpec with WithFakeApplication {
         val result = controller.delete(notificationId.toString).apply(validRequest)
 
         status(result) shouldBe NOT_FOUND
+      }
+    }
+  }
+
+    "get all notification by client id" when {
+
+    // TODO: fix it after implementation is done
+    "implementation is not done yet" should {
+      "throw an exception because not implemented yet" in {
+
+        val result = controller.getAll().apply(FakeRequest())
+        intercept[Exception] {
+          await(result)
+        }
       }
     }
   }
