@@ -45,6 +45,7 @@ class RetrieveAndDeleteNotificationSpec extends FeatureSpec with GivenWhenThen w
 
       Then("you will receive a 404 error response")
       status(result) shouldBe NOT_FOUND
+      contentAsString(result) shouldBe ""
     }
 
     scenario("Invalid Accept Header") {
@@ -56,6 +57,7 @@ class RetrieveAndDeleteNotificationSpec extends FeatureSpec with GivenWhenThen w
 
       Then("you will be returned a 406 error response")
       status(result) shouldBe NOT_ACCEPTABLE
+      contentAsString(result) shouldBe ""
     }
 
     scenario("missing X-Client-Id Header") {
@@ -67,6 +69,7 @@ class RetrieveAndDeleteNotificationSpec extends FeatureSpec with GivenWhenThen w
 
       Then("you will be returned a 500 error response")
       status(result) shouldBe INTERNAL_SERVER_ERROR
+      contentAsString(result) shouldBe ""
     }
   }
 }

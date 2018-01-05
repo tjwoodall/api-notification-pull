@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.apinotificationpull.model
+package uk.gov.hmrc.apinotificationpull.util
 
-import play.api.libs.json.Json
+import uk.gov.hmrc.apinotificationpull.model.Notifications
+import uk.gov.hmrc.apinotificationpull.util.XmlBuilder.toXml
+import uk.gov.hmrc.play.test.UnitSpec
 
-case class Notifications(notifications: List[String])
+class XmlBuilderSpec extends UnitSpec {
 
-object Notifications {
-  implicit val notificationsJF = Json.format[Notifications]
-}
+  "XmlBuilder.toXml()" should {
 
-object XmlErrorResponse {
-  def apply(message: String) =
-    <error_response>
-      <code>UNKNOWN_ERROR</code>
-      <errors>
-        <error><type>SERVICE_UNAVAILABLE</type>
-          <description>{message}</description>
-        </error>
-      </errors>
-    </error_response>.toString()
+    "convert notifications to XML" in {
+      val notifications = Notifications(List("/notification/12"))
+      toXml(notifications) shouldBe <notifications><notification>/notification/12</notification></notifications>
+    }
+
+  }
+
 }

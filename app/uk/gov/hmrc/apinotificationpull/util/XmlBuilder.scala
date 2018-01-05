@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.apinotificationpull.model
+package uk.gov.hmrc.apinotificationpull.util
 
-import play.api.libs.json.Json
+import uk.gov.hmrc.apinotificationpull.model.Notifications
 
-case class Notifications(notifications: List[String])
+object XmlBuilder {
 
-object Notifications {
-  implicit val notificationsJF = Json.format[Notifications]
-}
+  def toXml(notifications: Notifications): scala.xml.Elem = {
 
-object XmlErrorResponse {
-  def apply(message: String) =
-    <error_response>
-      <code>UNKNOWN_ERROR</code>
-      <errors>
-        <error><type>SERVICE_UNAVAILABLE</type>
-          <description>{message}</description>
-        </error>
-      </errors>
-    </error_response>.toString()
+    def toXml(notification: String): scala.xml.Elem = {
+      <notification>{notification}</notification>
+    }
+
+    <notifications>{notifications.notifications.map( n => toXml(n))}</notifications>
+  }
+
 }

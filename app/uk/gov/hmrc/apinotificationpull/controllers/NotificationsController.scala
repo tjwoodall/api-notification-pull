@@ -18,22 +18,53 @@ package uk.gov.hmrc.apinotificationpull.controllers
 
 import javax.inject.{Inject, Singleton}
 
-import play.api.mvc._
+import play.api.Logger
+import play.api.mvc.{AnyContent, Action, Result}
+import uk.gov.hmrc.apinotificationpull.model.XmlErrorResponse
+import uk.gov.hmrc.apinotificationpull.services.ApiNotificationQueueService
+import uk.gov.hmrc.apinotificationpull.util.XmlBuilder.toXml
 import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class NotificationsController @Inject()(headerValidator: HeaderValidator) extends BaseController {
+class NotificationsController @Inject()(apiNotificationQueueService: ApiNotificationQueueService,
+                                        headerValidator: HeaderValidator) extends BaseController {
+
+  implicit val hc = HeaderCarrier()
+
+  private val X_CLIENT_ID_HEADER_NAME = "X-Client-ID"
+
+  private def recovery: PartialFunction[Throwable, Result] = {
+    case e =>
+      Logger.error(s"An unexpected error occurred: ${e.getMessage}", e)
+      InternalServerError(XmlErrorResponse("An unexpected error occurred"))
+  }
 
   def delete(notificationId: String): Action[AnyContent] =
     (headerValidator.validateAcceptHeader andThen headerValidator.validateXClientIdHeader).async {
       Future.successful(NotFound)
     }
 
-  def getAll = Action.async { implicit request =>
-    Future.failed(new NotImplementedError)
+  def getAll: Action[AnyContent] =
+    (headerValidator.validateAcceptHeader andThen headerValidator.validateXClientIdHeader).async { implicit request =>
+
+      def buildHeaderCarrier(): HeaderCarrier = {
+        request.headers.get(X_CLIENT_ID_HEADER_NAME) match {
+          case Some(clientId: String) => hc.withExtraHeaders(X_CLIENT_ID_HEADER_NAME -> clientId)
+          case _ =>
+            // It should never happen
+            Logger.warn(s"Header $X_CLIENT_ID_HEADER_NAME not found in the request.")
+            hc
+        }
+      }
+
+      apiNotificationQueueService.getNotifications()(buildHeaderCarrier()).map {
+        notifications => Ok(toXml(notifications)).as(XML)
+      } recover recovery
   }
 
 }

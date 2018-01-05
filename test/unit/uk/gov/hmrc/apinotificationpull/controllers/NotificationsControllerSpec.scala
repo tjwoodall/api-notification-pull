@@ -17,45 +17,102 @@
 package uk.gov.hmrc.apinotificationpull.controllers
 
 import java.util.UUID
+import java.util.concurrent.TimeoutException
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
 import play.api.http.HeaderNames._
 import play.api.http.Status._
 import play.api.test.FakeRequest
 import uk.gov.hmrc.apinotificationpull.fakes.SuccessfulHeaderValidatorFake
+import uk.gov.hmrc.apinotificationpull.model.Notifications
+import uk.gov.hmrc.apinotificationpull.services.ApiNotificationQueueService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
-class NotificationsControllerSpec extends UnitSpec with WithFakeApplication {
+import scala.xml.{Node, Utility, XML}
+import scala.concurrent.Future
+import scala.util.control.NonFatal
 
-  private val headerValidator = new SuccessfulHeaderValidatorFake
-  private val controller = new NotificationsController(headerValidator)
-  private val notificationId = UUID.randomUUID()
+class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with MockitoSugar {
+
+  private val notificationId1 = UUID.randomUUID()
+  private val notificationId2 = UUID.randomUUID()
+
+  private val notifications = Notifications(List(s"/notification/$notificationId1", s"/notification/$notificationId2"))
+
   private val xClientIdHeader = "X-Client-ID"
+  private val clientId = "client_id"
 
-  "delete notification by id" when {
-    val validRequest = FakeRequest("DELETE", s"/$notificationId").
-      withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> "client-id")
+  private val validHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
 
-    "notification does not exist" should {
-      "return 404 NOT_FOUND response" in {
-        val result = controller.delete(notificationId.toString).apply(validRequest)
+  trait Setup {
+    implicit val materializer = fakeApplication.materializer
+
+    val headerValidator = new SuccessfulHeaderValidatorFake
+
+    val mockApiNotificationQueueService = mock[ApiNotificationQueueService]
+    val controller = new NotificationsController(mockApiNotificationQueueService, headerValidator)
+  }
+
+  "delete notification" should {
+
+    val validRequest = FakeRequest("DELETE", s"/$notificationId1").withHeaders(validHeaders: _*)
+
+    "return 404 NOT_FOUND response when the notification does not exist" in new Setup {
+        val result = await(controller.delete(notificationId1.toString).apply(validRequest))
 
         status(result) shouldBe NOT_FOUND
+        bodyOf(result) shouldBe ""
       }
+    }
+
+  "get all notifications" should {
+
+    val validRequest = FakeRequest("GET", "/").withHeaders(validHeaders: _*)
+
+    "return all notifications" in new Setup {
+      when(mockApiNotificationQueueService.getNotifications()(any(classOf[HeaderCarrier])))
+        .thenReturn(Future.successful(notifications))
+
+      val result = await(controller.getAll().apply(validRequest))
+
+      status(result) shouldBe OK
+
+      val expectedXml = s"<notifications><notification>/notification/$notificationId1</notification><notification>/notification/$notificationId2</notification></notifications>"
+      bodyOf(result) shouldBe expectedXml
+    }
+
+    "fail if ApiNotificationQueueService failed" in new Setup {
+      when(mockApiNotificationQueueService.getNotifications()(any(classOf[HeaderCarrier])))
+        .thenReturn(Future.failed(new TimeoutException()))
+
+      val result = await(controller.getAll().apply(validRequest))
+
+      status(result) shouldBe INTERNAL_SERVER_ERROR
+
+      val expectedXml = scala.xml.Utility.trim(
+        <error_response>
+          <code>UNKNOWN_ERROR</code>
+          <errors>
+            <error>
+              <type>SERVICE_UNAVAILABLE</type>
+              <description>An unexpected error occurred</description>
+            </error>
+          </errors>
+        </error_response>)
+      string2xml(bodyOf(result)) shouldBe expectedXml
     }
   }
 
-    "get all notification by client id" when {
-
-    // TODO: fix it after implementation is done
-    "implementation is not done yet" should {
-      "throw an exception because not implemented yet" in {
-
-        val result = controller.getAll().apply(FakeRequest())
-        intercept[Exception] {
-          await(result)
-        }
-      }
+  protected def string2xml(s: String): Node = {
+    val xml = try {
+      XML.loadString(s)
+    } catch {
+      case NonFatal(thr) => fail("Not an xml: " + s, thr)
     }
+    Utility.trim(xml)
   }
 
 }
