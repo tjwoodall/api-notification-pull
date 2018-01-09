@@ -47,14 +47,14 @@ class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with
 
   private val notifications = Notifications(List(s"/notifications/$notificationId1", s"/notifications/$notificationId2"))
 
-  private val xClientIdHeader = "X-Client-ID"
-  private val clientId = "client_id"
-
   private val mockApiNotificationQueueService = mock[ApiNotificationQueueService]
   private val notificationPresenter = mock[NotificationPresenter]
 
   trait Setup {
     implicit val materializer: Materializer = fakeApplication.materializer
+
+    val xClientIdHeader = "X-Client-ID"
+    val clientId = "client_id"
 
     val validHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
     val headerValidator = new SuccessfulHeaderValidatorFake

@@ -16,29 +16,26 @@
 
 package uk.gov.hmrc.apinotificationpull.acceptance
 
-import java.util.UUID
-
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{status => wmStatus, _}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import org.scalatest.OptionValues._
 import org.scalatest._
-import org.scalatest.concurrent.Eventually
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class RetrieveAndDeleteNotificationSpec extends FeatureSpec
-  with GivenWhenThen with Matchers with GuiceOneAppPerTest
-  with BeforeAndAfterEach with BeforeAndAfterAll with Eventually {
+class GetAllNotificationsSpec extends FeatureSpec with GivenWhenThen with Matchers with GuiceOneAppPerTest
+  with BeforeAndAfterEach with BeforeAndAfterAll {
 
   private val clientId = "client-id"
   private val xClientIdHeader = "X-Client-ID"
 
-  private val notificationId = UUID.randomUUID.toString
+  private val notificationId1 = 1234
+  private val notificationId2 = 6789
 
   private val externalServicesHost = "localhost"
   private val externalServicesPort = 11111
@@ -61,50 +58,42 @@ class RetrieveAndDeleteNotificationSpec extends FeatureSpec
     externalServices.stop()
   }
 
-  feature("Retrieve(DELETE) a single notification from the API Notification Pull service") {
+  feature("GET all notifications from the API Notification Pull service") {
     info("As a 3rd Party")
-    info("I want to successfully retrieve a notification waiting for me")
-    info("So that I can progress my original declaration submission")
+    info("I want to successfully retrieve all notification locations by client id")
 
-    val validRequest = FakeRequest("DELETE", s"/$notificationId").
+    val validRequest = FakeRequest("GET", "/").
       withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
 
-    scenario("Successful DELETE and 3rd party receives the notification") {
-      Given("There is a notification waiting in the API Notification Queue and you have the correct notification Id")
-      val notificationBody = "<notification>notification</notification>"
-      stubForExistingNotification(notificationId, notificationBody)
+    scenario("Successful GET and 3rd party receives the notifications locations") {
+      Given("There are notifications in the API Notification Queue")
+      stubForAllNotifications()
 
-      When("You call making the 'DELETE' action to the api-notification-pull service")
+      When("You call making the 'GET' action to the api-notification-pull service")
       val result = route(app, validRequest).value
 
-      Then("You will receive the notification")
+      Then("You will receive all notifications for your client id")
       status(result) shouldBe OK
-      contentAsString(result).stripMargin shouldBe notificationBody
 
-      And("The notification will be DELETED")
-      verify(eventually(deleteRequestedFor(urlMatching(s"/notifications/$notificationId"))))
+      val expectedBody = scala.xml.Utility.trim(
+        <resource href="/notifications/">
+          <link rel="self" href="/notifications/"/>
+          <link rel="notification" href="/notifications/1234"/>
+          <link rel="notification" href="/notifications/6789"/>
+        </resource>
+      )
+
+      contentAsString(result).stripMargin shouldBe expectedBody.toString()
+
+      And("The notifications will be retrieved")
+      verify(getRequestedFor(urlMatching("/notifications")))
     }
 
-    scenario("3rd party provides notification Id but there are no notifications available or matching the Notification Id") {
-      Given("A notification has already been retrieved using the correct notification Id")
-
-      stubFor(get(urlMatching(s"/notifications/$notificationId"))
-        .willReturn(aResponse()
-          .withStatus(NOT_FOUND)))
-
-      When("You make another call using the same notification Id")
-      val result = route(app, validRequest).value
-
-      Then("You will receive a 404 error response")
-      status(result) shouldBe NOT_FOUND
-      contentAsString(result) shouldBe "NOT FOUND"
-    }
-
-    scenario("Invalid Accept Header") {
+    scenario("Missing Accept Header") {
       Given("You do not provide the Accept Header")
       val request = validRequest.copyFakeRequest(headers = validRequest.headers.remove(ACCEPT))
 
-      When("You call make the 'DELETE' call, with a notification Id, to the api-notification-pull service")
+      When("You call make the 'GET' call to the api-notification-pull service")
       val result = route(app, request).value
 
       Then("You will be returned a 406 error response")
@@ -116,7 +105,7 @@ class RetrieveAndDeleteNotificationSpec extends FeatureSpec
       Given("The platform does not inject a X-Client-Id Header")
       val request = validRequest.copyFakeRequest(headers = validRequest.headers.remove(xClientIdHeader))
 
-      When("You call make the 'DELETE' call, with a notification Id, to the api-notification-pull service ")
+      When("You call make the 'GET' call to the api-notification-pull service ")
       val result = route(app, request).value
 
       Then("You will be returned a 500 error response")
@@ -125,14 +114,12 @@ class RetrieveAndDeleteNotificationSpec extends FeatureSpec
     }
   }
 
-  private def stubForExistingNotification(notificationId: String, notificationBody: String) = {
-    stubFor(get(urlMatching(s"/notifications/$notificationId"))
+  private def stubForAllNotifications() = {
+    stubFor(get(urlMatching("/notifications"))
       .willReturn(aResponse()
-        .withBody(notificationBody)
-        .withStatus(OK)))
-
-    stubFor(delete(urlMatching(s"/notifications/$notificationId"))
-      .willReturn(aResponse()
-        .withStatus(OK)))
+        .withStatus(OK)
+        .withBody(s"""{"notifications":["/notifications/$notificationId1","/notifications/$notificationId2"]}""")
+      ))
   }
+
 }

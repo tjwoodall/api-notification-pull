@@ -27,6 +27,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ApiNotificationQueueConnector @Inject()(config: ServiceConfiguration, http: HttpClient) {
+
   private lazy val serviceBaseUrl: String = config.baseUrl("api-notification-queue")
 
   def getNotifications()(implicit hc: HeaderCarrier): Future[Notifications] = {
