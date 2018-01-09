@@ -12,10 +12,27 @@ uses:
   annotations: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/annotations.raml
   types: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
 
+/@apiContext/:
+  get:
+    displayName: Get a list of all available notifications
+    description: Allows retrieval of a list of notifications waiting to be pulled
+    headers:
+      Accept:
+        description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+        type: string
+        required: true
+        example: application/vnd.hmrc.1.0+xml
+
+      (annotations.scope): "write:api-notification-pull"
+        securedBy: [ sec.oauth_2_0: { scopes: [ "write:api-notification-pull" ] } ]
+        responses:
+          200:
+            body: application/xml
+
 /@apiContext/{id}/:
   delete:
-    displayName: Collect and delete a notification
-    description: Allows collection of individual notifications. The notification will be returned in the response body and deleted.
+    displayName: Retrieve and delete a notification from the api-notification-queue
+    description: Allows retrieval of individual notifications. The notification will be returned in the response body and then deleted from the api-notification-queue.
     headers:
       Accept:
         description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
@@ -28,3 +45,7 @@ uses:
     responses:
       200:
         body: application/xml
+      404:
+        body:
+          application/xml:
+            description: Not found
