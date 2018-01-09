@@ -14,7 +14,7 @@ This API allows third party developers to collect notifications.
 Retrieves and deletes a notification from `api-notification-queue`
 
 Required Headers:
-  - `X-Client-Id`
+  - `X-Client-ID`
   - `Accept`
 
 ```
@@ -24,8 +24,24 @@ curl -v -X GET "http://localhost:9649/notifications" \
 ```
 
 #### Response
-200 OK on success otherwise 404 Not Found
+`200 OK` on success, `404 Not Found` otherwise
 
+### GET `/`
+
+Retrieves all notifications, for a specific client id, from `api-notification-queue`
+
+Required Headers:
+  - `X-Client-ID`
+  - `Accept`
+
+```
+curl -v -X GET "http://localhost:9649/" \
+  -H "X-Client-ID: pHnwo74C0y4SckQUbcoL2DbFAZ0b" \
+  -H "Accept: application/vnd.hmrc.1.0+xml"
+```
+
+#### Response
+`200 OK` on success
 ---
 
 ### Tests
