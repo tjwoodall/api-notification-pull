@@ -4,6 +4,17 @@
 
 This API allows third party developers to collect notifications.
 
+---
+
+### Tests
+There are unit tests, integration tests and code coverage reports.
+In order to run them, use this command line:
+```
+./run_all_tests.sh
+```
+
+---
+
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")
