@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.apinotificationpull.controllers
 
+import java.util.UUID
 import java.util.concurrent.TimeoutException
 
 import akka.stream.Materializer
@@ -92,10 +93,10 @@ class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with
   "get all notifications" should {
 
     trait SetupGetAllNotifications extends Setup {
-      protected val notificationId1: UUID = UUID.randomUUID()
-      protected val notificationId2: UUID = UUID.randomUUID()
+      protected val notificationId1: String = "1234"
+      protected val notificationId2: String = "6789"
 
-      protected val notifications = Notifications(List(s"/notification/$notificationId1", s"/notification/$notificationId2"))
+      protected val notifications = Notifications(List(s"/notifications/$notificationId1", s"/notifications/$notificationId2"))
 
       val validRequest = FakeRequest("GET", "/").withHeaders(validHeaders: _*)
     }
