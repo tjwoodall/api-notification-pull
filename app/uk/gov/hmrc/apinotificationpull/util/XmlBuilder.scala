@@ -19,14 +19,6 @@ package uk.gov.hmrc.apinotificationpull.util
 import uk.gov.hmrc.apinotificationpull.model.Notifications
 
 object XmlBuilder {
-
-  def toXml(notifications: Notifications): scala.xml.Elem = {
-
-    def toXml(notification: String): scala.xml.Elem = {
-      <notification>{notification}</notification>
-    }
-
-    <notifications>{notifications.notifications.map( n => toXml(n))}</notifications>
-  }
-
+  private def toXml(notificationLocation: String): scala.xml.Elem = <link rel="notification" href={notificationLocation}/>
+  def toXml(notifications: Notifications): scala.xml.Elem = <resource href="/notifications/"><link rel="self" href="/notifications/"/>{notifications.notifications.map( n => toXml(n))}</resource>
 }

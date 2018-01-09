@@ -25,8 +25,29 @@ class XmlBuilderSpec extends UnitSpec {
   "XmlBuilder.toXml()" should {
 
     "convert notifications to XML" in {
-      val notifications = Notifications(List("/notification/12"))
-      toXml(notifications) shouldBe <notifications><notification>/notification/12</notification></notifications>
+      val notifications = Notifications(List("/notifications/123", "/notifications/456"))
+
+      val expectedXml = scala.xml.Utility.trim(
+        <resource href="/notifications/">
+          <link rel="self" href="/notifications/"/>
+          <link rel="notification" href="/notifications/123"/>
+          <link rel="notification" href="/notifications/456"/>
+        </resource>
+      )
+
+       toXml(notifications) shouldBe expectedXml
+    }
+
+    "convert empty notifications to XML" in {
+      val notifications = Notifications(Nil)
+
+      val expectedXml = scala.xml.Utility.trim(
+        <resource href="/notifications/">
+          <link rel="self" href="/notifications/"/>
+        </resource>
+      )
+
+      toXml(notifications) shouldBe expectedXml
     }
 
   }
