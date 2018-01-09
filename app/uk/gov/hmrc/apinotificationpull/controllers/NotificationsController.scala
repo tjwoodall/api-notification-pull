@@ -19,8 +19,9 @@ package uk.gov.hmrc.apinotificationpull.controllers
 import javax.inject.{Inject, Singleton}
 
 import play.api.Logger
-import play.api.mvc.{AnyContent, Action, Result}
+import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.apinotificationpull.model.XmlErrorResponse
+import uk.gov.hmrc.apinotificationpull.presenters.NotificationPresenter
 import uk.gov.hmrc.apinotificationpull.services.ApiNotificationQueueService
 import uk.gov.hmrc.apinotificationpull.util.XmlBuilder.toXml
 import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
@@ -28,13 +29,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 @Singleton
 class NotificationsController @Inject()(apiNotificationQueueService: ApiNotificationQueueService,
-                                        headerValidator: HeaderValidator) extends BaseController {
-
-  implicit val hc = HeaderCarrier()
+                                        headerValidator: HeaderValidator,
+                                        notificationPresenter: NotificationPresenter) extends BaseController {
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private val X_CLIENT_ID_HEADER_NAME = "X-Client-ID"
 
@@ -45,9 +45,11 @@ class NotificationsController @Inject()(apiNotificationQueueService: ApiNotifica
   }
 
   def delete(notificationId: String): Action[AnyContent] =
-    (headerValidator.validateAcceptHeader andThen headerValidator.validateXClientIdHeader).async {
-      Future.successful(NotFound)
-    }
+    (headerValidator.validateAcceptHeader andThen headerValidator.validateXClientIdHeader).async { implicit request =>
+
+    apiNotificationQueueService.getAndRemoveNotification(notificationId)
+      .map(n => notificationPresenter.present(n))
+  }
 
   def getAll: Action[AnyContent] =
     (headerValidator.validateAcceptHeader andThen headerValidator.validateXClientIdHeader).async { implicit request =>
@@ -66,5 +68,4 @@ class NotificationsController @Inject()(apiNotificationQueueService: ApiNotifica
         notifications => Ok(toXml(notifications)).as(XML)
       } recover recovery
   }
-
 }

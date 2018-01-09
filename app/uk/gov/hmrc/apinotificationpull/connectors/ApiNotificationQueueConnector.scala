@@ -18,20 +18,32 @@ package uk.gov.hmrc.apinotificationpull.connectors
 
 import javax.inject.Inject
 
-import uk.gov.hmrc.apinotificationpull.model.Notifications
 import uk.gov.hmrc.apinotificationpull.config.ServiceConfiguration
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ApiNotificationQueueConnector @Inject()(config: ServiceConfiguration, http: HttpClient) {
-
   private lazy val serviceBaseUrl: String = config.baseUrl("api-notification-queue")
 
   def getNotifications()(implicit hc: HeaderCarrier): Future[Notifications] = {
     http.GET[Notifications](s"$serviceBaseUrl/notifications")
   }
 
+  def getById(notificationId: String)(implicit hc: HeaderCarrier): Future[Option[Notification]] = {
+    http.GET[HttpResponse](s"$serviceBaseUrl/notifications/$notificationId")
+      .map {
+        r => Some(Notification(notificationId, r.allHeaders.map(h => h._1 -> h._2.head), r.body))
+      }
+      .recoverWith {
+        case _: NotFoundException => Future.successful(None)
+      }
+  }
+
+  def delete(notification: Notification)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    http.DELETE(s"$serviceBaseUrl/notifications/${notification.id}")
+  }
 }

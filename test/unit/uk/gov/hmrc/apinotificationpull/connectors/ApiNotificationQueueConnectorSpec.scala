@@ -18,18 +18,20 @@ package uk.gov.hmrc.apinotificationpull.connectors
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.{verify => wverify, _}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import com.github.tomakehurst.wiremock.matching.UrlPattern
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.HeaderNames._
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK}
+import play.api.http.ContentTypes.XML
+import play.api.http.Status._
 import play.api.libs.json.Json.{stringify, toJson}
 import uk.gov.hmrc.apinotificationpull.config.ServiceConfiguration
-import uk.gov.hmrc.apinotificationpull.model.Notifications
+import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, Upstream5xxResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.http.ws.WSHttp
@@ -114,7 +116,59 @@ class ApiNotificationQueueConnectorSpec extends UnitSpec with ScalaFutures with 
         await(connector.getNotifications())
       }
     }
-
   }
 
+  "ApiNotificationQueueConnector.getById(id: String)" when {
+    val notificationId = "notificationId"
+
+    "notification can't be found" should {
+      "return none" in new Setup {
+        stubFor(get(urlEqualTo(s"/notifications/$notificationId"))
+          .willReturn(
+            aResponse()
+              .withStatus(NOT_FOUND)))
+
+        val result = await(connector.getById(notificationId))
+
+        result shouldBe None
+      }
+    }
+
+    "notification found" should {
+      "return notification" in new Setup {
+        val notificationPayload = "notification"
+        val notification = Notification(notificationId, Map(CONTENT_TYPE -> XML), notificationPayload)
+
+        stubFor(get(urlEqualTo(s"/notifications/$notificationId"))
+            .withHeader(USER_AGENT, equalTo("api-notification-pull"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(notificationPayload)
+              .withHeader(CONTENT_TYPE, XML)))
+
+        val result = await(connector.getById(notificationId)).get
+
+        result.id shouldBe notificationId
+        result.payload shouldBe notification.payload
+        result.headers should contain allElementsOf notification.headers
+      }
+    }
+  }
+
+  "ApiNotificationQueueConnector.delete(notification: Notification)" should {
+    "delete the notification" in new Setup {
+      val notificationId = "notificationId"
+      val notification = Notification(notificationId, Map(CONTENT_TYPE -> XML), "payload")
+      val url: UrlPattern = urlEqualTo(s"/notifications/$notificationId")
+
+      stubFor(delete(url).withHeader(USER_AGENT, equalTo("api-notification-pull"))
+        .willReturn(aResponse().withStatus(OK)))
+
+      await(connector.delete(notification))
+
+
+      wverify(deleteRequestedFor(url))
+    }
+  }
 }

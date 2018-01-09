@@ -18,23 +18,28 @@ package uk.gov.hmrc.apinotificationpull.controllers
 
 import java.util.concurrent.TimeoutException
 
-import org.mockito.ArgumentMatchers.any
+import akka.stream.Materializer
+import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
-import play.api.http.HeaderNames._
-import play.api.http.Status._
+import play.api.http.HeaderNames.{ACCEPT, CONTENT_TYPE}
+import play.api.http.MimeTypes
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
 import uk.gov.hmrc.apinotificationpull.fakes.SuccessfulHeaderValidatorFake
-import uk.gov.hmrc.apinotificationpull.model.Notifications
+import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
+import uk.gov.hmrc.apinotificationpull.presenters.NotificationPresenter
 import uk.gov.hmrc.apinotificationpull.services.ApiNotificationQueueService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
-import scala.xml.{Node, Utility, XML}
 import scala.concurrent.Future
 import scala.util.control.NonFatal
+import scala.xml.{Node, Utility, XML}
 
-class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with MockitoSugar {
+class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with MockitoSugar with BeforeAndAfterEach {
 
   private val notificationId1 = 1234
   private val notificationId2 = 6789
@@ -44,34 +49,58 @@ class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with
   private val xClientIdHeader = "X-Client-ID"
   private val clientId = "client_id"
 
-  private val validHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
+  private val mockApiNotificationQueueService = mock[ApiNotificationQueueService]
+  private val notificationPresenter = mock[NotificationPresenter]
 
   trait Setup {
-    implicit val materializer = fakeApplication.materializer
+    implicit val materializer: Materializer = fakeApplication.materializer
 
+    val validHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
     val headerValidator = new SuccessfulHeaderValidatorFake
 
-    val mockApiNotificationQueueService = mock[ApiNotificationQueueService]
-    val controller = new NotificationsController(mockApiNotificationQueueService, headerValidator)
+    val controller = new NotificationsController(mockApiNotificationQueueService, headerValidator, notificationPresenter)
   }
 
-  "delete notification" should {
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(notificationPresenter, mockApiNotificationQueueService)
+  }
 
-    val validRequest = FakeRequest("DELETE", s"/$notificationId1").withHeaders(validHeaders: _*)
+  "delete notification by id" should {
+    trait SetupDeleteNotification extends Setup {
+      val notificationId = UUID.randomUUID().toString
+      val validRequest = FakeRequest("DELETE", s"/$notificationId").
+        withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> "client-id")
 
-    "return 404 NOT_FOUND response when the notification does not exist" in new Setup {
-        val result = await(controller.delete(notificationId1.toString).apply(validRequest))
-
-        status(result) shouldBe NOT_FOUND
-        bodyOf(result) shouldBe ""
-      }
+      val presentedNotification = Ok("presented notification")
+      val headers = Map(CONTENT_TYPE -> MimeTypes.XML)
+      val notification = Notification(notificationId, headers, "notification")
     }
+
+    "return the presented notification" in new SetupDeleteNotification {
+      when(mockApiNotificationQueueService.getAndRemoveNotification(meq(notificationId))(any[HeaderCarrier]))
+        .thenReturn(Some(notification))
+
+      when(notificationPresenter.present(Some(notification))).thenReturn(presentedNotification)
+
+      val result = await(controller.delete(notificationId).apply(validRequest))
+
+      result shouldBe presentedNotification
+    }
+  }
 
   "get all notifications" should {
 
-    val validRequest = FakeRequest("GET", "/").withHeaders(validHeaders: _*)
+    trait SetupGetAllNotifications extends Setup {
+      protected val notificationId1: UUID = UUID.randomUUID()
+      protected val notificationId2: UUID = UUID.randomUUID()
 
-    "return all notifications" in new Setup {
+      protected val notifications = Notifications(List(s"/notification/$notificationId1", s"/notification/$notificationId2"))
+
+      val validRequest = FakeRequest("GET", "/").withHeaders(validHeaders: _*)
+    }
+
+    "return all notifications" in new SetupGetAllNotifications {
       when(mockApiNotificationQueueService.getNotifications()(any(classOf[HeaderCarrier])))
         .thenReturn(Future.successful(notifications))
 
@@ -90,7 +119,7 @@ class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with
       string2xml(bodyOf(result)) shouldBe expectedXml
     }
 
-    "fail if ApiNotificationQueueService failed" in new Setup {
+    "fail if ApiNotificationQueueService failed" in new SetupGetAllNotifications {
       when(mockApiNotificationQueueService.getNotifications()(any(classOf[HeaderCarrier])))
         .thenReturn(Future.failed(new TimeoutException()))
 
