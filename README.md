@@ -41,7 +41,8 @@ curl -v -X GET "http://localhost:9649/" \
 ```
 
 #### Response
-`200 OK` on success
+`200 OK`
+
 ---
 
 ### Tests
