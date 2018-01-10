@@ -82,13 +82,13 @@ class RetrieveAndDeleteNotificationSpec extends FeatureSpec
       contentAsString(result).stripMargin shouldBe notificationBody
 
       And("The notification will be DELETED")
-      verify(eventually(deleteRequestedFor(urlMatching(s"/notifications/$notificationId"))))
+      verify(eventually(deleteRequestedFor(urlMatching(s"/notification/$notificationId"))))
     }
 
     scenario("3rd party provides notification Id but there are no notifications available or matching the Notification Id") {
       Given("A notification has already been retrieved using the correct notification Id")
 
-      stubFor(get(urlMatching(s"/notifications/$notificationId"))
+      stubFor(get(urlMatching(s"/notification/$notificationId"))
         .willReturn(aResponse()
           .withStatus(NOT_FOUND)))
 
@@ -126,12 +126,12 @@ class RetrieveAndDeleteNotificationSpec extends FeatureSpec
   }
 
   private def stubForExistingNotification(notificationId: String, notificationBody: String) = {
-    stubFor(get(urlMatching(s"/notifications/$notificationId"))
+    stubFor(get(urlMatching(s"/notification/$notificationId")).withHeader(xClientIdHeader, equalTo(clientId))
       .willReturn(aResponse()
         .withBody(notificationBody)
         .withStatus(OK)))
 
-    stubFor(delete(urlMatching(s"/notifications/$notificationId"))
+    stubFor(delete(urlMatching(s"/notification/$notificationId")).withHeader(xClientIdHeader, equalTo(clientId))
       .willReturn(aResponse()
         .withStatus(OK)))
   }

@@ -19,7 +19,7 @@ package uk.gov.hmrc.apinotificationpull.controllers
 import javax.inject.{Inject, Singleton}
 
 import play.api.Logger
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, Request, Result}
 import uk.gov.hmrc.apinotificationpull.model.XmlErrorResponse
 import uk.gov.hmrc.apinotificationpull.presenters.NotificationPresenter
 import uk.gov.hmrc.apinotificationpull.services.ApiNotificationQueueService
@@ -48,6 +48,8 @@ class NotificationsController @Inject()(apiNotificationQueueService: ApiNotifica
   def delete(notificationId: String): Action[AnyContent] =
     (headerValidator.validateAcceptHeader andThen headerValidator.validateXClientIdHeader).async { implicit request =>
 
+    implicit val hc: HeaderCarrier = buildHeaderCarrier(request)
+
     apiNotificationQueueService.getAndRemoveNotification(notificationId)
       .map(n => notificationPresenter.present(n))
   }
@@ -55,18 +57,18 @@ class NotificationsController @Inject()(apiNotificationQueueService: ApiNotifica
   def getAll: Action[AnyContent] =
     (headerValidator.validateAcceptHeader andThen headerValidator.validateXClientIdHeader).async { implicit request =>
 
-      def buildHeaderCarrier(): HeaderCarrier = {
-        request.headers.get(X_CLIENT_ID_HEADER_NAME) match {
-          case Some(clientId: String) => hc.withExtraHeaders(X_CLIENT_ID_HEADER_NAME -> clientId)
-          case _ =>
-            // It should never happen
-            Logger.warn(s"Header $X_CLIENT_ID_HEADER_NAME not found in the request.")
-            hc
-        }
-      }
-
-      apiNotificationQueueService.getNotifications()(buildHeaderCarrier()).map {
+      apiNotificationQueueService.getNotifications()(buildHeaderCarrier(request)).map {
         notifications => Ok(xmlBuilder.toXml(notifications)).as(XML)
       } recover recovery
+  }
+
+  private def buildHeaderCarrier(request: Request[AnyContent] ): HeaderCarrier = {
+    request.headers.get(X_CLIENT_ID_HEADER_NAME) match {
+      case Some(clientId: String) => hc.withExtraHeaders(X_CLIENT_ID_HEADER_NAME -> clientId)
+      case _ =>
+        // It should never happen
+        Logger.warn(s"Header $X_CLIENT_ID_HEADER_NAME not found in the request.")
+        hc
+    }
   }
 }

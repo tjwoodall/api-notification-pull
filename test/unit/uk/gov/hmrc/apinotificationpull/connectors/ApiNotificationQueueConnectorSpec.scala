@@ -123,7 +123,7 @@ class ApiNotificationQueueConnectorSpec extends UnitSpec with ScalaFutures with 
 
     "notification can't be found" should {
       "return none" in new Setup {
-        stubFor(get(urlEqualTo(s"/notifications/$notificationId"))
+        stubFor(get(urlEqualTo(s"/notification/$notificationId"))
           .willReturn(
             aResponse()
               .withStatus(NOT_FOUND)))
@@ -139,7 +139,7 @@ class ApiNotificationQueueConnectorSpec extends UnitSpec with ScalaFutures with 
         val notificationPayload = "notification"
         val notification = Notification(notificationId, Map(CONTENT_TYPE -> XML), notificationPayload)
 
-        stubFor(get(urlEqualTo(s"/notifications/$notificationId"))
+        stubFor(get(urlEqualTo(s"/notification/$notificationId"))
             .withHeader(USER_AGENT, equalTo("api-notification-pull"))
           .willReturn(
             aResponse()
@@ -160,7 +160,7 @@ class ApiNotificationQueueConnectorSpec extends UnitSpec with ScalaFutures with 
     "delete the notification" in new Setup {
       val notificationId = "notificationId"
       val notification = Notification(notificationId, Map(CONTENT_TYPE -> XML), "payload")
-      val url: UrlPattern = urlEqualTo(s"/notifications/$notificationId")
+      val url: UrlPattern = urlEqualTo(s"/notification/$notificationId")
 
       stubFor(delete(url).withHeader(USER_AGENT, equalTo("api-notification-pull"))
         .willReturn(aResponse().withStatus(OK)))
