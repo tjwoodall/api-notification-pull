@@ -23,7 +23,7 @@ import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.apinotificationpull.model.XmlErrorResponse
 import uk.gov.hmrc.apinotificationpull.presenters.NotificationPresenter
 import uk.gov.hmrc.apinotificationpull.services.ApiNotificationQueueService
-import uk.gov.hmrc.apinotificationpull.util.XmlBuilder.toXml
+import uk.gov.hmrc.apinotificationpull.util.XmlBuilder
 import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
@@ -33,7 +33,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class NotificationsController @Inject()(apiNotificationQueueService: ApiNotificationQueueService,
                                         headerValidator: HeaderValidator,
-                                        notificationPresenter: NotificationPresenter) extends BaseController {
+                                        notificationPresenter: NotificationPresenter,
+                                        xmlBuilder: XmlBuilder) extends BaseController {
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private val X_CLIENT_ID_HEADER_NAME = "X-Client-ID"
@@ -65,7 +66,7 @@ class NotificationsController @Inject()(apiNotificationQueueService: ApiNotifica
       }
 
       apiNotificationQueueService.getNotifications()(buildHeaderCarrier()).map {
-        notifications => Ok(toXml(notifications)).as(XML)
+        notifications => Ok(xmlBuilder.toXml(notifications)).as(XML)
       } recover recovery
   }
 }

@@ -41,6 +41,7 @@ class GetAllNotificationsSpec extends FeatureSpec with GivenWhenThen with Matche
   private val externalServicesPort = 11111
 
   override def newAppForTest(testData: TestData): Application = new GuiceApplicationBuilder().configure(Map(
+    "api.context" -> "notifications",
     "microservice.services.api-notification-queue.host" -> externalServicesHost,
     "microservice.services.api-notification-queue.port" -> externalServicesPort
   )).build()

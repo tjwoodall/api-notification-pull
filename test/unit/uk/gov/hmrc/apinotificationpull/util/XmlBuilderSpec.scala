@@ -16,16 +16,25 @@
 
 package uk.gov.hmrc.apinotificationpull.util
 
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
+import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.apinotificationpull.model.Notifications
-import uk.gov.hmrc.apinotificationpull.util.XmlBuilder.toXml
 import uk.gov.hmrc.play.test.UnitSpec
 
-class XmlBuilderSpec extends UnitSpec {
+class XmlBuilderSpec extends UnitSpec with MockitoSugar {
+
+  trait Setup {
+    val apiContext = "notifications"
+    val appContext = mock[AppContext]
+    when(appContext.apiContext).thenReturn(apiContext)
+    val xmlBuilder = new XmlBuilder(appContext)
+  }
 
   "XmlBuilder.toXml()" should {
 
-    "convert notifications to XML" in {
-      val notifications = Notifications(List("/notifications/123", "/notifications/456"))
+    "convert notifications to XML" in new Setup {
+      val notifications = Notifications(List("/notification/123", "/notification/456"))
 
       val expectedXml = scala.xml.Utility.trim(
         <resource href="/notifications/">
@@ -35,10 +44,10 @@ class XmlBuilderSpec extends UnitSpec {
         </resource>
       )
 
-       toXml(notifications) shouldBe expectedXml
+       xmlBuilder.toXml(notifications) shouldBe expectedXml
     }
 
-    "convert empty notifications to XML" in {
+    "convert empty notifications to XML" in new Setup {
       val notifications = Notifications(Nil)
 
       val expectedXml = scala.xml.Utility.trim(
@@ -47,7 +56,7 @@ class XmlBuilderSpec extends UnitSpec {
         </resource>
       )
 
-      toXml(notifications) shouldBe expectedXml
+      xmlBuilder.toXml(notifications) shouldBe expectedXml
     }
 
   }

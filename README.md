@@ -18,7 +18,7 @@ Required Headers:
   - `Accept`
 
 ```
-curl -v -X GET "http://localhost:9649/notifications" \
+curl -v -X DELETE "http://localhost:9649/{notificationId}" \
   -H "X-Client-ID: pHnwo74C0y4SckQUbcoL2DbFAZ0b" \
   -H "Accept: application/vnd.hmrc.1.0+xml"
 ```

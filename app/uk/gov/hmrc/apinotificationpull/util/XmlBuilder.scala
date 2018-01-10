@@ -16,9 +16,12 @@
 
 package uk.gov.hmrc.apinotificationpull.util
 
+import javax.inject.Inject
+
+import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.apinotificationpull.model.Notifications
 
-object XmlBuilder {
-  private def toXml(notificationLocation: String): scala.xml.Elem = <link rel="notification" href={notificationLocation}/>
+class XmlBuilder @Inject()(appContext: AppContext) {
+  private def toXml(notificationLocation: String): scala.xml.Elem = <link rel="notification" href={s"/${appContext.apiContext}/${notificationLocation.split("/").last}"}/>
   def toXml(notifications: Notifications): scala.xml.Elem = <resource href="/notifications/"><link rel="self" href="/notifications/"/>{notifications.notifications.map( n => toXml(n))}</resource>
 }
