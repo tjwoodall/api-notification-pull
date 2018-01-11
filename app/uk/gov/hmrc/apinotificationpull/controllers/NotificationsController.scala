@@ -59,7 +59,9 @@ class NotificationsController @Inject()(apiNotificationQueueService: ApiNotifica
   def getAll: Action[AnyContent] =
     (headerValidator.validateAcceptHeader andThen headerValidator.validateXClientIdHeader).async { implicit request =>
 
-      apiNotificationQueueService.getNotifications()(buildHeaderCarrier(request)).map {
+      implicit val hc: HeaderCarrier = buildHeaderCarrier(request)
+
+      apiNotificationQueueService.getNotifications().map {
         notifications => Ok(xmlBuilder.toXml(notifications)).as(XML)
       } recover recovery
   }

@@ -46,7 +46,11 @@ class NotificationPresenterSpec extends UnitSpec with WithFakeApplication {
        trait PresentSomeNotification {
          val presenter = new NotificationPresenter
          val notificationId = "notificationId"
-         val notification = Notification(notificationId, Map(CONTENT_TYPE -> XML), "Notification")
+
+         val header1: (String, String) = "Header1-Name" -> "Header1-value"
+         val header2: (String, String) = "Header2-Name" -> "Header2-value"
+
+         val notification = Notification(notificationId, Map(CONTENT_TYPE -> XML, header1, header2), "Notification")
 
          val result = presenter.present(Some(notification))
        }
@@ -57,6 +61,10 @@ class NotificationPresenterSpec extends UnitSpec with WithFakeApplication {
 
        "return notification payload in body" in new PresentSomeNotification {
          bodyOf(result) shouldBe notification.payload
+       }
+
+       "return headers" in new PresentSomeNotification {
+         await(result.header.headers) should contain allOf(header1, header2)
        }
      }
    }

@@ -22,6 +22,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{status => wmStatus, _}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
+import com.github.tomakehurst.wiremock.http.{HttpHeader, HttpHeaders}
 import org.scalatest.OptionValues._
 import org.scalatest._
 import org.scalatest.concurrent.Eventually
@@ -71,8 +72,10 @@ class RetrieveAndDeleteNotificationSpec extends FeatureSpec
 
     scenario("Successful DELETE and 3rd party receives the notification") {
       Given("There is a notification waiting in the API Notification Queue and you have the correct notification Id")
+      val header1 = "header1-name" -> "header1-val"
+      val header2 = "header2-name" -> "header2-val"
       val notificationBody = "<notification>notification</notification>"
-      stubForExistingNotification(notificationId, notificationBody)
+      stubForExistingNotification(notificationId, notificationBody, header1, header2)
 
       When("You call making the 'DELETE' action to the api-notification-pull service")
       val result = route(app, validRequest).value
@@ -80,6 +83,7 @@ class RetrieveAndDeleteNotificationSpec extends FeatureSpec
       Then("You will receive the notification")
       status(result) shouldBe OK
       contentAsString(result).stripMargin shouldBe notificationBody
+      await(result).header.headers should contain allOf(header1, header2)
 
       And("The notification will be DELETED")
       verify(eventually(deleteRequestedFor(urlMatching(s"/notification/$notificationId"))))
@@ -125,9 +129,10 @@ class RetrieveAndDeleteNotificationSpec extends FeatureSpec
     }
   }
 
-  private def stubForExistingNotification(notificationId: String, notificationBody: String) = {
+  private def stubForExistingNotification(notificationId: String, notificationBody: String, headers: (String, String)*) = {
     stubFor(get(urlMatching(s"/notification/$notificationId")).withHeader(xClientIdHeader, equalTo(clientId))
       .willReturn(aResponse()
+        .withHeaders(new HttpHeaders(headers.map(h => HttpHeader.httpHeader(h._1, h._2)): _*))
         .withBody(notificationBody)
         .withStatus(OK)))
 
