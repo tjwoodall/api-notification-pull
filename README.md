@@ -23,8 +23,18 @@ curl -v -X DELETE "http://localhost:9649/{notificationId}" \
   -H "Accept: application/vnd.hmrc.1.0+xml"
 ```
 
-#### Response
-`200 OK` on success, `404 Not Found` otherwise
+#### Responses
+
+##### Success
+```
+200 OK
+
+Notification
+```
+
+##### Not Found
+
+`404 Not Found`
 
 ### GET `/`
 
@@ -41,7 +51,14 @@ curl -v -X GET "http://localhost:9649/" \
 ```
 
 #### Response
-`200 OK`
+```
+200 OK
+
+<resource href="/notifications/">
+   <link rel="self" href="/notifications/"/>
+   <link rel="notification" href="/notifications/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+</resource>
+```
 
 ---
 
