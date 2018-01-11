@@ -23,11 +23,11 @@ uses:
         required: true
         example: application/vnd.hmrc.1.0+xml
 
-      (annotations.scope): "write:api-notification-pull"
-        securedBy: [ sec.oauth_2_0: { scopes: [ "write:api-notification-pull" ] } ]
-        responses:
-          200:
-            body: application/xml
+    (annotations.scope): "write:api-notification-pull"
+    securedBy: [ sec.oauth_2_0: { scopes: [ "write:api-notification-pull" ] } ]
+    responses:
+      200:
+        body: application/xml
 
 /@apiContext/{id}/:
   delete:
