@@ -27,7 +27,14 @@ uses:
     securedBy: [ sec.oauth_2_0: { scopes: [ "write:api-notification-pull" ] } ]
     responses:
       200:
-        body: application/xml
+        body:
+          application/xml:
+            description: Valid XML Payload
+            example: |
+              <resource href="/notifications/">
+                  <link rel="self" href="/notifications/"/>
+                  <link rel="notification" href="/notification/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+              </resource>
 
 /@apiContext/{id}/:
   delete:
@@ -44,7 +51,9 @@ uses:
     securedBy: [ sec.oauth_2_0: { scopes: [ "write:api-notification-pull" ] } ]
     responses:
       200:
-        body: application/xml
+        body:
+          application/xml:
+            description: The saved message
       404:
         body:
           application/xml:
