@@ -48,6 +48,18 @@ class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with
   private val notificationPresenter = mock[NotificationPresenter]
   private val mockXmlBuilder = mock[XmlBuilder]
 
+  private val errorXml = scala.xml.Utility.trim(
+    <error_response>
+      <code>UNKNOWN_ERROR</code>
+      <errors>
+        <error>
+          <type>SERVICE_UNAVAILABLE</type>
+          <description>An unexpected error occurred</description>
+        </error>
+      </errors>
+    </error_response>
+  )
+
   trait Setup {
     implicit val materializer: Materializer = fakeApplication.materializer
 
@@ -86,6 +98,17 @@ class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with
 
       result shouldBe presentedNotification
     }
+
+    "fail if ApiNotificationQueueService failed" in new SetupDeleteNotification {
+      when(mockApiNotificationQueueService.getAndRemoveNotification(anyString)(any(classOf[HeaderCarrier])))
+        .thenReturn(Future.failed(new TimeoutException()))
+
+      val result = await(controller.delete(notificationId).apply(validRequest))
+
+      status(result) shouldBe INTERNAL_SERVER_ERROR
+
+      string2xml(bodyOf(result)) shouldBe errorXml
+    }
   }
 
   "get all notifications" should {
@@ -120,19 +143,7 @@ class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with
 
       status(result) shouldBe INTERNAL_SERVER_ERROR
 
-      val expectedXml = scala.xml.Utility.trim(
-        <error_response>
-          <code>UNKNOWN_ERROR</code>
-          <errors>
-            <error>
-              <type>SERVICE_UNAVAILABLE</type>
-              <description>An unexpected error occurred</description>
-            </error>
-          </errors>
-        </error_response>
-      )
-
-      string2xml(bodyOf(result)) shouldBe expectedXml
+      string2xml(bodyOf(result)) shouldBe errorXml
     }
   }
 

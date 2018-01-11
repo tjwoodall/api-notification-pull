@@ -51,7 +51,9 @@ class NotificationsController @Inject()(apiNotificationQueueService: ApiNotifica
     implicit val hc: HeaderCarrier = buildHeaderCarrier(request)
 
     apiNotificationQueueService.getAndRemoveNotification(notificationId)
-      .map(n => notificationPresenter.present(n))
+      .map{
+        n => notificationPresenter.present(n)
+      } recover recovery
   }
 
   def getAll: Action[AnyContent] =
