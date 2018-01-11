@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.apinotificationpull.config
+package uk.gov.hmrc.apinotificationpull
 
-import javax.inject.{Inject, Singleton}
+import com.google.inject.AbstractModule
 
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.config.ServicesConfig
-
-@Singleton
-class ServiceConfiguration @Inject()(override val runModeConfiguration: Configuration,
-                                     environment: Environment) extends ServicesConfig {
-  override protected def mode = environment.mode
+class RegistrationModule extends AbstractModule {
+  override def configure() = {
+    bind(classOf[ApplicationRegistration]).asEagerSingleton()
+  }
 }

@@ -25,7 +25,6 @@ import views.txt
 
 import scala.concurrent.Future
 
-@Singleton
 class DefinitionController @Inject()(appContext: AppContext) extends BaseController {
 
   def get() = Action.async {

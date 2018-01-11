@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.apinotificationpull.config
+package uk.gov.hmrc.apinotificationpull
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
+import javax.inject.Singleton
 
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.apinotificationpull.config.ServiceConfiguration
+import uk.gov.hmrc.apinotificationpull.connectors.ServiceLocatorConnector
+
 
 @Singleton
-class ServiceConfiguration @Inject()(override val runModeConfiguration: Configuration,
-                                     environment: Environment) extends ServicesConfig {
-  override protected def mode = environment.mode
+class ApplicationRegistration @Inject()(serviceLocatorConnector: ServiceLocatorConnector, config: ServiceConfiguration) {
+  val registrationEnabled: Boolean = config.getConfBool("service-locator.enabled", defBool = true)
+
+  if (registrationEnabled) serviceLocatorConnector.register()
 }

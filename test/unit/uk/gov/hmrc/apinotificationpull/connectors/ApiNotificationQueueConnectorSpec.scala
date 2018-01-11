@@ -26,15 +26,20 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
 import play.api.http.HeaderNames._
 import play.api.http.ContentTypes.XML
 import play.api.http.Status._
 import play.api.libs.json.Json.{stringify, toJson}
 import uk.gov.hmrc.apinotificationpull.config.ServiceConfiguration
 import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK}
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json.{stringify, toJson}
+import uk.gov.hmrc.apinotificationpull.model.Notifications
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, Upstream5xxResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.http.ws.WSHttp
+import uk.gov.hmrc.play.bootstrap.http.{DefaultHttpClient, HttpClient}
 import uk.gov.hmrc.play.test.UnitSpec
 
 class ApiNotificationQueueConnectorSpec extends UnitSpec with ScalaFutures with BeforeAndAfterEach
@@ -44,19 +49,22 @@ class ApiNotificationQueueConnectorSpec extends UnitSpec with ScalaFutures with 
   private val host = "localhost"
   private val apiNotificationQueueUrl = s"http://$host:$port"
   private val wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(port))
+  override lazy val app: Application = new GuiceApplicationBuilder()
+    .configure(
+      "microservice.services.api-notification-queue.host" -> host,
+      "microservice.services.api-notification-queue.port" -> port
+    ).overrides(
+    bind[HttpClient].to[DefaultHttpClient]
+  ).build()
 
-  private class TestHttpClient extends HttpClient with WSHttp {
-    override val hooks = Seq.empty
-  }
+  lazy val connector = app.injector.instanceOf[ApiNotificationQueueConnector]
+
 
   private val clientId = "client-id"
 
   trait Setup {
-    val serviceConfiguration = mock[ServiceConfiguration]
-    when(serviceConfiguration.baseUrl("api-notification-queue")).thenReturn(apiNotificationQueueUrl)
 
     implicit val hc = HeaderCarrier().withExtraHeaders("X-Client-ID" -> clientId)
-    val connector = new ApiNotificationQueueConnector(serviceConfiguration, new TestHttpClient())
   }
 
   override def beforeEach() {
