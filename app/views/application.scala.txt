@@ -23,8 +23,7 @@ uses:
         required: true
         example: application/vnd.hmrc.1.0+xml
 
-    (annotations.scope): "write:api-notification-pull"
-    securedBy: [ sec.oauth_2_0: { scopes: [ "write:api-notification-pull" ] } ]
+    securedBy: [ sec.x-application ]
     responses:
       200:
         body:
@@ -47,14 +46,14 @@ uses:
         required: true
         example: application/vnd.hmrc.1.0+xml
 
-    (annotations.scope): "write:api-notification-pull"
-    securedBy: [ sec.oauth_2_0: { scopes: [ "write:api-notification-pull" ] } ]
+    securedBy: [ sec.x-application ]
     responses:
       200:
         body:
           application/xml:
             description: The saved message
+            example: |
+              <example>
+                Saved Message
+              </example>
       404:
-        body:
-          application/xml:
-            description: Not found
