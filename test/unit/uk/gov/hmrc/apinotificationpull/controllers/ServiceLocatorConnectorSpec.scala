@@ -21,6 +21,8 @@ import org.mockito.ArgumentMatchers.{any, eq => eqs}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
+import play.api.http.HeaderNames.CONTENT_TYPE
+import play.api.http.ContentTypes.JSON
 import play.api.libs.json.Writes
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.apinotificationpull.config.ServiceConfiguration
@@ -71,7 +73,7 @@ class ServiceLocatorConnectorSpec  extends UnitSpec with MockitoSugar with Scala
       when(mockHttpClient.POST(
         eqs(s"$serviceUrl/registration"),
         eqs(registration),
-        eqs(Seq("Content-Type" -> "application/json"))
+        eqs(Seq(CONTENT_TYPE -> JSON))
       )(
         any[Writes[Registration]], any[HttpReads[HttpResponse]], any[HeaderCarrier], any[ExecutionContext]
       ))
@@ -81,7 +83,7 @@ class ServiceLocatorConnectorSpec  extends UnitSpec with MockitoSugar with Scala
       verify(mockHttpClient).POST(
         eqs("https://SERVICE_LOCATOR/registration"),
         eqs(registration),
-        eqs(Seq("Content-Type" -> "application/json"))
+        eqs(Seq(CONTENT_TYPE -> JSON))
       )(
         any[Writes[Registration]], any[HttpReads[HttpResponse]], any[HeaderCarrier], any[ExecutionContext]
       )
@@ -98,7 +100,7 @@ class ServiceLocatorConnectorSpec  extends UnitSpec with MockitoSugar with Scala
       when(mockHttpClient.POST(
         eqs(s"$serviceUrl/registration"),
         eqs(registration),
-        eqs(Seq("Content-Type" -> "application/json"))
+        eqs(Seq(CONTENT_TYPE -> JSON))
       )(
         any[Writes[Registration]], any[HttpReads[HttpResponse]], any[HeaderCarrier], any[ExecutionContext])
       )
@@ -108,7 +110,7 @@ class ServiceLocatorConnectorSpec  extends UnitSpec with MockitoSugar with Scala
       verify(mockHttpClient).POST(
         eqs("https://SERVICE_LOCATOR/registration"),
         eqs(registration),
-        eqs(Seq("Content-Type" -> "application/json"))
+        eqs(Seq(CONTENT_TYPE -> JSON))
       )(
         any[Writes[Registration]], any[HttpReads[HttpResponse]], any[HeaderCarrier], any[ExecutionContext]
       )
