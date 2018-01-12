@@ -1,13 +1,6 @@
 @import play.api.libs.json.Json
-@(apiScopeKey: String, apiContext: String)
+@(apiContext: String)
 {
-  "scopes": [
-    {
-      "key": "@apiScopeKey",
-      "name": "API Notification Pull",
-      "description": "Pull notifications"
-    }
-  ],
   "api": {
     "name": "API Notification Pull",
     "description": "Allows for retrieval of notifications",
