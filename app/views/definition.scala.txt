@@ -1,11 +1,11 @@
 @import play.api.libs.json.Json
 @(apiContext: String)
 {
+  "scopes":[],
   "api": {
     "name": "API Notification Pull",
     "description": "Allows for retrieval of notifications",
     "context": "@apiContext",
-    "scopes":[],
     "versions": [
       {
         "version": "1.0",
