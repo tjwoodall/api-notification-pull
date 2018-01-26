@@ -21,7 +21,6 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{verify => wverify, _}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.matching.UrlPattern
-import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -30,9 +29,7 @@ import play.api.Application
 import play.api.http.HeaderNames._
 import play.api.http.ContentTypes.XML
 import play.api.http.Status._
-import play.api.libs.json.Json.{stringify, toJson}
-import uk.gov.hmrc.apinotificationpull.config.ServiceConfiguration
-import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
+import uk.gov.hmrc.apinotificationpull.model.Notification
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
