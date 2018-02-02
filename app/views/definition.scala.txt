@@ -3,7 +3,7 @@
 {
   "scopes":[],
   "api": {
-    "name": "API Notification Pull",
+    "name": "Pull Notifications",
     "description": "Allows for retrieval of notifications",
     "context": "@apiContext",
     "versions": [

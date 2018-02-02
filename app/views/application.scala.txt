@@ -1,7 +1,7 @@
 @(apiContext: String)#%RAML 1.0
 ---
 
-title: API Notification Pull
+title: Pull Notifications
 version: 1.0
 protocols: [ HTTPS ]
 baseUri: https://api.service.hmrc.gov.uk/
