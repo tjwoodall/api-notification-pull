@@ -35,7 +35,7 @@ class DefinitionControllerSpec extends UnitSpec with WithFakeApplication {
   private val appContext = new AppContext(Configuration("api.definition.scope" -> apiScope, "api.context" -> apiContext))
   private val controller = new DefinitionController(appContext)
 
-  "DocumentationController.definition" should {
+  "DefinitionController.definition" should {
     lazy val result = getDefinition(controller)
 
     "return OK status" in {
@@ -51,23 +51,8 @@ class DefinitionControllerSpec extends UnitSpec with WithFakeApplication {
     }
   }
 
-  "DocumentationController.conf" should {
-    lazy val result = getConf(controller)
-
-    "return OK status" in {
-      status(result) shouldBe OK
-    }
-
-    "return application.raml in the body" in {
-      bodyOf(result) shouldBe txt.application(apiContext).toString()
-    }
-  }
-
   private def getDefinition(controller: DefinitionController) = {
     await(controller.get().apply(FakeRequest("GET", "/api/definition")))
   }
 
-  private def getConf(controller: DefinitionController) = {
-    await(controller.conf("1.0","application.raml").apply(FakeRequest("GET", "/api/conf/1.0/application.raml")))
-  }
 }

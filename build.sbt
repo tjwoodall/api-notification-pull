@@ -57,6 +57,7 @@ lazy val microservice = (project in file("."))
   .settings(publishingSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(unmanagedResourceDirectories in Compile += baseDirectory.value / "resources")
+  .settings(unmanagedResourceDirectories in Compile += baseDirectory.value / "public")
   .settings(
     name := appName,
     scalaVersion := "2.11.11",

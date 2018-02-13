@@ -1,7 +1,7 @@
-@(apiContext: String)#%RAML 1.0
+#%RAML 1.0
 ---
 
-title: Pull Notifications
+title: Pull Notifications Api
 version: 1.0
 protocols: [ HTTPS ]
 baseUri: https://api.service.hmrc.gov.uk/
@@ -12,7 +12,17 @@ uses:
   annotations: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/annotations.raml
   types: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
 
-/@apiContext/:
+documentation:
+  - title: Overview
+    content: !include docs/overview.md
+  - title: Versioning
+    content: !include https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/versioning.md
+  - title: Errors
+    content: !include https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/errors.md
+  - title: Testing the API
+    content: !include docs/testing.md
+
+/notifications/:
   get:
     displayName: Get a list of all available notifications
     description: Allows retrieval of a list of notifications waiting to be pulled
@@ -35,7 +45,7 @@ uses:
                   <link rel="notification" href="/notifications/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
               </resource>
 
-/@apiContext/{id}/:
+/notifications/{id}/:
   delete:
     displayName: Retrieve and delete a notification from the api-notification-queue
     description: Allows retrieval of individual notifications. The notification will be returned in the response body and then deleted from the api-notification-queue.

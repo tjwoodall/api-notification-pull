@@ -18,18 +18,15 @@ package uk.gov.hmrc.apinotificationpull.controllers
 
 import javax.inject.{Inject, Singleton}
 
-import play.api.mvc.Action
-import uk.gov.hmrc.apinotificationpull.config.AppContext
+import controllers.AssetsBuilder
+import play.api.http.HttpErrorHandler
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import views.txt
-
-import scala.concurrent.Future
 
 @Singleton
-class DefinitionController @Inject()(appContext: AppContext) extends BaseController {
-
-  def get() = Action.async {
-    Future.successful(Ok(txt.definition(appContext.apiContext)).withHeaders(CONTENT_TYPE -> JSON))
+class DocumentationController @Inject()(errorHandler: HttpErrorHandler) extends AssetsBuilder(errorHandler)
+  with BaseController {
+  def conf(version: String, file: String): Action[AnyContent] = {
+    super.at(s"/public/api/conf/$version", file)
   }
-
 }
