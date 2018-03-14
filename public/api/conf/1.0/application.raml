@@ -22,48 +22,49 @@ documentation:
   - title: Testing
     content: !include docs/testing.md
 
-/notifications/:
-  get:
-    displayName: Get a list of all available notifications
-    description: Allows retrieval of a list of notifications waiting to be pulled
-    headers:
-      Accept:
-        description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
-        type: string
-        required: true
-        example: application/vnd.hmrc.1.0+xml
+/notifications:
+    /:
+      get:
+        displayName: Get a list of all available notifications
+        description: Allows retrieval of a list of notifications waiting to be pulled
+        headers:
+          Accept:
+            description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+            type: string
+            required: true
+            example: application/vnd.hmrc.1.0+xml
 
-    securedBy: [ sec.x-application ]
-    responses:
-      200:
-        body:
-          application/xml:
-            description: Valid XML Payload
-            example: |
-              <resource href="/notifications/">
-                  <link rel="self" href="/notifications/"/>
-                  <link rel="notification" href="/notifications/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
-              </resource>
+        securedBy: [ sec.x-application ]
+        responses:
+          200:
+            body:
+              application/xml:
+                description: Valid XML Payload
+                example: |
+                  <resource href="/notifications/">
+                      <link rel="self" href="/notifications/"/>
+                      <link rel="notification" href="/notifications/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+                  </resource>
 
-/notifications/{id}/:
-  delete:
-    displayName: Retrieve and delete a notification from the api-notification-queue
-    description: Allows retrieval of individual notifications. The notification will be returned in the response body and then deleted from the api-notification-queue.
-    headers:
-      Accept:
-        description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
-        type: string
-        required: true
-        example: application/vnd.hmrc.1.0+xml
+    /{id}:
+      delete:
+        displayName: Retrieve and delete a notification from the api-notification-queue
+        description: Allows retrieval of individual notifications. The notification will be returned in the response body and then deleted from the api-notification-queue.
+        headers:
+          Accept:
+            description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+            type: string
+            required: true
+            example: application/vnd.hmrc.1.0+xml
 
-    securedBy: [ sec.x-application ]
-    responses:
-      200:
-        body:
-          application/xml:
-            description: The saved message
-            example: |
-              <example>
-                Saved Message
-              </example>
-      404:
+        securedBy: [ sec.x-application ]
+        responses:
+          200:
+            body:
+              application/xml:
+                description: The saved message
+                example: |
+                  <example>
+                    Saved Message
+                  </example>
+          404:
