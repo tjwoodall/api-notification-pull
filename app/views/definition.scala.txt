@@ -9,7 +9,7 @@
     "versions": [
       {
         "version": "1.0",
-        "status": "PUBLISHED",
+        "status": "BETA",
         "access": {
           "type": "PUBLIC"
         }
