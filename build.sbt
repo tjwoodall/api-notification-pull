@@ -26,7 +26,6 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning
 
 lazy val appName = "api-notification-pull"
-lazy val appVersion = envOrElse("API_NOTIFICATION_PULL_VERSION", "999-SNAPSHOT")
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test
 
