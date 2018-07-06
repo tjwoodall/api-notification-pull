@@ -27,7 +27,7 @@ object Notifications {
 case class Notification(id: String, headers: Map[String, String], payload: String)
 
 object XmlErrorResponse {
-  def apply(message: String) =
+  def apply(message: String): String =
     <error_response>
       <code>UNKNOWN_ERROR</code>
       <errors>

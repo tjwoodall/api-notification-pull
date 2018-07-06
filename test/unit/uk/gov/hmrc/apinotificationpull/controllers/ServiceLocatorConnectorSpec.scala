@@ -106,7 +106,7 @@ class ServiceLocatorConnectorSpec  extends UnitSpec with MockitoSugar with Scala
       )
         .thenReturn(Future.failed(serviceLocatorException))
 
-      connector.register.futureValue shouldBe false
+      connector.register().futureValue shouldBe false
       verify(mockHttpClient).POST(
         eqs("https://SERVICE_LOCATOR/registration"),
         eqs(registration),

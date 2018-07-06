@@ -17,8 +17,7 @@
 package uk.gov.hmrc.apinotificationpull.controllers
 
 import javax.inject.{Inject, Singleton}
-
-import play.api.mvc.Action
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import views.txt
@@ -28,7 +27,7 @@ import scala.concurrent.Future
 @Singleton
 class DefinitionController @Inject()(appContext: AppContext) extends BaseController {
 
-  def get() = Action.async {
+  def get(): Action[AnyContent] = Action.async {
     Future.successful(Ok(txt.definition(appContext.apiContext)).withHeaders(CONTENT_TYPE -> JSON))
   }
 
