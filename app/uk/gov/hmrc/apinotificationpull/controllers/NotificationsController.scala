@@ -35,6 +35,7 @@ class NotificationsController @Inject()(apiNotificationQueueService: ApiNotifica
                                         headerValidator: HeaderValidator,
                                         notificationPresenter: NotificationPresenter,
                                         xmlBuilder: XmlBuilder) extends BaseController {
+
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private val X_CLIENT_ID_HEADER_NAME = "X-Client-ID"
@@ -51,9 +52,8 @@ class NotificationsController @Inject()(apiNotificationQueueService: ApiNotifica
     implicit val hc: HeaderCarrier = buildHeaderCarrier(request)
 
     apiNotificationQueueService.getAndRemoveNotification(notificationId)
-      .map{
-        n => notificationPresenter.present(n)
-      } recover recovery
+      .map(notificationPresenter.present)
+      .recover(recovery)
   }
 
   def getAll: Action[AnyContent] =
@@ -61,8 +61,8 @@ class NotificationsController @Inject()(apiNotificationQueueService: ApiNotifica
 
       implicit val hc: HeaderCarrier = buildHeaderCarrier(request)
 
-      apiNotificationQueueService.getNotifications().map {
-        notifications => Ok(xmlBuilder.toXml(notifications)).as(XML)
+      apiNotificationQueueService.getNotifications().map { notifications =>
+        Ok(xmlBuilder.toXml(notifications)).as(XML)
       } recover recovery
   }
 
@@ -75,4 +75,5 @@ class NotificationsController @Inject()(apiNotificationQueueService: ApiNotifica
         hc
     }
   }
+
 }

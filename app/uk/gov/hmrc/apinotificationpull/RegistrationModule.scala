@@ -19,7 +19,9 @@ package uk.gov.hmrc.apinotificationpull
 import com.google.inject.AbstractModule
 
 class RegistrationModule extends AbstractModule {
+
   override def configure(): Unit = {
     bind(classOf[ApplicationRegistration]).asEagerSingleton()
   }
+
 }

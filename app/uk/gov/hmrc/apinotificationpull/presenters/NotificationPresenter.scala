@@ -25,6 +25,7 @@ import play.api.mvc.{ResponseHeader, Result}
 import uk.gov.hmrc.apinotificationpull.model.Notification
 
 class NotificationPresenter {
+
   def present(notification: Option[Notification]): Result = {
     notification.fold(NotFound("NOT FOUND"))(
       n => Result(
@@ -32,4 +33,5 @@ class NotificationPresenter {
         body = HttpEntity.Strict(ByteString(n.payload), n.headers.get(CONTENT_TYPE)))
       .withHeaders(n.headers.toSeq: _*))
   }
+
 }

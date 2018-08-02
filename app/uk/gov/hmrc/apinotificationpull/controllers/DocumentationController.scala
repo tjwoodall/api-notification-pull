@@ -26,7 +26,9 @@ import uk.gov.hmrc.play.bootstrap.controller.BaseController
 @Singleton
 class DocumentationController @Inject()(errorHandler: HttpErrorHandler) extends AssetsBuilder(errorHandler)
   with BaseController {
+
   def conf(version: String, file: String): Action[AnyContent] = {
     super.at(s"/public/api/conf/$version", file)
   }
+
 }

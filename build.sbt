@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import scala.util.Properties.envOrElse
 import play.sbt.PlayImport._
 import play.core.PlayVersion
 import sbt.Tests.{SubProcess, Group}

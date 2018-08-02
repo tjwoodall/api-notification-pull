@@ -36,8 +36,8 @@ class ApiNotificationQueueConnector @Inject()(config: ServiceConfiguration, http
 
   def getById(notificationId: String)(implicit hc: HeaderCarrier): Future[Option[Notification]] = {
     http.GET[HttpResponse](s"$serviceBaseUrl/notification/$notificationId")
-      .map {
-        r => Some(Notification(notificationId, r.allHeaders.map(h => h._1 -> h._2.head), r.body))
+      .map { r =>
+        Some(Notification(notificationId, r.allHeaders.map(h => h._1 -> h._2.head), r.body))
       }
       .recoverWith {
         case _: NotFoundException => Future.successful(None)
@@ -47,4 +47,5 @@ class ApiNotificationQueueConnector @Inject()(config: ServiceConfiguration, http
   def delete(notification: Notification)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     http.DELETE(s"$serviceBaseUrl/notification/${notification.id}")
   }
+
 }
