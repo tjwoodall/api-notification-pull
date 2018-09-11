@@ -18,7 +18,6 @@ package unit.controllers
 
 import akka.stream.Materializer
 import play.api.Configuration
-import play.api.http.HeaderNames.CONTENT_TYPE
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -44,7 +43,7 @@ class DefinitionControllerSpec extends UnitSpec with WithFakeApplication {
     }
 
     "have a JSON content type" in {
-      result.header.headers should contain (CONTENT_TYPE -> "application/json;charset=utf-8")
+      result.body.contentType shouldBe Some("application/json; charset=utf-8")
     }
 
     "return definition in the body" in {
