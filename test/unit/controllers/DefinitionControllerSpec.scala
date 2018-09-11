@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.apinotificationpull.controllers
+package unit.controllers
 
 import akka.stream.Materializer
 import play.api.Configuration
-import play.api.http.Status._
 import play.api.http.HeaderNames.CONTENT_TYPE
+import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.apinotificationpull.config.AppContext
+import uk.gov.hmrc.apinotificationpull.controllers.DefinitionController
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import views.txt
 

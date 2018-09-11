@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.apinotificationpull.controllers
+package unit.controllers
 
 import java.io.FileNotFoundException
 
@@ -22,6 +22,7 @@ import akka.stream.Materializer
 import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status._
 import play.api.test.FakeRequest
+import uk.gov.hmrc.apinotificationpull.controllers.DocumentationController
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 class DocumentationControllerSpec extends UnitSpec with MockitoSugar with WithFakeApplication {

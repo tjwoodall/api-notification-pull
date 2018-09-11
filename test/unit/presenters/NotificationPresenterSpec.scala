@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.apinotificationpull.presenters
+package unit.presenters
 
 import akka.stream.Materializer
+import play.api.http.ContentTypes.XML
 import play.api.http.HeaderNames.CONTENT_TYPE
 import play.api.http.Status._
-import play.api.http.ContentTypes.XML
 import uk.gov.hmrc.apinotificationpull.model.Notification
+import uk.gov.hmrc.apinotificationpull.presenters.NotificationPresenter
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 class NotificationPresenterSpec extends UnitSpec with WithFakeApplication {

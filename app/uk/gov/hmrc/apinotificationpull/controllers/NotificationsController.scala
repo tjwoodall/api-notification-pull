@@ -17,14 +17,13 @@
 package uk.gov.hmrc.apinotificationpull.controllers
 
 import javax.inject.{Inject, Singleton}
-
-import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import uk.gov.hmrc.apinotificationpull.model.XmlErrorResponse
 import uk.gov.hmrc.apinotificationpull.presenters.NotificationPresenter
 import uk.gov.hmrc.apinotificationpull.services.ApiNotificationQueueService
 import uk.gov.hmrc.apinotificationpull.util.XmlBuilder
 import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
+import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 
@@ -34,7 +33,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class NotificationsController @Inject()(apiNotificationQueueService: ApiNotificationQueueService,
                                         headerValidator: HeaderValidator,
                                         notificationPresenter: NotificationPresenter,
-                                        xmlBuilder: XmlBuilder) extends BaseController {
+                                        xmlBuilder: XmlBuilder,
+                                        logger: CdsLogger) extends BaseController {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -42,7 +42,7 @@ class NotificationsController @Inject()(apiNotificationQueueService: ApiNotifica
 
   private def recovery: PartialFunction[Throwable, Result] = {
     case e =>
-      Logger.error(s"An unexpected error occurred: ${e.getMessage}", e)
+      logger.error(s"An unexpected error occurred: ${e.getMessage}", e)
       InternalServerError(XmlErrorResponse("An unexpected error occurred"))
   }
 
@@ -71,7 +71,7 @@ class NotificationsController @Inject()(apiNotificationQueueService: ApiNotifica
       case Some(clientId: String) => hc.withExtraHeaders(X_CLIENT_ID_HEADER_NAME -> clientId)
       case _ =>
         // It should never happen
-        Logger.warn(s"Header $X_CLIENT_ID_HEADER_NAME not found in the request.")
+        logger.warn(s"Header $X_CLIENT_ID_HEADER_NAME not found in the request.")
         hc
     }
   }

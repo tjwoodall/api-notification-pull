@@ -14,82 +14,121 @@
  * limitations under the License.
  */
 
-import play.sbt.PlayImport._
-import play.core.PlayVersion
-import sbt.Tests.{SubProcess, Group}
+import AppDependencies._
+import play.sbt.routes.RoutesKeys._
+import sbt.Keys._
+import sbt.Tests.{Group, SubProcess}
+import sbt.{Resolver, _}
+import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings, targetJvm}
+import uk.gov.hmrc.PublishingSettings._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
-import uk.gov.hmrc._
-import DefaultBuildSettings._
-import uk.gov.hmrc.SbtAutoBuildPlugin
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
-import uk.gov.hmrc.versioning.SbtGitVersioning
 
-lazy val appName = "api-notification-pull"
+name := "api-notification-pull"
 
-lazy val appDependencies: Seq[ModuleID] = compile ++ test
+targetJvm := "jvm-1.8"
 
-lazy val compile = Seq(
-  ws,
-  "uk.gov.hmrc" %% "bootstrap-play-25" % "1.7.0"
+
+lazy val allResolvers = resolvers ++= Seq(
+  Resolver.bintrayRepo("hmrc", "releases"),
+  Resolver.jcenterRepo
 )
 
-lazy val scope: String = "test, it"
+lazy val ComponentTest = config("component") extend Test
+lazy val CdsIntegrationTest = config("it") extend Test
 
-lazy val test = Seq(
-  "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % scope,
-  "org.scalatest" %% "scalatest" % "3.0.4" % scope,
-  "org.pegdown" % "pegdown" % "1.6.0" % scope,
-  "org.mockito" % "mockito-core" % "2.15.0" % scope,
-  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % scope,
-  "com.github.tomakehurst" % "wiremock" % "2.15.0" % scope exclude("org.apache.httpcomponents","httpclient") exclude("org.apache.httpcomponents","httpcore")
-)
+val testConfig = Seq(ComponentTest, CdsIntegrationTest, Test)
 
-lazy val plugins: Seq[Plugins] = Seq.empty
-lazy val playSettings: Seq[Setting[_]] = Seq.empty
+def forkedJvmPerTestConfig(tests: Seq[TestDefinition], packages: String*): Seq[Group] =
+  tests.groupBy(_.name.takeWhile(_ != '.')).filter(packageAndTests => packages contains packageAndTests._1) map {
+    case (packg, theTests) =>
+      Group(packg, theTests, SubProcess(ForkOptions()))
+  } toSeq
+
+lazy val testAll = TaskKey[Unit]("test-all")
+lazy val allTest = Seq(testAll := (test in ComponentTest)
+  .dependsOn((test in CdsIntegrationTest).dependsOn(test in Test)))
+
 
 lazy val microservice = (project in file("."))
-  .enablePlugins(Seq(_root_.play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin) ++ plugins: _*)
-  .settings(playSettings: _*)
-  .settings(scalaSettings: _*)
-  .settings(publishingSettings: _*)
-  .settings(defaultSettings(): _*)
-  .settings(unmanagedResourceDirectories in Compile += baseDirectory.value / "resources")
-  .settings(unmanagedResourceDirectories in Compile += baseDirectory.value / "public")
+  .enablePlugins(PlayScala)
+  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
+  .enablePlugins(SbtDistributablesPlugin)
+  .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
+  .configs(testConfig: _*)
   .settings(
-    name := appName,
-    targetJvm := "jvm-1.8",
-    scalaVersion := "2.11.11",
-    libraryDependencies ++= appDependencies,
-    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
+    commonSettings,
+    unitTestSettings,
+    integrationTestSettings,
+    componentTestSettings,
+    playSettings,
+    playPublishingSettings,
+    allTest,
+    scoverageSettings,
+    allResolvers
   )
-  .settings(
-    Keys.fork in Test := false,
-    unmanagedSourceDirectories in Test := Seq((baseDirectory in Test).value / "test" / "unit"),
-    addTestReportOption(Test, "test-reports")
-  )
-  .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
-  .settings(
-    Keys.fork in IntegrationTest := false,
-    unmanagedSourceDirectories in IntegrationTest := Seq((baseDirectory in IntegrationTest).value / "test" / "it"),
-    addTestReportOption(IntegrationTest, "int-test-reports"),
-    testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
-    parallelExecution in IntegrationTest := false,
-    libraryDependencies ++= test
-  )
-  .settings(resolvers ++= Seq(
-    Resolver.bintrayRepo("hmrc", "releases"),
-    Resolver.jcenterRepo
-  ))
+
+def onPackageName(rootPackage: String): String => Boolean = {
+  testName => testName startsWith rootPackage
+}
+
+lazy val unitTestSettings =
+  inConfig(Test)(Defaults.testTasks) ++
+    Seq(
+      testOptions in Test := Seq(Tests.Filter(onPackageName("unit"))),
+      unmanagedSourceDirectories in Test := Seq((baseDirectory in Test).value / "test"),
+      addTestReportOption(Test, "test-reports")
+    )
+
+lazy val integrationTestSettings =
+  inConfig(CdsIntegrationTest)(Defaults.testTasks) ++
+    Seq(
+      testOptions in CdsIntegrationTest := Seq(Tests.Filters(Seq(onPackageName("integration"), onPackageName("component")))),
+      fork in CdsIntegrationTest := false,
+      parallelExecution in CdsIntegrationTest := false,
+      addTestReportOption(CdsIntegrationTest, "int-test-reports"),
+      testGrouping in CdsIntegrationTest := forkedJvmPerTestConfig((definedTests in Test).value, "integration", "component")
+    )
+
+lazy val componentTestSettings =
+  inConfig(ComponentTest)(Defaults.testTasks) ++
+    Seq(
+      testOptions in ComponentTest := Seq(Tests.Filter(onPackageName("component"))),
+      fork in ComponentTest := false,
+      parallelExecution in ComponentTest := false,
+      addTestReportOption(ComponentTest, "component-reports")
+    )
 
 
-def oneForkedJvmPerTest(tests: Seq[TestDefinition]) =
-  tests map {
-    test => Group(test.name, Seq(test), SubProcess(ForkOptions(runJVMOptions = Seq("-Dtest.name=" + test.name))))
-  }
+lazy val commonSettings: Seq[Setting[_]] =
+  scalaSettings ++
+    publishingSettings ++
+    defaultSettings() ++
+    gitStampSettings
 
-// Coverage configuration
-coverageMinimum := 96
-coverageFailOnMinimum := true
-coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;views.*;uk.gov.hmrc.apinotificationpull.config.*"
+lazy val playSettings: Seq[Setting[_]] = Seq(
+  routesImport ++= Seq("uk.gov.hmrc.customs.api.common.domain._")
+)
+
+lazy val playPublishingSettings: Seq[sbt.Setting[_]] = sbtrelease.ReleasePlugin.releaseSettings ++
+  Seq(credentials += SbtCredentials) ++
+  publishAllArtefacts
+
+lazy val scoverageSettings: Seq[Setting[_]] = Seq(
+  coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;views.*;uk.gov.hmrc.apinotificationpull.config.*",
+  coverageMinimum := 94,
+  coverageFailOnMinimum := true,
+  coverageHighlighting := true,
+  parallelExecution in Test := false
+)
+
+scalastyleConfig := baseDirectory.value / "project" / "scalastyle-config.xml"
+
+val compileDependencies = Seq(customsApiCommon)
+
+val testDependencies = Seq(hmrcTest, scalaTest, pegDown,
+  scalaTestPlusPlay, wireMock, mockito, customsApiCommonTests)
+
+unmanagedResourceDirectories in Compile += baseDirectory.value / "public"
+
+libraryDependencies ++= compileDependencies ++ testDependencies
+

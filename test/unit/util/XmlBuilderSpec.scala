@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.apinotificationpull.util
+package unit.util
 
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.apinotificationpull.model.Notifications
+import uk.gov.hmrc.apinotificationpull.util.XmlBuilder
 import uk.gov.hmrc.play.test.UnitSpec
 
 class XmlBuilderSpec extends UnitSpec with MockitoSugar {

@@ -14,52 +14,32 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.apinotificationpull.acceptance
+package component
 
 import java.util.UUID
 
-import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
-import com.github.tomakehurst.wiremock.http.{HttpHeader, HttpHeaders}
 import org.scalatest.OptionValues._
-import org.scalatest._
 import org.scalatest.concurrent.Eventually
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
-import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class RetrieveAndDeleteNotificationSpec extends FeatureSpec
-  with GivenWhenThen with Matchers with GuiceOneAppPerTest
-  with BeforeAndAfterEach with BeforeAndAfterAll with Eventually {
+class RetrieveAndDeleteNotificationSpec extends ComponentSpec with Eventually with ExternalServices {
 
-  private val clientId = "client-id"
-  private val xClientIdHeader = "X-Client-ID"
+  override val clientId: String = UUID.randomUUID.toString
 
   private val notificationId = UUID.randomUUID.toString
 
-  private val externalServicesHost = "localhost"
-  private val externalServicesPort = 11111
-
-  override def newAppForTest(testData: TestData): Application = new GuiceApplicationBuilder().configure(Map(
-    "microservice.services.api-notification-queue.host" -> externalServicesHost,
-    "microservice.services.api-notification-queue.port" -> externalServicesPort
-  )).build()
-
-  val externalServices: WireMockServer = new WireMockServer(wireMockConfig.port(externalServicesPort))
-
   override def beforeAll(): Unit = {
-    super.beforeAll()
-    if (!externalServices.isRunning) externalServices.start()
-    WireMock.configureFor(externalServicesHost, externalServicesPort)
+    startMockServer()
+  }
+
+  override protected def beforeEach() {
+    resetMockServer()
   }
 
   override def afterAll(): Unit = {
-    super.afterAll()
-    externalServices.stop()
+    stopMockServer()
   }
 
   feature("Retrieve(DELETE) a single notification from the API Notification Pull service") {
@@ -129,15 +109,4 @@ class RetrieveAndDeleteNotificationSpec extends FeatureSpec
     }
   }
 
-  private def stubForExistingNotification(notificationId: String, notificationBody: String, headers: (String, String)*) = {
-    stubFor(get(urlMatching(s"/notification/$notificationId")).withHeader(xClientIdHeader, equalTo(clientId))
-      .willReturn(aResponse()
-        .withHeaders(new HttpHeaders(headers.map(h => HttpHeader.httpHeader(h._1, h._2)): _*))
-        .withBody(notificationBody)
-        .withStatus(OK)))
-
-    stubFor(delete(urlMatching(s"/notification/$notificationId")).withHeader(xClientIdHeader, equalTo(clientId))
-      .willReturn(aResponse()
-        .withStatus(OK)))
-  }
 }

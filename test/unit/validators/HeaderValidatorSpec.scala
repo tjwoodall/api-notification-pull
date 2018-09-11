@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.apinotificationpull.validators
+package unit.validators
 
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.test.UnitSpec
-import play.api.mvc.Results.Ok
-import play.api.test.FakeRequest
-import play.api.http.Status._
 import play.api.http.HeaderNames.ACCEPT
+import play.api.http.Status._
+import play.api.mvc.Results.Ok
+import play.api.mvc.{Action, AnyContent}
+import play.api.test.FakeRequest
+import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
+import uk.gov.hmrc.play.test.UnitSpec
 
 class HeaderValidatorSpec extends UnitSpec {
   private val validator = new HeaderValidator

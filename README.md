@@ -63,10 +63,10 @@ curl -v -X GET "http://localhost:9649/" \
 ---
 
 ### Tests
-There are unit tests, integration tests and code coverage reports.
+There are unit, integration component tests and code coverage reports.
 In order to run them, use this command line:
 ```
-./run_all_tests.sh
+./precheck.sh
 ```
 
 ---

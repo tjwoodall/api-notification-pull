@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.apinotificationpull.controllers
+package unit.controllers
 
 import java.util.UUID
 import java.util.concurrent.TimeoutException
@@ -30,13 +30,15 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
-import uk.gov.hmrc.apinotificationpull.fakes.SuccessfulHeaderValidatorFake
+import uk.gov.hmrc.apinotificationpull.controllers.NotificationsController
 import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
 import uk.gov.hmrc.apinotificationpull.presenters.NotificationPresenter
 import uk.gov.hmrc.apinotificationpull.services.ApiNotificationQueueService
 import uk.gov.hmrc.apinotificationpull.util.XmlBuilder
+import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import unit.fakes.SuccessfulHeaderValidatorFake
 
 import scala.concurrent.Future
 import scala.util.control.NonFatal
@@ -47,6 +49,7 @@ class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with
   private val mockApiNotificationQueueService = mock[ApiNotificationQueueService]
   private val notificationPresenter = mock[NotificationPresenter]
   private val mockXmlBuilder = mock[XmlBuilder]
+  private val mockLogger = mock[CdsLogger]
 
   private val errorXml = scala.xml.Utility.trim(
     <error_response>
@@ -69,7 +72,7 @@ class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with
     val validHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
     val headerValidator = new SuccessfulHeaderValidatorFake
 
-    val controller = new NotificationsController(mockApiNotificationQueueService, headerValidator, notificationPresenter, mockXmlBuilder)
+    val controller = new NotificationsController(mockApiNotificationQueueService, headerValidator, notificationPresenter, mockXmlBuilder, mockLogger)
   }
 
   override def beforeEach(): Unit = {

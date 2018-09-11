@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.apinotificationpull.fakes
+package unit.fakes
 
 import play.api.mvc.{ActionBuilder, Request, Result}
 import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
