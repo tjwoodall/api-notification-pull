@@ -1,7 +1,5 @@
 # Pull Notifications API
 
-[![Build Status](https://travis-ci.org/hmrc/api-notification-pull.svg)](https://travis-ci.org/hmrc/api-notification-pull) [ ![Download](https://api.bintray.com/packages/hmrc/releases/api-notification-pull/images/download.svg) ](https://bintray.com/hmrc/releases/api-notification-pull/_latestVersion)
-
 # Introduction
 This API allows third party developers to collect notifications.
 
