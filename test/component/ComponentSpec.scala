@@ -28,6 +28,7 @@ abstract class ComponentSpec extends FeatureSpec with GivenWhenThen with Matcher
   override def newAppForTest(testData: TestData): Application = new GuiceApplicationBuilder().configure(Map(
     "api.context" -> "notifications",
     "microservice.services.api-notification-queue.host" -> Host,
-    "microservice.services.api-notification-queue.port" -> Port
+    "microservice.services.api-notification-queue.port" -> Port,
+    "auditing.enabled" -> false
   )).build()
 }

@@ -23,6 +23,66 @@ documentation:
     content: !include docs/testing.md
 
 /notifications:
+    /unread/{notificationId}
+      get:
+        displayName: Read an unread notification
+        description: Allows retrieval of an unread notification
+        headers:
+          Accept:
+            description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+            type: string
+            required: true
+            example: application/vnd.hmrc.1.0+xml
+         securedBy: [ sec.x-application ]
+        responses:
+          200:
+            body:
+              application/xml:
+                description: Valid XML Payload
+                example: |
+                  <?xml version="1.0" encoding="UTF-8"?>
+                  <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+                     <soapenv:Header/>
+                     <soapenv:Body>
+                        <n1:InventoryLinkingImportsDeclarationStatusNotification xmlns:n1="http://gov.uk/customs/inventoryLinkingImport/v1">
+                           <n1:declarationMethod>2</n1:declarationMethod>
+                           <n1:dateOfEntry>2018-11-15T11:54:27.000Z</n1:dateOfEntry>
+                           <n1:entryNumber>18GBCN36B8HDVFGVR6</n1:entryNumber>
+                           <n1:entryVersionNumber>2</n1:entryVersionNumber>
+                           <n1:goodsArrivalDeclaration>Y</n1:goodsArrivalDeclaration>
+                           <n1:ics>14</n1:ics>
+                           <n1:inventoryConsignmentReference>GB/1234-99999886JCP</n1:inventoryConsignmentReference>
+                           <n1:roe>0</n1:roe>
+                           <n1:traderReference>8GB025115100018-123456ABABAB1</n1:traderReference>
+                           <n1:totalPackages>55</n1:totalPackages>
+                        </n1:InventoryLinkingImportsDeclarationStatusNotification>
+                     </soapenv:Body>
+                  </soapenv:Envelope>
+          400:
+            body:
+              application/xml:
+                description: Invalid XML Payload
+                type: !include schemas/customs/error.xsd
+                example: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                      <code>BAD_REQUEST</code>
+                      <message>Notification is unread</message>
+                    </errorResponse>
+          404:
+            body:
+              application/xml:
+                description: Invalid XML Payload
+                type: !include schemas/customs/error.xsd
+                example: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                      <code>NOT_FOUND</code>
+                      <message>Resource was not found</message>
+                    </errorResponse>
     /:
       get:
         displayName: Get a list of all available notifications

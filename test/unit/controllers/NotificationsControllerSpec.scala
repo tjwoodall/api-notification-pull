@@ -35,21 +35,21 @@ import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
 import uk.gov.hmrc.apinotificationpull.presenters.NotificationPresenter
 import uk.gov.hmrc.apinotificationpull.services.ApiNotificationQueueService
 import uk.gov.hmrc.apinotificationpull.util.XmlBuilder
-import uk.gov.hmrc.customs.api.common.logging.CdsLogger
+import uk.gov.hmrc.customs.api.common.config.ServicesConfig
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import unit.fakes.SuccessfulHeaderValidatorFake
+import unit.util.StubCdsLogger
+import unit.util.XmlUtil.string2xml
 
 import scala.concurrent.Future
-import scala.util.control.NonFatal
-import scala.xml.{Node, Utility, XML}
 
 class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with MockitoSugar with BeforeAndAfterEach {
 
   private val mockApiNotificationQueueService = mock[ApiNotificationQueueService]
   private val notificationPresenter = mock[NotificationPresenter]
   private val mockXmlBuilder = mock[XmlBuilder]
-  private val mockLogger = mock[CdsLogger]
+  private val mockLogger = new StubCdsLogger(mock[ServicesConfig])
 
   private val errorXml = scala.xml.Utility.trim(
     <error_response>
@@ -109,7 +109,6 @@ class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with
       val result = await(controller.delete(notificationId).apply(validRequest))
 
       status(result) shouldBe INTERNAL_SERVER_ERROR
-
       string2xml(bodyOf(result)) shouldBe errorXml
     }
   }
@@ -148,16 +147,6 @@ class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with
 
       string2xml(bodyOf(result)) shouldBe errorXml
     }
-  }
-
-  protected def string2xml(s: String): Node = {
-    val xml = try {
-      XML.loadString(s)
-    } catch {
-      case NonFatal(t) => fail("Not an XML: " + s, t)
-    }
-
-    Utility.trim(xml)
   }
 
 }

@@ -55,7 +55,7 @@ class RetrieveAndDeleteNotificationSpec extends ComponentSpec with Eventually wi
       val header1 = "header1-name" -> "header1-val"
       val header2 = "header2-name" -> "header2-val"
       val notificationBody = "<notification>notification</notification>"
-      stubForExistingNotification(notificationId, notificationBody, header1, header2)
+      stubForExistingNotificationForDelete(notificationId, notificationBody, Seq(header1, header2))
 
       When("You call making the 'DELETE' action to the api-notification-pull service")
       val result = route(app, validRequest).value

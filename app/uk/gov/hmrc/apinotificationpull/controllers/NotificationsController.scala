@@ -66,7 +66,7 @@ class NotificationsController @Inject()(apiNotificationQueueService: ApiNotifica
       } recover recovery
   }
 
-  private def buildHeaderCarrier(request: Request[AnyContent] ): HeaderCarrier = {
+  private def buildHeaderCarrier(request: Request[AnyContent]): HeaderCarrier = {
     request.headers.get(X_CLIENT_ID_HEADER_NAME) match {
       case Some(clientId: String) => hc.withExtraHeaders(X_CLIENT_ID_HEADER_NAME -> clientId)
       case _ =>
@@ -75,5 +75,4 @@ class NotificationsController @Inject()(apiNotificationQueueService: ApiNotifica
         hc
     }
   }
-
 }
