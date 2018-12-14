@@ -18,14 +18,14 @@ package uk.gov.hmrc.apinotificationpull.services
 
 import javax.inject.Inject
 import uk.gov.hmrc.apinotificationpull.connectors.EnhancedApiNotificationQueueConnector
-import uk.gov.hmrc.apinotificationpull.model.Notification
+import uk.gov.hmrc.apinotificationpull.model.{Notification, NotificationStatus}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
 
 import scala.concurrent.Future
 
 class EnhancedApiNotificationQueueService @Inject()(enhancedApiNotificationQueueConnector: EnhancedApiNotificationQueueConnector) {
 
-  def getUnreadNotificationById(notificationId: String)(implicit hc: HeaderCarrier): Future[Either[HttpException, Notification]] = {
-    enhancedApiNotificationQueueConnector.getUnreadNotificationById(notificationId)
+  def getNotificationBy(notificationId: String, notificationStatus: NotificationStatus.Value)(implicit hc: HeaderCarrier): Future[Either[HttpException, Notification]] = {
+    enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, notificationStatus)
   }
 }

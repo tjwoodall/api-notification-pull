@@ -17,9 +17,11 @@
 package uk.gov.hmrc.apinotificationpull.connectors
 
 import javax.inject.Inject
+import uk.gov.hmrc.apinotificationpull.model.NotificationStatus
 import uk.gov.hmrc.apinotificationpull.config.ServiceConfiguration
 import uk.gov.hmrc.apinotificationpull.model.Notification
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
@@ -29,8 +31,9 @@ class EnhancedApiNotificationQueueConnector @Inject()(config: ServiceConfigurati
 
   private lazy val serviceBaseUrl: String = config.baseUrl("api-notification-queue")
 
-  def getUnreadNotificationById(notificationId: String)(implicit hc: HeaderCarrier): Future[Either[HttpException, Notification]] = {
-    http.GET[HttpResponse](s"$serviceBaseUrl/notifications/unread/$notificationId")
+  def getNotificationBy(notificationId: String, notificationStatus: NotificationStatus.Value)(implicit hc: HeaderCarrier): Future[Either[HttpException, Notification]] = {
+
+    http.GET[HttpResponse](s"$serviceBaseUrl/notifications/${notificationStatus.toString}/$notificationId")
       .map { r =>
         Right(Notification(notificationId, r.allHeaders.map(h => h._1 -> h._2.head), r.body))
       }
@@ -39,6 +42,7 @@ class EnhancedApiNotificationQueueConnector @Inject()(config: ServiceConfigurati
         case bre: BadRequestException => Left(bre)
         case ise => Left(new InternalServerException(ise.getMessage))
       }
-  }
-}
 
+  }
+
+}

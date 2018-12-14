@@ -21,6 +21,7 @@ import org.scalatest.concurrent.Eventually
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.apinotificationpull.connectors.EnhancedApiNotificationQueueConnector
 import uk.gov.hmrc.apinotificationpull.model.Notification
+import uk.gov.hmrc.apinotificationpull.model.NotificationStatus._
 import uk.gov.hmrc.apinotificationpull.services.EnhancedApiNotificationQueueService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
@@ -42,14 +43,26 @@ class EnhancedApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar
 
   "EnhancedApiNotificationQueueService" should {
 
-    "pass the notification id to the connector" in new Setup {
+    "pass the unread notification id to the connector" in new Setup {
 
       val headers = Map(X_CLIENT_ID_HEADER_NAME -> Seq(clientId))
       val notification = Notification(notificationId, headers.map(h => h._1 -> h._2.head), "notification-payload")
 
-      when(mockEnhancedApiNotificationQueueConnector.getUnreadNotificationById(notificationId)(hc)).thenReturn(Future.successful(Right(notification)))
+      when(mockEnhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unread)(hc)).thenReturn(Future.successful(Right(notification)))
 
-      val result = await(enhancedApiNotificationQueueService.getUnreadNotificationById(notificationId)(hc))
+      val result = await(enhancedApiNotificationQueueService.getNotificationBy(notificationId, Unread)(hc))
+
+      result shouldBe Right(notification)
+    }
+
+    "pass the read notification id to the connector" in new Setup {
+
+      val headers = Map(X_CLIENT_ID_HEADER_NAME -> Seq(clientId))
+      val notification = Notification(notificationId, headers.map(h => h._1 -> h._2.head), "notification-payload")
+
+      when(mockEnhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Read)(hc)).thenReturn(Future.successful(Right(notification)))
+
+      val result = await(enhancedApiNotificationQueueService.getNotificationBy(notificationId, Read)(hc))
 
       result shouldBe Right(notification)
     }

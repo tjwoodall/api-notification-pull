@@ -33,6 +33,7 @@ import uk.gov.hmrc.apinotificationpull.model.Notification
 import uk.gov.hmrc.apinotificationpull.services.EnhancedApiNotificationQueueService
 import uk.gov.hmrc.apinotificationpull.util.XmlBuilder
 import uk.gov.hmrc.customs.api.common.config.ServicesConfig
+import uk.gov.hmrc.apinotificationpull.model.NotificationStatus
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import unit.fakes.SuccessfulHeaderValidatorFake
@@ -94,9 +95,9 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
 
   "EnhancedNotificationsController" should {
 
-    "return the unread notification" in new SetUp {
+    "return the notification" in new SetUp {
 
-      when(mockEnhancedApiNotificationQueueService.getUnreadNotificationById(meq(notificationId))(any[HeaderCarrier]))
+      when(mockEnhancedApiNotificationQueueService.getNotificationBy(meq(notificationId), any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Right(notification)))
 
       val result = await(controller.unread(notificationId).apply(validRequest))
@@ -107,7 +108,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
 
     "return a not found error for an unknown notification" in new SetUp {
 
-      when(mockEnhancedApiNotificationQueueService.getUnreadNotificationById(any[String])(any[HeaderCarrier]))
+      when(mockEnhancedApiNotificationQueueService.getNotificationBy(any[String], any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(new NotFoundException("not found exception"))))
 
       val result = await(controller.unread("unknown-notification-id").apply(validRequest))
@@ -117,9 +118,9 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
 
     }
 
-    "return a bad request error for an already read notification" in new SetUp {
+    "return a bad request error for a notification with wrong notification status" in new SetUp {
 
-      when(mockEnhancedApiNotificationQueueService.getUnreadNotificationById(any[String])(any[HeaderCarrier]))
+      when(mockEnhancedApiNotificationQueueService.getNotificationBy(any[String], any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(new BadRequestException("bad request exception"))))
 
       val result = await(controller.unread("read-notification-id").apply(validRequest))
@@ -131,7 +132,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
 
     "return an internal server error when an unexpected error is returned by downstream service" in new SetUp {
 
-      when(mockEnhancedApiNotificationQueueService.getUnreadNotificationById(any[String])(any[HeaderCarrier]))
+      when(mockEnhancedApiNotificationQueueService.getNotificationBy(any[String], any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(new InternalServerException("internal server exception"))))
 
       val result = await(controller.unread("internal-server-notification-id").apply(validRequest))
@@ -143,7 +144,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
 
     "return an internal server error when an unexpected error occurs" in new SetUp {
 
-      when(mockEnhancedApiNotificationQueueService.getUnreadNotificationById(any[String])(any[HeaderCarrier]))
+      when(mockEnhancedApiNotificationQueueService.getNotificationBy(any[String], any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.failed(new Exception("exception")))
 
       val result = await(controller.unread("internal-server-notification-id").apply(validRequest))

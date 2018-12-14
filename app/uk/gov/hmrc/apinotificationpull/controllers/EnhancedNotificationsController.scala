@@ -20,13 +20,14 @@ import akka.util.ByteString
 import javax.inject.{Inject, Singleton}
 import play.api.http.HttpEntity
 import play.api.mvc._
-import uk.gov.hmrc.apinotificationpull.model.Notification
+import uk.gov.hmrc.apinotificationpull.model.NotificationStatus
 import uk.gov.hmrc.apinotificationpull.services.EnhancedApiNotificationQueueService
 import uk.gov.hmrc.apinotificationpull.util.XmlBuilder
+import uk.gov.hmrc.apinotificationpull.model.NotificationStatus._
 import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, ErrorNotFound, errorBadRequest}
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpException, NotFoundException}
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -41,38 +42,33 @@ class EnhancedNotificationsController @Inject()(enhancedApiNotificationQueueServ
 
   private val X_CLIENT_ID_HEADER_NAME = "X-Client-ID"
 
-  private def recovery: PartialFunction[Throwable, Result] = {
-    case e =>
-      logger.error(s"An unexpected error occurred: ${e.getMessage}", e)
-      ErrorInternalServerError.XmlResult
-  }
+  private val badRequestReadText = "Notification is unread"
+  private val badRequestUnreadText = "Notification has been read"
 
-  def unread(notificationId: String): Action[AnyContent] =
+  def read(notificationId: String): Action[AnyContent] = get(notificationId, Read, badRequestReadText)
+
+  def unread(notificationId: String): Action[AnyContent] = get(notificationId, Unread, badRequestUnreadText)
+
+  private def get(notificationId: String, notificationStatus: NotificationStatus.Value, badRequestText: String): Action[AnyContent] =
     (headerValidator.validateAcceptHeader andThen headerValidator.validateXClientIdHeader).async { implicit request =>
 
-    implicit val hc: HeaderCarrier = buildHeaderCarrier(request)
-      enhancedApiNotificationQueueService.getUnreadNotificationById(notificationId)
-      .map(r => present(r, notificationId))
-      .recover(recovery)
-  }
-
-  private def present(result: Either[HttpException, Notification], notificationId: String): Result = {
-    result match {
-      case Right(n) => Result(
-        header = ResponseHeader(OK),
-        body = HttpEntity.Strict(ByteString(n.payload), n.headers.get(CONTENT_TYPE)))
-        .withHeaders(n.headers.toSeq: _*)
-
-      case Left(nfe: NotFoundException) =>
-        logger.info(s"Notification not found for id: $notificationId", nfe)
-        ErrorNotFound.XmlResult
-      case Left(bre: BadRequestException) =>
-        logger.info(s"Notification has already been read for id: $notificationId", bre)
-        errorBadRequest("Notification has been read").XmlResult
-      case Left(e) =>
-        logger.error(s"Internal server error for notification id: $notificationId", e)
-        ErrorInternalServerError.XmlResult
-    }
+      implicit val hc: HeaderCarrier = buildHeaderCarrier(request)
+      enhancedApiNotificationQueueService.getNotificationBy(notificationId, notificationStatus)
+        .map {
+          case Right(n) => Result(
+            header = ResponseHeader(OK),
+            body = HttpEntity.Strict(ByteString(n.payload), n.headers.get(CONTENT_TYPE)))
+            .withHeaders(n.headers.toSeq: _*)
+          case Left(nfe: NotFoundException) =>
+            logger.info(s"Notification not found for id: $notificationId", nfe)
+            ErrorNotFound.XmlResult
+          case Left(bre: BadRequestException) =>
+            logger.info(s"$badRequestText for id: $notificationId", bre)
+            errorBadRequest(badRequestText).XmlResult
+          case Left(e) =>
+            logger.error(s"Internal server error for notification id: $notificationId", e)
+            ErrorInternalServerError.XmlResult
+        }.recover(recovery)
   }
 
   private def buildHeaderCarrier(request: Request[AnyContent] ): HeaderCarrier = {
@@ -84,4 +80,11 @@ class EnhancedNotificationsController @Inject()(enhancedApiNotificationQueueServ
         hc
     }
   }
+
+  private def recovery: PartialFunction[Throwable, Result] = {
+    case e =>
+      logger.error(s"An unexpected error occurred: ${e.getMessage}", e)
+      ErrorInternalServerError.XmlResult
+  }
+
 }

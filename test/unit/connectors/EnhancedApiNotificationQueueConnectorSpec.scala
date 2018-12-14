@@ -25,6 +25,7 @@ import uk.gov.hmrc.apinotificationpull.config.ServiceConfiguration
 import uk.gov.hmrc.apinotificationpull.connectors.EnhancedApiNotificationQueueConnector
 import uk.gov.hmrc.apinotificationpull.model.Notification
 import uk.gov.hmrc.http.{NotFoundException, _}
+import uk.gov.hmrc.apinotificationpull.model.NotificationStatus._
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
 
@@ -61,7 +62,17 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
       when(mockHttpClient.GET[HttpResponse](meq(s"http://api-notification-queue.url/notifications/unread/$notificationId"))
         (any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(mockHttpResponse))
 
-      val result: Either[HttpException, Notification] = await(enhancedApiNotificationQueueConnector.getUnreadNotificationById(notificationId))
+      val result: Either[HttpException, Notification] = await(enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unread))
+
+      result shouldBe Right(notification)
+    }
+
+    "return the read notification for the specified notification id" in new Setup {
+
+      when(mockHttpClient.GET[HttpResponse](meq(s"http://api-notification-queue.url/notifications/read/$notificationId"))
+        (any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(mockHttpResponse))
+
+      val result: Either[HttpException, Notification] = await(enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Read))
 
       result shouldBe Right(notification)
     }
@@ -73,7 +84,7 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
       when(mockHttpClient.GET[HttpResponse](meq(s"http://api-notification-queue.url/notifications/unread/$notificationId"))
         (any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.failed(notFoundException))
 
-      val result: Either[HttpException, Notification] = await(enhancedApiNotificationQueueConnector.getUnreadNotificationById(notificationId))
+      val result: Either[HttpException, Notification] = await(enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unread))
 
       result shouldBe Left(notFoundException)
     }
@@ -85,7 +96,7 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
       when(mockHttpClient.GET[HttpResponse](meq(s"http://api-notification-queue.url/notifications/unread/$notificationId"))
         (any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.failed(badRequestException))
 
-      val result: Either[HttpException, Notification] = await(enhancedApiNotificationQueueConnector.getUnreadNotificationById(notificationId))
+      val result: Either[HttpException, Notification] = await(enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unread))
 
       result shouldBe Left(badRequestException)
     }
@@ -97,7 +108,7 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
       when(mockHttpClient.GET[HttpResponse](meq(s"http://api-notification-queue.url/notifications/unread/$notificationId"))
         (any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.failed(unauthorisedException))
 
-      val result: Either[HttpException, Notification] = await(enhancedApiNotificationQueueConnector.getUnreadNotificationById(notificationId))
+      val result: Either[HttpException, Notification] = await(enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unread))
 
       result.left.get.message shouldBe "unauthorised exception"
       result.left.get.responseCode shouldBe 500
