@@ -23,7 +23,7 @@ documentation:
     content: !include docs/testing.md
 
 /notifications:
-    /unread/{notificationId}
+    /unread/{notificationId}:
       get:
         displayName: Read an unread notification
         description: Allows retrieval of an unread notification
@@ -84,7 +84,7 @@ documentation:
                       <message>Resource was not found</message>
                     </errorResponse>
 
-    /read/{notificationId}
+    /read/{notificationId}:
       get:
         displayName: Re-read a notification
         description: Allows retrieval of a notification that has already been read
