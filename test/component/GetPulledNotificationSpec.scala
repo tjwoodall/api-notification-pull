@@ -18,7 +18,6 @@ package component
 
 import java.util.UUID
 
-import com.github.tomakehurst.wiremock.client.WireMock.{status => _}
 import org.scalatest.OptionValues._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -26,7 +25,7 @@ import unit.util.XmlUtil.string2xml
 
 import scala.xml.Utility.trim
 
-class GetReadNotificationSpec extends ComponentSpec with ExternalServices {
+class GetPulledNotificationSpec extends ComponentSpec with ExternalServices {
 
   override val clientId: String = UUID.randomUUID().toString
 
@@ -43,20 +42,20 @@ class GetReadNotificationSpec extends ComponentSpec with ExternalServices {
   }
 
   val notificationId = "notification-id"
-  val validRequest = FakeRequest("GET", s"/notifications/read/$notificationId").
+  val validRequest = FakeRequest("GET", s"/notifications/pulled/$notificationId").
     withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
 
-  feature("GET a read notification by id") {
+  feature("GET a pulled notification by id") {
 
     scenario("I want to successfully retrieve a notification by notification id") {
-      Given("There is a read notification in the API Notification Queue")
+      Given("There is a pulled notification in the API Notification Queue")
 
       val body = """<notification>some-notification</notification>""".stripMargin
 
-      stubForExistingNotification("/notifications/read", notificationId, body,
+      stubForExistingNotification("/notifications/pulled", notificationId, body,
         Seq(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId))
 
-      When("I call the GET read notification endpoint")
+      When("I call the GET pulled notification endpoint")
       val result = route(app, validRequest).value
 
       Then("I receive the notification")
@@ -66,10 +65,10 @@ class GetReadNotificationSpec extends ComponentSpec with ExternalServices {
 
     }
 
-    scenario("I try to GET a read notification") {
-      Given("A notification that is unread or doesn't exist")
+    scenario("I try to GET a pulled notification") {
+      Given("A notification that is unpulled or doesn't exist")
 
-      When("I call the GET read notification endpoint")
+      When("I call the GET pulled notification endpoint")
       val result = route(app, validRequest).value
 
       Then("I receive a NOT FOUND error")

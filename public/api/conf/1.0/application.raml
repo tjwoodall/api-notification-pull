@@ -23,10 +23,10 @@ documentation:
     content: !include docs/testing.md
 
 /notifications:
-    /unread/{notificationId}:
+    /unpulled/{notificationId}:
       get:
-        displayName: Read an unread notification
-        description: Allows retrieval of an unread notification
+        displayName: Get an unpulled notification
+        description: Allows retrieval of an unpulled notification
         headers:
           Accept:
             description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
@@ -70,7 +70,7 @@ documentation:
                     <?xml version="1.0" encoding="UTF-8"?>
                     <errorResponse>
                       <code>BAD_REQUEST</code>
-                      <message>Notification is unread</message>
+                      <message>Notification is unpulled</message>
                     </errorResponse>
           404:
             body:
@@ -84,10 +84,10 @@ documentation:
                       <message>Resource was not found</message>
                     </errorResponse>
 
-    /read/{notificationId}:
+    /pulled/{notificationId}:
       get:
-        displayName: Re-read a notification
-        description: Allows retrieval of a notification that has already been read
+        displayName: Get a pulled notification
+        description: Allows retrieval of a notification that has already been pulled
         headers:
           Accept:
             description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
@@ -132,7 +132,7 @@ documentation:
                     <?xml version="1.0" encoding="UTF-8"?>
                     <errorResponse>
                       <code>BAD_REQUEST</code>
-                      <message>Notification is unread</message>
+                      <message>Notification is unpulled</message>
                     </errorResponse>
           404:
             body:

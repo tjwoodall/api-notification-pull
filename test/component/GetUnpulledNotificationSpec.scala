@@ -18,13 +18,12 @@ package component
 
 import java.util.UUID
 
-import com.github.tomakehurst.wiremock.client.WireMock.{status => _}
 import org.scalatest.OptionValues._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import unit.util.XmlUtil.string2xml
 
-class GetUnreadNotificationSpec extends ComponentSpec with ExternalServices {
+class GetUnpulledNotificationSpec extends ComponentSpec with ExternalServices {
 
 
   override val clientId: String = UUID.randomUUID().toString
@@ -43,20 +42,20 @@ class GetUnreadNotificationSpec extends ComponentSpec with ExternalServices {
 
 
   val notificationId = "notification-id"
-  val validRequest = FakeRequest("GET", s"/notifications/unread/$notificationId").
+  val validRequest = FakeRequest("GET", s"/notifications/unpulled/$notificationId").
     withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
 
-  feature("GET an unread notification by id") {
+  feature("GET an unpulled notification by id") {
 
     scenario("I want to successfully retrieve a notification by notification id") {
-      Given("There is an unread notification in the API Notification Queue")
+      Given("There is an unpulled notification in the API Notification Queue")
 
       val body = """<notification>some-notification</notification>""".stripMargin
 
-      stubForExistingNotification("/notifications/unread", notificationId, body,
+      stubForExistingNotification("/notifications/unpulled", notificationId, body,
         Seq(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId))
 
-      When("I call the GET unread notification endpoint")
+      When("I call the GET unpulled notification endpoint")
       val result = route(app, validRequest).value
 
       Then("I receive the notification")
@@ -66,10 +65,10 @@ class GetUnreadNotificationSpec extends ComponentSpec with ExternalServices {
 
     }
 
-    scenario("I try to GET an already read notification") {
-      Given("A notification that has been previously read")
+    scenario("I try to GET an already pulled notification") {
+      Given("A notification that has been previously pulled")
 
-      When("I call the GET unread notification endpoint")
+      When("I call the GET unpulled notification endpoint")
       val result = route(app, validRequest).value
 
       Then("I receive a NOT FOUND error")

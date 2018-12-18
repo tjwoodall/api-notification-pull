@@ -19,8 +19,8 @@ package uk.gov.hmrc.apinotificationpull.model
 import play.api.libs.json.Json
 
 object NotificationStatus extends Enumeration {
-  val Unread = Value("unread")
-  val Read = Value("read")
+  val Unpulled = Value("unpulled")
+  val Pulled = Value("pulled")
 }
 
 case class Notifications(notifications: List[String])

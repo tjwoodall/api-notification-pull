@@ -6,5 +6,6 @@ GET           /                                                 @uk.gov.hmrc.api
 
 GET           /admin/metrics                                    @com.kenshoo.play.metrics.MetricsController.metrics
 
-GET           /notifications/unread/:notificationId             @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.unread(notificationId)
-GET           /notifications/read/:notificationId               @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.read(notificationId)
+GET           /notifications/unpulled/:notificationId             @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.unpulled(notificationId)
+
+GET           /notifications/pulled/:notificationId               @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.pulled(notificationId)

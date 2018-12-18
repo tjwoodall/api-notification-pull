@@ -7,16 +7,16 @@ This API allows third party developers to collect notifications.
 
 ## Endpoints
 
-### GET `/notifications/unread/{notificationId}`
+### GET `/notifications/unpulled/{notificationId}`
 
-Read an unread notification
+Get an unpulled notification
 
 Required Headers:
   - `X-Client-ID`
   - `Accept`
 
 ```
-curl -v -X GET "http://localhost:9649/notifications/unread/{notificationId}" \
+curl -v -X GET "http://localhost:9649/notifications/unpulled/{notificationId}" \
   -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
   -H "Accept: application/vnd.hmrc.1.0+xml"
 ```
@@ -33,7 +33,7 @@ curl -v -X GET "http://localhost:9649/notifications/unread/{notificationId}" \
 400 Bad Request
     <errorResponse>
         <code>BAD_REQUEST</code>
-        <message>Notification has been read</message>
+        <message>Notification has been pulled</message>
     </errorResponse>
 ```
 
@@ -46,16 +46,16 @@ curl -v -X GET "http://localhost:9649/notifications/unread/{notificationId}" \
     </errorResponse>
 ```
 
-### GET `/notifications/read/{notificationId}`
+### GET `/notifications/pulled/{notificationId}`
 
-Re-reads a notification
+Get a pulled notification
 
 Required Headers:
   - `X-Client-ID`
   - `Accept`
 
 ```
-curl -v -X GET "http://localhost:9649/notifications/read/{notificationId}" \
+curl -v -X GET "http://localhost:9649/notifications/pulled/{notificationId}" \
   -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
   -H "Accept: application/vnd.hmrc.1.0+xml"
 ```
@@ -75,7 +75,7 @@ Notification
 
     <errorResponse>
         <code>BAD_REQUEST</code>
-        <message>Notification is unread</message>
+        <message>Notification is unpulled</message>
     </errorResponse>
 ```
 

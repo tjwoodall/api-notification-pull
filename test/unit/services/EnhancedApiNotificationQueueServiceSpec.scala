@@ -43,26 +43,26 @@ class EnhancedApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar
 
   "EnhancedApiNotificationQueueService" should {
 
-    "pass the unread notification id to the connector" in new Setup {
+    "pass the unpulled notification id to the connector" in new Setup {
 
       val headers = Map(X_CLIENT_ID_HEADER_NAME -> Seq(clientId))
       val notification = Notification(notificationId, headers.map(h => h._1 -> h._2.head), "notification-payload")
 
-      when(mockEnhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unread)(hc)).thenReturn(Future.successful(Right(notification)))
+      when(mockEnhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unpulled)(hc)).thenReturn(Future.successful(Right(notification)))
 
-      val result = await(enhancedApiNotificationQueueService.getNotificationBy(notificationId, Unread)(hc))
+      val result = await(enhancedApiNotificationQueueService.getNotificationBy(notificationId, Unpulled)(hc))
 
       result shouldBe Right(notification)
     }
 
-    "pass the read notification id to the connector" in new Setup {
+    "pass the pulled notification id to the connector" in new Setup {
 
       val headers = Map(X_CLIENT_ID_HEADER_NAME -> Seq(clientId))
       val notification = Notification(notificationId, headers.map(h => h._1 -> h._2.head), "notification-payload")
 
-      when(mockEnhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Read)(hc)).thenReturn(Future.successful(Right(notification)))
+      when(mockEnhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Pulled)(hc)).thenReturn(Future.successful(Right(notification)))
 
-      val result = await(enhancedApiNotificationQueueService.getNotificationBy(notificationId, Read)(hc))
+      val result = await(enhancedApiNotificationQueueService.getNotificationBy(notificationId, Pulled)(hc))
 
       result shouldBe Right(notification)
     }

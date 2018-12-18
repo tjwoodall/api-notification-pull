@@ -42,12 +42,12 @@ class EnhancedNotificationsController @Inject()(enhancedApiNotificationQueueServ
 
   private val X_CLIENT_ID_HEADER_NAME = "X-Client-ID"
 
-  private val badRequestReadText = "Notification is unread"
-  private val badRequestUnreadText = "Notification has been read"
+  private val badRequestPulledText = "Notification is unpulled"
+  private val badRequestUnpulledText = "Notification has been pulled"
 
-  def read(notificationId: String): Action[AnyContent] = get(notificationId, Read, badRequestReadText)
+  def pulled(notificationId: String): Action[AnyContent] = get(notificationId, Pulled, badRequestPulledText)
 
-  def unread(notificationId: String): Action[AnyContent] = get(notificationId, Unread, badRequestUnreadText)
+  def unpulled(notificationId: String): Action[AnyContent] = get(notificationId, Unpulled, badRequestUnpulledText)
 
   private def get(notificationId: String, notificationStatus: NotificationStatus.Value, badRequestText: String): Action[AnyContent] =
     (headerValidator.validateAcceptHeader andThen headerValidator.validateXClientIdHeader).async { implicit request =>

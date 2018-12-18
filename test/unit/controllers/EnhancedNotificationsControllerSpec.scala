@@ -58,7 +58,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
   private val errorBadRequestXml = scala.xml.Utility.trim(
     <errorResponse>
       <code>BAD_REQUEST</code>
-      <message>Notification has been read</message>
+      <message>Notification has been pulled</message>
     </errorResponse>
   )
 
@@ -100,7 +100,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
       when(mockEnhancedApiNotificationQueueService.getNotificationBy(meq(notificationId), any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Right(notification)))
 
-      val result = await(controller.unread(notificationId).apply(validRequest))
+      val result = await(controller.unpulled(notificationId).apply(validRequest))
 
       bodyOf(result) shouldBe "notification"
       status(result) shouldBe OK
@@ -111,7 +111,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
       when(mockEnhancedApiNotificationQueueService.getNotificationBy(any[String], any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(new NotFoundException("not found exception"))))
 
-      val result = await(controller.unread("unknown-notification-id").apply(validRequest))
+      val result = await(controller.unpulled("unknown-notification-id").apply(validRequest))
 
       string2xml(bodyOf(result)) shouldBe errorNotFoundXml
       status(result) shouldBe NOT_FOUND
@@ -123,7 +123,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
       when(mockEnhancedApiNotificationQueueService.getNotificationBy(any[String], any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(new BadRequestException("bad request exception"))))
 
-      val result = await(controller.unread("read-notification-id").apply(validRequest))
+      val result = await(controller.unpulled("pulled-notification-id").apply(validRequest))
 
       string2xml(bodyOf(result)) shouldBe errorBadRequestXml
       status(result) shouldBe BAD_REQUEST
@@ -135,7 +135,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
       when(mockEnhancedApiNotificationQueueService.getNotificationBy(any[String], any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(new InternalServerException("internal server exception"))))
 
-      val result = await(controller.unread("internal-server-notification-id").apply(validRequest))
+      val result = await(controller.unpulled("internal-server-notification-id").apply(validRequest))
 
       string2xml(bodyOf(result)) shouldBe errorInternalServerXml
       status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -147,7 +147,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
       when(mockEnhancedApiNotificationQueueService.getNotificationBy(any[String], any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.failed(new Exception("exception")))
 
-      val result = await(controller.unread("internal-server-notification-id").apply(validRequest))
+      val result = await(controller.unpulled("internal-server-notification-id").apply(validRequest))
 
       string2xml(bodyOf(result)) shouldBe errorInternalServerXml
       status(result) shouldBe INTERNAL_SERVER_ERROR
