@@ -20,7 +20,7 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.apinotificationpull.connectors.EnhancedApiNotificationQueueConnector
-import uk.gov.hmrc.apinotificationpull.model.Notification
+import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
 import uk.gov.hmrc.apinotificationpull.model.NotificationStatus._
 import uk.gov.hmrc.apinotificationpull.services.EnhancedApiNotificationQueueService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -65,6 +65,17 @@ class EnhancedApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar
       val result = await(enhancedApiNotificationQueueService.getNotificationBy(notificationId, Pulled)(hc))
 
       result shouldBe Right(notification)
+    }
+
+    "pass the notification status to the connector" in new Setup {
+
+      val headers = Map(X_CLIENT_ID_HEADER_NAME -> Seq(clientId))
+
+      when(mockEnhancedApiNotificationQueueConnector.getAllNotificationsBy(Pulled)(hc)).thenReturn(Future.successful(Notifications(List())))
+
+      val result = await(enhancedApiNotificationQueueService.getAllNotificationsBy(Pulled)(hc))
+
+      result shouldBe Notifications(List())
     }
   }
 }

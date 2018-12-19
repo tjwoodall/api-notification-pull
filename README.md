@@ -7,6 +7,30 @@ This API allows third party developers to collect notifications.
 
 ## Endpoints
 
+### GET `/notifications/unpulled`
+
+Get a list of unpulled notification
+
+Required Headers:
+  - `X-Client-ID`
+  - `Accept`
+
+```
+curl -v -X GET "http://localhost:9649/notifications/unpulled" \
+  -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
+  -H "Accept: application/vnd.hmrc.1.0+xml"
+```
+
+#### Responses
+##### Success
+```
+200 OK
+ <resource href="/notifications/unpulled/">
+    <link rel="self" href="/notifications/unpulled/"/>
+    <link rel="notification" href="/notifications/unpulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+ </resource>
+```
+
 ### GET `/notifications/unpulled/{notificationId}`
 
 Get an unpulled notification
@@ -44,6 +68,30 @@ curl -v -X GET "http://localhost:9649/notifications/unpulled/{notificationId}" \
         <code>NOT_FOUND</code>
         <message>Resource was not found</message>
     </errorResponse>
+```
+
+### GET `/notifications/pulled`
+
+Get a list of pulled notification
+
+Required Headers:
+  - `X-Client-ID`
+  - `Accept`
+
+```
+curl -v -X GET "http://localhost:9649/notifications/pulled" \
+  -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
+  -H "Accept: application/vnd.hmrc.1.0+xml"
+```
+
+#### Responses
+##### Success
+```
+200 OK
+ <resource href="/notifications/pulled/">
+    <link rel="self" href="/notifications/pulled/"/>
+    <link rel="notification" href="/notifications/pulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+ </resource>
 ```
 
 ### GET `/notifications/pulled/{notificationId}`

@@ -17,9 +17,8 @@
 package uk.gov.hmrc.apinotificationpull.connectors
 
 import javax.inject.Inject
-import uk.gov.hmrc.apinotificationpull.model.NotificationStatus
+import uk.gov.hmrc.apinotificationpull.model.{Notification, NotificationStatus, Notifications}
 import uk.gov.hmrc.apinotificationpull.config.ServiceConfiguration
-import uk.gov.hmrc.apinotificationpull.model.Notification
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -30,6 +29,10 @@ import scala.concurrent.Future
 class EnhancedApiNotificationQueueConnector @Inject()(config: ServiceConfiguration, http: HttpClient) {
 
   private lazy val serviceBaseUrl: String = config.baseUrl("api-notification-queue")
+
+  def getAllNotificationsBy(notificationStatus: NotificationStatus.Value)(implicit hc: HeaderCarrier): Future[Notifications] = {
+    http.GET[Notifications](s"$serviceBaseUrl/notifications/${notificationStatus.toString}")
+  }
 
   def getNotificationBy(notificationId: String, notificationStatus: NotificationStatus.Value)(implicit hc: HeaderCarrier): Future[Either[HttpException, Notification]] = {
 
@@ -42,7 +45,5 @@ class EnhancedApiNotificationQueueConnector @Inject()(config: ServiceConfigurati
         case bre: BadRequestException => Left(bre)
         case ise => Left(new InternalServerException(ise.getMessage))
       }
-
   }
-
 }

@@ -23,7 +23,7 @@ import org.scalatest.concurrent.Eventually
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.apinotificationpull.config.ServiceConfiguration
 import uk.gov.hmrc.apinotificationpull.connectors.EnhancedApiNotificationQueueConnector
-import uk.gov.hmrc.apinotificationpull.model.Notification
+import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
 import uk.gov.hmrc.http.{NotFoundException, _}
 import uk.gov.hmrc.apinotificationpull.model.NotificationStatus._
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -42,6 +42,7 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
     val mockServiceConfiguration: ServiceConfiguration = mock[ServiceConfiguration]
     val mockHttpClient: HttpClient = mock[HttpClient]
     val mockHttpResponse = mock[HttpResponse]
+    val notifications = Notifications(List("notification-1", "notification-2"))
 
     val notificationId = "some-notification-id"
     val headers = Map(X_CLIENT_ID_HEADER_NAME -> Seq(clientId))
@@ -57,6 +58,26 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
   "EnhancedApiNotificationQueueConnector" should {
 
+    "return a list of unpulled notification" in new Setup {
+
+      when(mockHttpClient.GET[Notifications](meq(s"http://api-notification-queue.url/notifications/unpulled"))
+        (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(notifications))
+
+      val result: Notifications = await(enhancedApiNotificationQueueConnector.getAllNotificationsBy(Unpulled))
+
+      result shouldBe notifications
+    }
+
+    "return a list of previously pulled notification" in new Setup {
+
+      when(mockHttpClient.GET[Notifications](meq(s"http://api-notification-queue.url/notifications/pulled"))
+        (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(notifications))
+
+      val result: Notifications = await(enhancedApiNotificationQueueConnector.getAllNotificationsBy(Pulled))
+
+      result shouldBe notifications
+    }
+
     "return the unpulled notification for the specified notification id" in new Setup {
 
       when(mockHttpClient.GET[HttpResponse](meq(s"http://api-notification-queue.url/notifications/unpulled/$notificationId"))
@@ -67,7 +88,7 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
       result shouldBe Right(notification)
     }
 
-    "return the pulled notification for the specified notification id" in new Setup {
+    "return the previously pulled notification for the specified notification id" in new Setup {
 
       when(mockHttpClient.GET[HttpResponse](meq(s"http://api-notification-queue.url/notifications/pulled/$notificationId"))
         (any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(mockHttpResponse))
@@ -112,6 +133,26 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       result.left.get.message shouldBe "unauthorised exception"
       result.left.get.responseCode shouldBe 500
+    }
+
+    "return an empty list of unpulled notifications when the downstream returns an empty list" in new Setup {
+
+      when(mockHttpClient.GET[Notifications](meq(s"http://api-notification-queue.url/notifications/unpulled"))
+        (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(Notifications(List())))
+
+      val result = await(enhancedApiNotificationQueueConnector.getAllNotificationsBy(Unpulled))
+
+      result shouldBe Notifications(List())
+    }
+
+    "return an empty list of previously pulled notifications when the downstream returns an empty list" in new Setup {
+
+      when(mockHttpClient.GET[Notifications](meq(s"http://api-notification-queue.url/notifications/pulled"))
+        (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(Notifications(List())))
+
+      val result = await(enhancedApiNotificationQueueConnector.getAllNotificationsBy(Pulled))
+
+      result shouldBe Notifications(List())
     }
   }
 }

@@ -53,4 +53,12 @@ trait ExternalServices extends WireMockRunner {
         .withBody(notificationBody)
         .withStatus(OK)))
   }
+
+  def stubForExistingNotificationsList(context: String, notificationBody: String, headers: Seq[(String, String)]): StubMapping = {
+    stubFor(get(urlMatching(s"$context")).withHeader(xClientIdHeader, equalTo(clientId))
+      .willReturn(aResponse()
+        .withHeaders(new HttpHeaders(headers.map(h => HttpHeader.httpHeader(h._1, h._2)): _*))
+        .withBody(notificationBody)
+        .withStatus(OK)))
+  }
 }

@@ -45,6 +45,61 @@ class GetPulledNotificationSpec extends ComponentSpec with ExternalServices {
   val validRequest = FakeRequest("GET", s"/notifications/pulled/$notificationId").
     withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
 
+  val validListRequest = FakeRequest("GET", s"/notifications/pulled").
+    withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
+
+  feature("GET a list of pulled notifications") {
+    scenario("I want to successfully retrieve a list of pulled notifications") {
+
+      Given("There is list of pulled notification in the API Notification Queue")
+
+      val body = """{ "notifications": ["notification1", "notification2"] }""".stripMargin
+
+      stubForExistingNotificationsList("/notifications/pulled", body,
+        Seq(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId))
+
+      When("I call the GET pulled notifications endpoint")
+      val result = route(app, validListRequest).value
+
+      Then("I receive the list of notifications")
+      status(result) shouldBe OK
+
+      val expectedXml = scala.xml.Utility.trim(
+        <resource href="/notifications/pulled/">
+          <link rel="self" href="/notifications/pulled/"/>
+          <link rel="notification" href="/notifications/pulled/notification1"/>
+          <link rel="notification" href="/notifications/pulled/notification2"/>
+        </resource>
+      )
+
+      string2xml(contentAsString(result)) shouldBe expectedXml
+    }
+
+    scenario("I want to successfully retrieve an empty list of notifications") {
+
+      Given("There are no notification in the API Notification Queue")
+
+      val body = """{ "notifications": [] }""".stripMargin
+
+      stubForExistingNotificationsList("/notifications/pulled", body,
+        Seq(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId))
+
+      When("I call the GET pulled notifications endpoint")
+      val result = route(app, validListRequest).value
+
+      Then("I receive the list of notifications")
+      status(result) shouldBe OK
+
+      val expectedXml = scala.xml.Utility.trim(
+        <resource href="/notifications/pulled/">
+          <link rel="self" href="/notifications/pulled/"/>
+        </resource>
+      )
+
+      string2xml(contentAsString(result)) shouldBe expectedXml
+    }
+  }
+
   feature("GET a pulled notification by id") {
 
     scenario("I want to successfully retrieve a notification by notification id") {

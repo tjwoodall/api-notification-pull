@@ -28,12 +28,12 @@ import play.api.http.MimeTypes
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController
-import uk.gov.hmrc.apinotificationpull.model.Notification
+import uk.gov.hmrc.apinotificationpull.model.{Notification, NotificationStatus, Notifications}
 import uk.gov.hmrc.apinotificationpull.services.EnhancedApiNotificationQueueService
-import uk.gov.hmrc.apinotificationpull.util.XmlBuilder
+import uk.gov.hmrc.apinotificationpull.util.EnhancedXmlBuilder
 import uk.gov.hmrc.customs.api.common.config.ServicesConfig
-import uk.gov.hmrc.apinotificationpull.model.NotificationStatus
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import unit.fakes.SuccessfulHeaderValidatorFake
@@ -45,7 +45,8 @@ import scala.concurrent.Future
 class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplication with MockitoSugar with BeforeAndAfterEach {
 
   private val mockEnhancedApiNotificationQueueService = mock[EnhancedApiNotificationQueueService]
-  private val mockXmlBuilder = mock[XmlBuilder]
+  private val mockAppContext: AppContext = mock[AppContext]
+  private val xmlBuilder = new EnhancedXmlBuilder(mockAppContext)
   private val mockLogger = new StubCdsLogger(mock[ServicesConfig])
 
   private val errorNotFoundXml = scala.xml.Utility.trim(
@@ -78,22 +79,83 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
     val validHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
     val headerValidator = new SuccessfulHeaderValidatorFake
 
-    val controller = new EnhancedNotificationsController(mockEnhancedApiNotificationQueueService, headerValidator, mockXmlBuilder, mockLogger)
+    val controller = new EnhancedNotificationsController(mockEnhancedApiNotificationQueueService, headerValidator, xmlBuilder, mockLogger)
 
     val notificationId: String = UUID.randomUUID().toString
-    val validRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("DELETE", s"/$notificationId").
+    val validRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().
       withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> "client-id")
 
     val headers = Map(CONTENT_TYPE -> MimeTypes.XML)
     val notification = Notification(notificationId, headers, "notification")
+
+    when(mockAppContext.apiContext).thenReturn("api-notification-pull-context")
   }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockEnhancedApiNotificationQueueService, mockXmlBuilder)
+    reset(mockEnhancedApiNotificationQueueService)
   }
 
   "EnhancedNotificationsController" should {
+
+    "return a list of unpulled notifications" in new SetUp {
+
+      when(mockEnhancedApiNotificationQueueService.getAllNotificationsBy(any[NotificationStatus.Value])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Notifications(List("notification-unpulled-1", "notification-unpulled-2"))))
+
+      val result = await(controller.unpulledList().apply(validRequest))
+
+      status(result) shouldBe OK
+
+      private val expectedXml = scala.xml.Utility.trim(
+        <resource href="/notifications/unpulled/">
+          <link rel="self" href="/notifications/unpulled/"/>
+          <link rel="notification" href="/api-notification-pull-context/unpulled/notification-unpulled-1"/>
+          <link rel="notification" href="/api-notification-pull-context/unpulled/notification-unpulled-2"/>
+        </resource>
+      )
+
+      string2xml(bodyOf(result)) shouldBe expectedXml
+    }
+
+    "return a list of pulled notifications" in new SetUp {
+
+      when(mockEnhancedApiNotificationQueueService.getAllNotificationsBy(any[NotificationStatus.Value])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Notifications(List("notification-pulled-1", "notification-pulled-2"))))
+
+      val result = await(controller.pulledList().apply(validRequest))
+
+      status(result) shouldBe OK
+
+      private val expectedXml = scala.xml.Utility.trim(
+        <resource href="/notifications/pulled/">
+          <link rel="self" href="/notifications/pulled/"/>
+          <link rel="notification" href="/api-notification-pull-context/pulled/notification-pulled-1"/>
+          <link rel="notification" href="/api-notification-pull-context/pulled/notification-pulled-2"/>
+        </resource>
+      )
+
+      string2xml(bodyOf(result)) shouldBe expectedXml
+    }
+
+    "return 500 error when calling unpulled notifications endpoint and downstream returns an error" in new SetUp {
+
+      when(mockEnhancedApiNotificationQueueService.getAllNotificationsBy(any[NotificationStatus.Value])(any[HeaderCarrier]))
+        .thenReturn(Future.failed(new UnauthorizedException("unauthorised exception")))
+
+      val result = await(controller.unpulledList().apply(validRequest))
+
+      status(result) shouldBe INTERNAL_SERVER_ERROR
+
+      private val expectedXml = scala.xml.Utility.trim(
+        <errorResponse>
+          <code>INTERNAL_SERVER_ERROR</code>
+          <message>Internal server error</message>
+        </errorResponse>
+      )
+
+      string2xml(bodyOf(result)) shouldBe expectedXml
+    }
 
     "return the notification" in new SetUp {
 

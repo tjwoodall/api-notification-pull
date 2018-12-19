@@ -22,7 +22,7 @@ import play.api.http.HttpEntity
 import play.api.mvc._
 import uk.gov.hmrc.apinotificationpull.model.NotificationStatus
 import uk.gov.hmrc.apinotificationpull.services.EnhancedApiNotificationQueueService
-import uk.gov.hmrc.apinotificationpull.util.XmlBuilder
+import uk.gov.hmrc.apinotificationpull.util.EnhancedXmlBuilder
 import uk.gov.hmrc.apinotificationpull.model.NotificationStatus._
 import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, ErrorNotFound, errorBadRequest}
@@ -35,7 +35,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class EnhancedNotificationsController @Inject()(enhancedApiNotificationQueueService: EnhancedApiNotificationQueueService,
                                                 headerValidator: HeaderValidator,
-                                                xmlBuilder: XmlBuilder,
+                                                enhancedXmlBuilder: EnhancedXmlBuilder,
                                                 logger: CdsLogger) extends BaseController {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -47,7 +47,21 @@ class EnhancedNotificationsController @Inject()(enhancedApiNotificationQueueServ
 
   def pulled(notificationId: String): Action[AnyContent] = get(notificationId, Pulled, badRequestPulledText)
 
+  def pulledList(): Action[AnyContent] = getList(Pulled)
+
   def unpulled(notificationId: String): Action[AnyContent] = get(notificationId, Unpulled, badRequestUnpulledText)
+
+  def unpulledList(): Action[AnyContent] = getList(Unpulled)
+
+  private def getList(notificationStatus: NotificationStatus.Value): Action[AnyContent] =
+  (headerValidator.validateAcceptHeader andThen headerValidator.validateXClientIdHeader).async { implicit request =>
+
+    implicit val hc: HeaderCarrier = buildHeaderCarrier(request)
+
+    enhancedApiNotificationQueueService.getAllNotificationsBy(notificationStatus).map { notifications =>
+        Ok(enhancedXmlBuilder.toXml(notifications, notificationStatus)).as(XML)
+    } recover recovery
+  }
 
   private def get(notificationId: String, notificationStatus: NotificationStatus.Value, badRequestText: String): Action[AnyContent] =
     (headerValidator.validateAcceptHeader andThen headerValidator.validateXClientIdHeader).async { implicit request =>

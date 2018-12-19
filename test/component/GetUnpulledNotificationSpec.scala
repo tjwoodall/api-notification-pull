@@ -45,6 +45,61 @@ class GetUnpulledNotificationSpec extends ComponentSpec with ExternalServices {
   val validRequest = FakeRequest("GET", s"/notifications/unpulled/$notificationId").
     withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
 
+  val validListRequest = FakeRequest("GET", s"/notifications/unpulled").
+    withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
+
+  feature("GET a list of unpulled notifications") {
+    scenario("I want to successfully retrieve a list of unpulled notifications") {
+
+      Given("There is list of unpulled notification in the API Notification Queue")
+
+      val body = """{ "notifications": ["notification1", "notification2"] }""".stripMargin
+
+      stubForExistingNotificationsList("/notifications/unpulled", body,
+        Seq(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId))
+
+      When("I call the GET unpulled notifications endpoint")
+      val result = route(app, validListRequest).value
+
+      Then("I receive the list of notifications")
+      status(result) shouldBe OK
+
+      val expectedXml = scala.xml.Utility.trim(
+        <resource href="/notifications/unpulled/">
+          <link rel="self" href="/notifications/unpulled/"/>
+          <link rel="notification" href="/notifications/unpulled/notification1"/>
+          <link rel="notification" href="/notifications/unpulled/notification2"/>
+        </resource>
+      )
+
+      string2xml(contentAsString(result)) shouldBe expectedXml
+    }
+
+    scenario("I want to successfully retrieve an empty list of notifications") {
+
+      Given("There are no notification in the API Notification Queue")
+
+      val body = """{ "notifications": [] }""".stripMargin
+
+      stubForExistingNotificationsList("/notifications/unpulled", body,
+        Seq(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId))
+
+      When("I call the GET unpulled notifications endpoint")
+      val result = route(app, validListRequest).value
+
+      Then("I receive the list of notifications")
+      status(result) shouldBe OK
+
+      val expectedXml = scala.xml.Utility.trim(
+        <resource href="/notifications/unpulled/">
+          <link rel="self" href="/notifications/unpulled/"/>
+        </resource>
+      )
+
+      string2xml(contentAsString(result)) shouldBe expectedXml
+    }
+  }
+
   feature("GET an unpulled notification by id") {
 
     scenario("I want to successfully retrieve a notification by notification id") {
