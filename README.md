@@ -7,7 +7,7 @@ This API allows third party developers to collect notifications.
 
 ## Endpoints
 
-### GET `/notifications/unpulled`
+### GET `/unpulled`
 
 Get a list of unpulled notification
 
@@ -16,7 +16,7 @@ Required Headers:
   - `Accept`
 
 ```
-curl -v -X GET "http://localhost:9649/notifications/unpulled" \
+curl -v -X GET "http://localhost:9649/unpulled" \
   -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
   -H "Accept: application/vnd.hmrc.1.0+xml"
 ```
@@ -31,7 +31,7 @@ curl -v -X GET "http://localhost:9649/notifications/unpulled" \
  </resource>
 ```
 
-### GET `/notifications/unpulled/{notificationId}`
+### GET `/unpulled/{notificationId}`
 
 Get an unpulled notification
 
@@ -40,7 +40,7 @@ Required Headers:
   - `Accept`
 
 ```
-curl -v -X GET "http://localhost:9649/notifications/unpulled/{notificationId}" \
+curl -v -X GET "http://localhost:9649/unpulled/{notificationId}" \
   -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
   -H "Accept: application/vnd.hmrc.1.0+xml"
 ```
@@ -70,7 +70,7 @@ curl -v -X GET "http://localhost:9649/notifications/unpulled/{notificationId}" \
     </errorResponse>
 ```
 
-### GET `/notifications/pulled`
+### GET `/pulled`
 
 Get a list of pulled notification
 
@@ -79,7 +79,7 @@ Required Headers:
   - `Accept`
 
 ```
-curl -v -X GET "http://localhost:9649/notifications/pulled" \
+curl -v -X GET "http://localhost:9649/pulled" \
   -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
   -H "Accept: application/vnd.hmrc.1.0+xml"
 ```
@@ -94,7 +94,7 @@ curl -v -X GET "http://localhost:9649/notifications/pulled" \
  </resource>
 ```
 
-### GET `/notifications/pulled/{notificationId}`
+### GET `/pulled/{notificationId}`
 
 Get a pulled notification
 
@@ -103,7 +103,7 @@ Required Headers:
   - `Accept`
 
 ```
-curl -v -X GET "http://localhost:9649/notifications/pulled/{notificationId}" \
+curl -v -X GET "http://localhost:9649/pulled/{notificationId}" \
   -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
   -H "Accept: application/vnd.hmrc.1.0+xml"
 ```

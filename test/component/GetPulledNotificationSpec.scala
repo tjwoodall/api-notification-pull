@@ -42,10 +42,10 @@ class GetPulledNotificationSpec extends ComponentSpec with ExternalServices {
   }
 
   val notificationId = "notification-id"
-  val validRequest = FakeRequest("GET", s"/notifications/pulled/$notificationId").
+  val validRequest = FakeRequest("GET", s"/pulled/$notificationId").
     withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
 
-  val validListRequest = FakeRequest("GET", s"/notifications/pulled").
+  val validListRequest = FakeRequest("GET", s"/pulled").
     withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
 
   feature("GET a list of pulled notifications") {
