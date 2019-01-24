@@ -10,7 +10,7 @@ Where a notification has been sent to the pull queue, your application can now p
 The Pull Notifications API works in two discrete modes.  It is recommended that your application consumes the Pull Notifications API in one of the following modes:
 
 
-## Retrieve and delete pull notifications:
+## Retrieve and delete pull notifications
 
 This mode is actioned via the two following endpoints:
 
@@ -19,7 +19,7 @@ GET /notifications - returns a list of all notifications id’s available to be 
 DELETE /notifications/{Id} - retrieve and delete the requested notification.
 
 
-## Retrieve and persist pull notifications:
+## Retrieve and persist pull notifications
 
 This mode will persist a retrieved notification for a  maximum of 14 days from when the notification was generated, during this time the notification is persisted in the pull notification queue and can be retrieved any number of times.
 
