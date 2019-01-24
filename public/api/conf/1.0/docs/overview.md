@@ -32,3 +32,4 @@ GET /notifications/unpulled/{notificationId} - returns an individual new notific
 GET /notifications/pulled - returns a list of previously pulled notification id's only, the response will contain id’s for all pulled notifications for a given Client id, for the past 14 days.
 
 GET /notifications/pulled/{notificationId} - returns an individual, previously pulled notification up to 14 days from the date the notification was generated.
+
