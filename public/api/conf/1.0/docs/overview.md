@@ -12,24 +12,24 @@ The Pull Notifications API works in two discrete modes.  It is recommended that 
 
 ## Retrieve and delete pull notifications
 
-This mode is actioned via the two following endpoints:
+This mode is implemented via the following two  endpoints:
 
-GET /notifications - returns a list of all notifications id’s available to be pulled for a given Client id.
+GET /notifications - returns a list of all notifications ids available to be pulled for a given Client id.
 
 DELETE /notifications/{Id} - retrieve and delete the requested notification.
 
 
 ## Retrieve and persist pull notifications
 
-This mode will persist a retrieved notification for a  maximum of 14 days from when the notification was generated, during this time the notification is persisted in the pull notification queue and can be retrieved any number of times.
+This mode will persist a retrieved notification for a maximum of 14 days from when the notification was generated. During this time the notification is persisted in the pull notification queue and can be retrieved any number of times.
 
-The retrieve and persist mode is actioned via the two following endpoints:
+The retrieve and persist mode is implemented via the following four endpoints:
 
-GET /notifications/unpulled - returns a list of new notifications id’s only. With ‘new’ being defined as notifications that have not been previously pulled.
+GET /notifications/unpulled - returns a list of new notifications ids only. ‘New’ is  defined as notifications that have not been previously pulled.
 
-GET /notifications/unpulled/{notificationId} - returns an individual new notification. Instead of the previous DELETE operation,  pulled notifications are now retained with a ‘pulled’ status for a period of 14 days from the date the notification was generated.
+GET /notifications/unpulled/{notificationId} - returns an individual new notification. Instead of the previous DELETE operation, pulled notifications are now retained with a ‘pulled’ status for a period of 14 days from the date the notification was generated.
 
-GET /notifications/pulled - returns a list of previously pulled notification id's only, the response will contain id’s for all pulled notifications for a given Client id, for the past 14 days.
+GET /notifications/pulled - returns a list of previously pulled notification ids only. The response will contain the  ids of all pulled notifications for a given Client id for the past 14 days.
 
 GET /notifications/pulled/{notificationId} - returns an individual, previously pulled notification up to 14 days from the date the notification was generated.
 
