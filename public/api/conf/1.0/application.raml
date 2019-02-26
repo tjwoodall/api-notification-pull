@@ -68,26 +68,36 @@ documentation:
                   description: Valid XML Payload
                   example: |
                     <?xml version="1.0" encoding="UTF-8"?>
-                    <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                      xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
-                      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-                      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-                       <soapenv:Header/>
-                       <soapenv:Body>
-                          <n1:InventoryLinkingImportsDeclarationStatusNotification xmlns:n1="http://gov.uk/customs/inventoryLinkingImport/v1">
-                             <n1:declarationMethod>2</n1:declarationMethod>
-                             <n1:dateOfEntry>2018-11-15T11:54:27.000Z</n1:dateOfEntry>
-                             <n1:entryNumber>18GBCN36B8HDVFGVR6</n1:entryNumber>
-                             <n1:entryVersionNumber>2</n1:entryVersionNumber>
-                             <n1:goodsArrivalDeclaration>Y</n1:goodsArrivalDeclaration>
-                             <n1:ics>14</n1:ics>
-                             <n1:inventoryConsignmentReference>GB/1234-99999886JCP</n1:inventoryConsignmentReference>
-                             <n1:roe>0</n1:roe>
-                             <n1:traderReference>8GB025115100018-123456ABABAB1</n1:traderReference>
-                             <n1:totalPackages>55</n1:totalPackages>
-                          </n1:InventoryLinkingImportsDeclarationStatusNotification>
-                       </soapenv:Body>
-                    </soapenv:Envelope>
+                    <_2:MetaData xmlns:_2="urn:wco:datamodel:WCO:DocumentMetaData-DMS:2"><_2:WCODataModelVersionCode>3.6</_2:WCODataModelVersionCode><_2:WCOTypeName>RES</_2:WCOTypeName><_2:ResponsibleCountryCode/><_2:ResponsibleAgencyName/><_2:AgencyAssignedCustomizationCode/><_2:AgencyAssignedCustomizationVersionCode/><_2_1:Response xmlns:_2_1="urn:wco:datamodel:WCO:RES-DMS:2">
+                          <_2_1:FunctionCode>03</_2_1:FunctionCode>
+                          <_2_1:FunctionalReferenceID>0f3ec64eec704999995ddf5a3ca9cc0b</_2_1:FunctionalReferenceID>
+                          <_2_1:IssueDateTime>
+                            <_2_2:DateTimeString formatCode="304" xmlns:_2_2="urn:wco:datamodel:WCO:Response_DS:DMS:2">20190220165953Z</_2_2:DateTimeString>
+                          </_2_1:IssueDateTime>
+                          <_2_1:Error>
+                            <_2_1:ValidationCode>CDS12014</_2_1:ValidationCode>
+                            <_2_1:Pointer>
+                              <_2_1:DocumentSectionCode>42A</_2_1:DocumentSectionCode>
+                              <_2_1:TagID>D013</_2_1:TagID>
+                            </_2_1:Pointer>
+                          </_2_1:Error>
+                          <_2_1:Error>
+                            <_2_1:ValidationCode>CDS12015</_2_1:ValidationCode>
+                            <_2_1:Pointer>
+                              <_2_1:DocumentSectionCode>42A</_2_1:DocumentSectionCode>
+                              <_2_1:TagID>D014</_2_1:TagID>
+                            </_2_1:Pointer>
+                          </_2_1:Error>
+                          <_2_1:Declaration>
+                            <_2_1:FunctionalReferenceID>gq8lPty99999NLgUQMSAmg</_2_1:FunctionalReferenceID>
+                            <_2_1:ID>19GB20GF2F99999VR4</_2_1:ID>
+                            <_2_1:RejectionDateTime>
+                              <_2_2:DateTimeString formatCode="304" xmlns:_2_2="urn:wco:datamodel:WCO:Response_DS:DMS:2">20190220165953Z</_2_2:DateTimeString>
+                            </_2_1:RejectionDateTime>
+                            <_2_1:VersionID>1</_2_1:VersionID>
+                          </_2_1:Declaration>
+                        </_2_1:Response>
+                    </_2:MetaData>
             400:
               body:
                 application/xml:
@@ -155,26 +165,36 @@ documentation:
                   description: Valid XML Payload
                   example: |
                     <?xml version="1.0" encoding="UTF-8"?>
-                    <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                      xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
-                      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-                      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-                       <soapenv:Header/>
-                       <soapenv:Body>
-                          <n1:InventoryLinkingImportsDeclarationStatusNotification xmlns:n1="http://gov.uk/customs/inventoryLinkingImport/v1">
-                             <n1:declarationMethod>2</n1:declarationMethod>
-                             <n1:dateOfEntry>2018-11-15T11:54:27.000Z</n1:dateOfEntry>
-                             <n1:entryNumber>18GBCN36B8HDVFGVR6</n1:entryNumber>
-                             <n1:entryVersionNumber>2</n1:entryVersionNumber>
-                             <n1:goodsArrivalDeclaration>Y</n1:goodsArrivalDeclaration>
-                             <n1:ics>14</n1:ics>
-                             <n1:inventoryConsignmentReference>GB/1234-99999886JCP</n1:inventoryConsignmentReference>
-                             <n1:roe>0</n1:roe>
-                             <n1:traderReference>8GB025115100018-123456ABABAB1</n1:traderReference>
-                             <n1:totalPackages>55</n1:totalPackages>
-                          </n1:InventoryLinkingImportsDeclarationStatusNotification>
-                       </soapenv:Body>
-                    </soapenv:Envelope>
+                    <_2:MetaData xmlns:_2="urn:wco:datamodel:WCO:DocumentMetaData-DMS:2"><_2:WCODataModelVersionCode>3.6</_2:WCODataModelVersionCode><_2:WCOTypeName>RES</_2:WCOTypeName><_2:ResponsibleCountryCode/><_2:ResponsibleAgencyName/><_2:AgencyAssignedCustomizationCode/><_2:AgencyAssignedCustomizationVersionCode/><_2_1:Response xmlns:_2_1="urn:wco:datamodel:WCO:RES-DMS:2">
+                          <_2_1:FunctionCode>03</_2_1:FunctionCode>
+                          <_2_1:FunctionalReferenceID>0f3ec64eec704999995ddf5a3ca9cc0b</_2_1:FunctionalReferenceID>
+                          <_2_1:IssueDateTime>
+                            <_2_2:DateTimeString formatCode="304" xmlns:_2_2="urn:wco:datamodel:WCO:Response_DS:DMS:2">20190220165953Z</_2_2:DateTimeString>
+                          </_2_1:IssueDateTime>
+                          <_2_1:Error>
+                            <_2_1:ValidationCode>CDS12014</_2_1:ValidationCode>
+                            <_2_1:Pointer>
+                              <_2_1:DocumentSectionCode>42A</_2_1:DocumentSectionCode>
+                              <_2_1:TagID>D013</_2_1:TagID>
+                            </_2_1:Pointer>
+                          </_2_1:Error>
+                          <_2_1:Error>
+                            <_2_1:ValidationCode>CDS12015</_2_1:ValidationCode>
+                            <_2_1:Pointer>
+                              <_2_1:DocumentSectionCode>42A</_2_1:DocumentSectionCode>
+                              <_2_1:TagID>D014</_2_1:TagID>
+                            </_2_1:Pointer>
+                          </_2_1:Error>
+                          <_2_1:Declaration>
+                            <_2_1:FunctionalReferenceID>gq8lPty99999NLgUQMSAmg</_2_1:FunctionalReferenceID>
+                            <_2_1:ID>19GB20GF2F99999VR4</_2_1:ID>
+                            <_2_1:RejectionDateTime>
+                              <_2_2:DateTimeString formatCode="304" xmlns:_2_2="urn:wco:datamodel:WCO:Response_DS:DMS:2">20190220165953Z</_2_2:DateTimeString>
+                            </_2_1:RejectionDateTime>
+                            <_2_1:VersionID>1</_2_1:VersionID>
+                          </_2_1:Declaration>
+                        </_2_1:Response>
+                    </_2:MetaData>
             400:
               body:
                 application/xml:
