@@ -17,7 +17,6 @@
 package uk.gov.hmrc.apinotificationpull.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.{X_CLIENT_ID_HEADER_NAME, getHeadersFromRequest}
 import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
@@ -29,12 +28,14 @@ import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 
+import scala.concurrent.ExecutionContext
+
 @Singleton
 class NotificationsController @Inject()(apiNotificationQueueService: ApiNotificationQueueService,
                                         headerValidator: HeaderValidator,
                                         notificationPresenter: NotificationPresenter,
                                         xmlBuilder: XmlBuilder,
-                                        logger: NotificationLogger) extends BaseController {
+                                        logger: NotificationLogger)(implicit ec: ExecutionContext) extends BaseController {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 

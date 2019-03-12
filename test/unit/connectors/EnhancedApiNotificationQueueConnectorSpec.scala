@@ -34,6 +34,7 @@ import unit.util.RequestHeaders.X_CLIENT_ID_HEADER_NAME
 import unit.util.StubNotificationLogger
 import unit.util.RequestHeaders.{ClientId, X_CLIENT_ID_HEADER}
 
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import scala.concurrent.{ExecutionContext, Future}
 
 class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with Eventually {

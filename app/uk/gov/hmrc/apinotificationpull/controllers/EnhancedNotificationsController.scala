@@ -19,7 +19,6 @@ package uk.gov.hmrc.apinotificationpull.controllers
 import akka.util.ByteString
 import javax.inject.{Inject, Singleton}
 import play.api.http.HttpEntity
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
 import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.{X_CLIENT_ID_HEADER_NAME, getHeadersFromRequest}
 import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
@@ -32,11 +31,13 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalSe
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 
+import scala.concurrent.ExecutionContext
+
 @Singleton
 class EnhancedNotificationsController @Inject()(enhancedApiNotificationQueueService: EnhancedApiNotificationQueueService,
                                                 headerValidator: HeaderValidator,
                                                 enhancedXmlBuilder: EnhancedXmlBuilder,
-                                                logger: NotificationLogger) extends BaseController {
+                                                logger: NotificationLogger)(implicit ec: ExecutionContext) extends BaseController {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
