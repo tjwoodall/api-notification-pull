@@ -34,6 +34,8 @@ import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, Upstream5xxResponse}
 import uk.gov.hmrc.play.bootstrap.http.{DefaultHttpClient, HttpClient}
 import uk.gov.hmrc.play.test.UnitSpec
+import unit.util.RequestHeaders.X_CLIENT_ID_HEADER_NAME
+import unit.util.RequestHeaders.ClientId
 import util.ExternalServicesConfig.{Host, Port}
 import util.WireMockRunner
 
@@ -50,11 +52,9 @@ class ApiNotificationQueueConnectorSpec extends UnitSpec with ScalaFutures with 
 
   lazy val connector: ApiNotificationQueueConnector = app.injector.instanceOf[ApiNotificationQueueConnector]
 
-  private val clientId = "client-id"
-
   trait Setup {
 
-    implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Client-ID" -> clientId)
+    implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders(X_CLIENT_ID_HEADER_NAME -> ClientId)
   }
 
   override def beforeAll(): Unit = {
@@ -76,7 +76,7 @@ class ApiNotificationQueueConnectorSpec extends UnitSpec with ScalaFutures with 
 
       stubFor(get(urlEqualTo("/notifications"))
         .withHeader(USER_AGENT, equalTo("api-notification-pull"))
-        .withHeader("X-Client-ID", equalTo(clientId))
+        .withHeader(X_CLIENT_ID_HEADER_NAME, equalTo(ClientId))
         .willReturn(
           aResponse()
             .withStatus(OK)
@@ -109,7 +109,7 @@ class ApiNotificationQueueConnectorSpec extends UnitSpec with ScalaFutures with 
         .willReturn(
           aResponse()
             .withStatus(BAD_REQUEST)
-            .withBody("X-Client-ID` header is not found in the request.")
+            .withBody(X_CLIENT_ID_HEADER_NAME + "` header is not found in the request.")
         )
       )
 

@@ -23,10 +23,12 @@ import org.scalatest.OptionValues._
 import org.scalatest.concurrent.Eventually
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import unit.util.RequestHeaders.X_CLIENT_ID_HEADER_NAME
+import unit.util.RequestHeaders.{ACCEPT_HEADER, X_CLIENT_ID_HEADER}
 
 class RetrieveAndDeleteNotificationSpec extends ComponentSpec with Eventually with ExternalServices {
 
-  override val clientId: String = UUID.randomUUID.toString
+  val clientId: String = UUID.randomUUID.toString
 
   private val notificationId = UUID.randomUUID.toString
 
@@ -48,7 +50,7 @@ class RetrieveAndDeleteNotificationSpec extends ComponentSpec with Eventually wi
     info("So that I can progress my original declaration submission")
 
     val validRequest = FakeRequest("DELETE", s"/$notificationId").
-      withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
+      withHeaders(ACCEPT_HEADER, X_CLIENT_ID_HEADER)
 
     scenario("Successful DELETE and 3rd party receives the notification") {
       Given("There is a notification waiting in the API Notification Queue and you have the correct notification Id")
@@ -96,9 +98,9 @@ class RetrieveAndDeleteNotificationSpec extends ComponentSpec with Eventually wi
       contentAsString(result) shouldBe ""
     }
 
-    scenario("Missing X-Client-Id Header") {
-      Given("The platform does not inject a X-Client-Id Header")
-      val request = validRequest.copyFakeRequest(headers = validRequest.headers.remove(xClientIdHeader))
+    scenario(s"Missing $X_CLIENT_ID_HEADER_NAME Header") {
+      Given(s"The platform does not inject a $X_CLIENT_ID_HEADER_NAME Header")
+      val request = validRequest.copyFakeRequest(headers = validRequest.headers.remove(X_CLIENT_ID_HEADER_NAME))
 
       When("You call make the 'DELETE' call, with a notification Id, to the api-notification-pull service ")
       val result = route(app, request).value

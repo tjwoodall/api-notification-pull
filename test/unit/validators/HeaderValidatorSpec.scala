@@ -16,16 +16,24 @@
 
 package unit.validators
 
+import org.scalatest.mockito.MockitoSugar
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
+import uk.gov.hmrc.customs.api.common.config.ServicesConfig
+import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.play.test.UnitSpec
+import unit.util.RequestHeaders.X_CLIENT_ID_HEADER_NAME
+import unit.util.StubNotificationLogger
+import unit.util.RequestHeaders.{ACCEPT_HEADER, ACCEPT_HEADER_VALUE, X_CLIENT_ID_HEADER}
 
-class HeaderValidatorSpec extends UnitSpec {
-  private val validator = new HeaderValidator
+class HeaderValidatorSpec extends UnitSpec with MockitoSugar {
+
+  private val stubLogger = new StubNotificationLogger(new CdsLogger(mock[ServicesConfig]))
+  private val validator = new HeaderValidator(stubLogger)
   private val expectedResult = Ok("")
 
   private val validateAccept: Action[AnyContent] = validator.validateAcceptHeader {
@@ -45,19 +53,19 @@ class HeaderValidatorSpec extends UnitSpec {
       status(validateAccept.apply(FakeRequest().withHeaders(ACCEPT -> "invalid"))) shouldBe NOT_ACCEPTABLE
     }
 
-    "return result from block if Accept header is application/vnd.hmrc.1.0+xml" in {
-      await(validateAccept.apply(FakeRequest().withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml"))) shouldBe expectedResult
+    s"return result from block if Accept header is $ACCEPT_HEADER_VALUE" in {
+      await(validateAccept.apply(FakeRequest().withHeaders(ACCEPT_HEADER))) shouldBe expectedResult
     }
   }
 
   "validateXClientIdHeader" should {
-    "return 500 INTERNAL_SERVER_ERROR if X-Client-ID header is not present" in {
+    s"return 500 INTERNAL_SERVER_ERROR if $X_CLIENT_ID_HEADER_NAME header is not present" in {
       status(validateXClientId.apply(FakeRequest())) shouldBe INTERNAL_SERVER_ERROR
 
     }
 
-    "return result from block if X-Client-ID header is present" in {
-      await(validateXClientId.apply(FakeRequest().withHeaders("X-Client-ID" -> "client-id"))) shouldBe expectedResult
+    s"return result from block if $X_CLIENT_ID_HEADER_NAME header is present" in {
+      await(validateXClientId.apply(FakeRequest().withHeaders(X_CLIENT_ID_HEADER))) shouldBe expectedResult
     }
   }
 }

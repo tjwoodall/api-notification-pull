@@ -16,28 +16,35 @@
 
 package uk.gov.hmrc.apinotificationpull.validators
 
-import play.api.mvc.{ActionBuilder, Request, Result, Results}
+import com.google.inject.Inject
 import play.api.http.HeaderNames._
 import play.api.http.Status._
+import play.api.mvc.{ActionBuilder, Request, Result, Results}
+import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.{ACCEPT_HEADER_VALUE, X_CLIENT_ID_HEADER_NAME, getHeadersFromRequest}
+import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 
 import scala.concurrent.Future
 
-class HeaderValidator extends Results {
+class HeaderValidator @Inject()(logger: NotificationLogger) extends Results {
 
   private def validateHeader(rules: Option[String] => Boolean, headerName: String, error: Result): ActionBuilder[Request] =
     new ActionBuilder[Request] {
       override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
-        if (rules(request.headers.get(headerName))) {
+        implicit val implicitRequest: Request[A] = request
+        val maybeHeader = request.headers.get(headerName)
+        if (rules(maybeHeader)) {
+          logger.info(s"$headerName passed validation: $maybeHeader")
           block(request)
         } else {
+          logger.info(s"$headerName failed validation: $maybeHeader")
           Future.successful(error)
         }
       }
   }
 
-  private val acceptHeaderRules: Option[String] => Boolean = _ contains "application/vnd.hmrc.1.0+xml"
+  private val acceptHeaderRules: Option[String] => Boolean = _ contains ACCEPT_HEADER_VALUE
   private val xClientIdHeaderRules: Option[String] => Boolean = _ exists (_ => true)
 
   def validateAcceptHeader: ActionBuilder[Request] = validateHeader(acceptHeaderRules, ACCEPT, Status(NOT_ACCEPTABLE))
-  def validateXClientIdHeader: ActionBuilder[Request] = validateHeader(xClientIdHeaderRules, "X-Client-ID", Status(INTERNAL_SERVER_ERROR))
+  def validateXClientIdHeader: ActionBuilder[Request] = validateHeader(xClientIdHeaderRules, X_CLIENT_ID_HEADER_NAME, Status(INTERNAL_SERVER_ERROR))
 }

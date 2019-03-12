@@ -19,32 +19,44 @@ package uk.gov.hmrc.apinotificationpull.connectors
 import javax.inject.Inject
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import uk.gov.hmrc.apinotificationpull.config.ServiceConfiguration
+import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.getHeadersFromHeaderCarrier
+import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.Future
 
-class ApiNotificationQueueConnector @Inject()(config: ServiceConfiguration, http: HttpClient) {
+class ApiNotificationQueueConnector @Inject()(config: ServiceConfiguration, http: HttpClient, logger: NotificationLogger) {
 
   private lazy val serviceBaseUrl: String = config.baseUrl("api-notification-queue")
 
   def getNotifications()(implicit hc: HeaderCarrier): Future[Notifications] = {
-    http.GET[Notifications](s"$serviceBaseUrl/notifications")
+    val url = s"$serviceBaseUrl/notifications"
+    logger.debug(s"Calling get notifications using url: $url")
+    http.GET[Notifications](url)
   }
 
   def getById(notificationId: String)(implicit hc: HeaderCarrier): Future[Option[Notification]] = {
-    http.GET[HttpResponse](s"$serviceBaseUrl/notification/$notificationId")
+
+    val url = s"$serviceBaseUrl/notification/$notificationId"
+    logger.debug(s"Getting notification by id using url: $url")
+    http.GET[HttpResponse](url)
       .map { r =>
+        logger.debug(s"Notification received successfully with id: $notificationId")
         Some(Notification(notificationId, r.allHeaders.map(h => h._1 -> h._2.head), r.body))
       }
-      .recoverWith {
-        case _: NotFoundException => Future.successful(None)
-      }
+      .recover[Option[Notification]] {
+      case _: NotFoundException =>
+        logger.debug(s"Notification not found with id: $notificationId")
+        None
+    }
   }
 
   def delete(notification: Notification)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    http.DELETE(s"$serviceBaseUrl/notification/${notification.id}")
+    val url = s"$serviceBaseUrl/notification/${notification.id}"
+    logger.debug(s"Calling delete notifications using url: $url")
+    http.DELETE(url)
   }
 
 }

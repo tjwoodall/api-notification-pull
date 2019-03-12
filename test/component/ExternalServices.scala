@@ -20,15 +20,14 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.http.{HttpHeader, HttpHeaders}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.test.Helpers.OK
+import unit.util.RequestHeaders.X_CLIENT_ID_HEADER_NAME
+import unit.util.RequestHeaders.ClientId
 import util.WireMockRunner
 
 trait ExternalServices extends WireMockRunner {
 
   private val notificationId1 = 1234
   private val notificationId2 = 6789
-
-  val clientId = "client-id"
-  val xClientIdHeader = "X-Client-ID"
 
   def stubForAllNotifications(): StubMapping = {
     stubFor(get(urlMatching("/notifications"))
@@ -41,13 +40,13 @@ trait ExternalServices extends WireMockRunner {
   def stubForExistingNotificationForDelete(notificationId: String, notificationBody: String, headers: Seq[(String, String)]): StubMapping = {
     stubForExistingNotification("/notification", notificationId, notificationBody, headers)
 
-    stubFor(delete(urlMatching(s"/notification/$notificationId")).withHeader(xClientIdHeader, equalTo(clientId))
+    stubFor(delete(urlMatching(s"/notification/$notificationId")).withHeader(X_CLIENT_ID_HEADER_NAME, equalTo(ClientId))
       .willReturn(aResponse()
         .withStatus(OK)))
   }
 
   def stubForExistingNotification(context: String, notificationId: String, notificationBody: String, headers: Seq[(String, String)]): StubMapping = {
-    stubFor(get(urlMatching(s"$context/$notificationId")).withHeader(xClientIdHeader, equalTo(clientId))
+    stubFor(get(urlMatching(s"$context/$notificationId")).withHeader(X_CLIENT_ID_HEADER_NAME, equalTo(ClientId))
       .willReturn(aResponse()
         .withHeaders(new HttpHeaders(headers.map(h => HttpHeader.httpHeader(h._1, h._2)): _*))
         .withBody(notificationBody)
@@ -55,7 +54,7 @@ trait ExternalServices extends WireMockRunner {
   }
 
   def stubForExistingNotificationsList(context: String, notificationBody: String, headers: Seq[(String, String)]): StubMapping = {
-    stubFor(get(urlMatching(s"$context")).withHeader(xClientIdHeader, equalTo(clientId))
+    stubFor(get(urlMatching(s"$context")).withHeader(X_CLIENT_ID_HEADER_NAME, equalTo(ClientId))
       .willReturn(aResponse()
         .withHeaders(new HttpHeaders(headers.map(h => HttpHeader.httpHeader(h._1, h._2)): _*))
         .withBody(notificationBody)

@@ -22,11 +22,13 @@ import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
 import org.scalatest.OptionValues._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import unit.util.RequestHeaders.X_CLIENT_ID_HEADER_NAME
+import unit.util.RequestHeaders.{ACCEPT_HEADER, X_CLIENT_ID_HEADER}
 
 class GetAllNotificationsSpec extends ComponentSpec with ExternalServices {
 
 
-  override val clientId: String = UUID.randomUUID().toString
+  val clientId: String = UUID.randomUUID().toString
 
   override def beforeAll(): Unit = {
     super.beforeAll()
@@ -49,7 +51,7 @@ class GetAllNotificationsSpec extends ComponentSpec with ExternalServices {
     info("I want to successfully retrieve all notification locations by client id")
 
     val validRequest = FakeRequest("GET", "/").
-      withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
+      withHeaders(ACCEPT_HEADER, X_CLIENT_ID_HEADER)
 
     scenario("Successful GET and 3rd party receives the notifications locations") {
       Given("There are notifications in the API Notification Queue")
@@ -87,9 +89,9 @@ class GetAllNotificationsSpec extends ComponentSpec with ExternalServices {
       contentAsString(result) shouldBe ""
     }
 
-    scenario("Missing X-Client-Id Header") {
-      Given("The platform does not inject a X-Client-Id Header")
-      val request = validRequest.copyFakeRequest(headers = validRequest.headers.remove(xClientIdHeader))
+    scenario(s"Missing $X_CLIENT_ID_HEADER_NAME Header") {
+      Given(s"The platform does not inject a $X_CLIENT_ID_HEADER_NAME Header")
+      val request = validRequest.copyFakeRequest(headers = validRequest.headers.remove(X_CLIENT_ID_HEADER_NAME))
 
       When("You call make the 'GET' call to the api-notification-pull service ")
       val result = route(app, request).value

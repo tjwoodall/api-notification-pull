@@ -21,12 +21,13 @@ import java.util.UUID
 import org.scalatest.OptionValues._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import unit.util.RequestHeaders.{ACCEPT_HEADER, X_CLIENT_ID_HEADER}
 import unit.util.XmlUtil.string2xml
 
 class GetUnpulledNotificationSpec extends ComponentSpec with ExternalServices {
 
 
-  override val clientId: String = UUID.randomUUID().toString
+  val clientId: String = UUID.randomUUID().toString
 
   override def beforeAll(): Unit = {
     startMockServer()
@@ -43,10 +44,10 @@ class GetUnpulledNotificationSpec extends ComponentSpec with ExternalServices {
 
   val notificationId = "notification-id"
   val validRequest = FakeRequest("GET", s"/unpulled/$notificationId").
-    withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
+    withHeaders(ACCEPT_HEADER, X_CLIENT_ID_HEADER)
 
   val validListRequest = FakeRequest("GET", s"/unpulled").
-    withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
+    withHeaders(ACCEPT_HEADER, X_CLIENT_ID_HEADER)
 
   feature("GET a list of unpulled notifications") {
     scenario("I want to successfully retrieve a list of unpulled notifications") {
@@ -56,7 +57,7 @@ class GetUnpulledNotificationSpec extends ComponentSpec with ExternalServices {
       val body = """{ "notifications": ["notification1", "notification2"] }""".stripMargin
 
       stubForExistingNotificationsList("/notifications/unpulled", body,
-        Seq(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId))
+        Seq(ACCEPT_HEADER, X_CLIENT_ID_HEADER))
 
       When("I call the GET unpulled notifications endpoint")
       val result = route(app, validListRequest).value
@@ -82,7 +83,7 @@ class GetUnpulledNotificationSpec extends ComponentSpec with ExternalServices {
       val body = """{ "notifications": [] }""".stripMargin
 
       stubForExistingNotificationsList("/notifications/unpulled", body,
-        Seq(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId))
+        Seq(ACCEPT_HEADER, X_CLIENT_ID_HEADER))
 
       When("I call the GET unpulled notifications endpoint")
       val result = route(app, validListRequest).value
@@ -108,7 +109,7 @@ class GetUnpulledNotificationSpec extends ComponentSpec with ExternalServices {
       val body = """<notification>some-notification</notification>""".stripMargin
 
       stubForExistingNotification("/notifications/unpulled", notificationId, body,
-        Seq(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId))
+        Seq(ACCEPT_HEADER, X_CLIENT_ID_HEADER))
 
       When("I call the GET unpulled notification endpoint")
       val result = route(app, validRequest).value

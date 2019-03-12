@@ -23,7 +23,7 @@ import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
-import play.api.http.HeaderNames.{ACCEPT, CONTENT_TYPE}
+import play.api.http.HeaderNames.CONTENT_TYPE
 import play.api.http.MimeTypes
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -34,10 +34,12 @@ import uk.gov.hmrc.apinotificationpull.model.{Notification, NotificationStatus, 
 import uk.gov.hmrc.apinotificationpull.services.EnhancedApiNotificationQueueService
 import uk.gov.hmrc.apinotificationpull.util.EnhancedXmlBuilder
 import uk.gov.hmrc.customs.api.common.config.ServicesConfig
+import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import unit.fakes.SuccessfulHeaderValidatorFake
-import unit.util.StubCdsLogger
+import unit.util.StubNotificationLogger
+import unit.util.RequestHeaders.{ACCEPT_HEADER, X_CLIENT_ID_HEADER}
 import unit.util.XmlUtil.string2xml
 
 import scala.concurrent.Future
@@ -47,7 +49,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
   private val mockEnhancedApiNotificationQueueService = mock[EnhancedApiNotificationQueueService]
   private val mockAppContext: AppContext = mock[AppContext]
   private val xmlBuilder = new EnhancedXmlBuilder(mockAppContext)
-  private val mockLogger = new StubCdsLogger(mock[ServicesConfig])
+  private val mockLogger = new StubNotificationLogger(new CdsLogger(mock[ServicesConfig]))
 
   private val errorNotFoundXml = scala.xml.Utility.trim(
       <errorResponse>
@@ -73,17 +75,16 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
   trait SetUp {
     implicit val materializer: Materializer = fakeApplication.materializer
 
-    val xClientIdHeader = "X-Client-ID"
     val clientId = "client_id"
 
-    val validHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> clientId)
-    val headerValidator = new SuccessfulHeaderValidatorFake
+    val validHeaders = Seq(ACCEPT_HEADER, X_CLIENT_ID_HEADER)
+    val headerValidator = new SuccessfulHeaderValidatorFake(new StubNotificationLogger(new CdsLogger(mock[ServicesConfig])))
 
     val controller = new EnhancedNotificationsController(mockEnhancedApiNotificationQueueService, headerValidator, xmlBuilder, mockLogger)
 
     val notificationId: String = UUID.randomUUID().toString
     val validRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().
-      withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+xml", xClientIdHeader -> "client-id")
+      withHeaders(ACCEPT_HEADER, X_CLIENT_ID_HEADER)
 
     val headers = Map(CONTENT_TYPE -> MimeTypes.XML)
     val notification = Notification(notificationId, headers, "notification")
