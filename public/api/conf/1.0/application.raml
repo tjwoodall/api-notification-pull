@@ -218,7 +218,7 @@ documentation:
 
     /:
       get:
-        displayName: Get a list of all available notifications
+        displayName: Get a list of all available notifications (DEPRECATED)
         description: Allows retrieval of a list of notifications waiting to be pulled
         headers:
           Accept:
@@ -241,8 +241,8 @@ documentation:
 
     /{id}:
       delete:
-        displayName: Retrieve and delete a notification from the api-notification-queue
-        description: Allows retrieval of individual notifications. The notification will be returned in the response body and then deleted from the api-notification-queue.
+        displayName: Retrieve and delete a notification from the queue (DEPRECATED)
+        description: Allows retrieval of individual notifications. The notification will be returned in the response body and then deleted from the queue.
         headers:
           Accept:
             description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
