@@ -219,8 +219,14 @@ documentation:
     /:
       get:
         displayName: Get a list of all available notifications (deprecated)
-        description: Allows retrieval of a list of notifications waiting to be pulled.
-          *This endpoint has been deprecated. It will be removed in a future release. It is recommended that your application use the Pull Notifications API as described under Retrieve pull notifications*
+        description: |
+          *This endpoint has been deprecated. It will be removed in a future release.*
+
+
+          *It is recommended that your application use the Pull Notifications API as described under Retrieve pull notifications.*
+
+
+          Allows retrieval of a list of notifications waiting to be pulled.
         headers:
           Accept:
             description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
@@ -243,8 +249,14 @@ documentation:
     /{id}:
       delete:
         displayName: Retrieve and delete a notification from the queue (deprecated)
-        description: Allows retrieval of individual notifications. The notification will be returned in the response body and then deleted from the queue.
-          *This endpoint has been deprecated. It will be removed in a future release. It is recommended that your application use the Pull Notifications API as described under Retrieve pull notifications*
+        description: |
+          *This endpoint has been deprecated. It will be removed in a future release.*
+
+
+          *It is recommended that your application use the Pull Notifications API as described under Retrieve pull notifications.*
+
+
+          Allows retrieval of individual notifications. The notification will be returned in the response body and then deleted from the queue.
         headers:
           Accept:
             description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
