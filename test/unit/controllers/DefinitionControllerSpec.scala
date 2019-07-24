@@ -17,23 +17,25 @@
 package unit.controllers
 
 import akka.stream.Materializer
+import controllers.Assets
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
 import play.api.http.Status._
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
+import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.apinotificationpull.config.AppContext
-import uk.gov.hmrc.apinotificationpull.controllers.DefinitionController
+import uk.gov.hmrc.apinotificationpull.controllers.ApiDocumentationController
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import views.txt
 
-class DefinitionControllerSpec extends UnitSpec with WithFakeApplication {
+class DefinitionControllerSpec extends UnitSpec with WithFakeApplication with MockitoSugar {
 
   private implicit val materializer: Materializer = fakeApplication.materializer
 
   private val apiScope = "scope"
   private val apiContext = "context"
   private val appContext = new AppContext(Configuration("api.definition.scope" -> apiScope, "api.context" -> apiContext))
-  private val controller = new DefinitionController(appContext)
+  private val controller = new ApiDocumentationController(mock[Assets], Helpers.stubControllerComponents(), appContext)
 
   "DefinitionController.definition" should {
     lazy val result = getDefinition(controller)
@@ -51,8 +53,8 @@ class DefinitionControllerSpec extends UnitSpec with WithFakeApplication {
     }
   }
 
-  private def getDefinition(controller: DefinitionController) = {
-    await(controller.get().apply(FakeRequest("GET", "/api/definition")))
+  private def getDefinition(controller: ApiDocumentationController) = {
+    await(controller.definition().apply(FakeRequest("GET", "/api/definition")))
   }
 
 }

@@ -19,8 +19,8 @@ package unit.connectors
 import com.github.tomakehurst.wiremock.client.WireMock.{verify => wverify, _}
 import com.github.tomakehurst.wiremock.matching.UrlPattern
 import org.scalatest.concurrent.{Eventually, ScalaFutures}
-import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.ContentTypes.XML

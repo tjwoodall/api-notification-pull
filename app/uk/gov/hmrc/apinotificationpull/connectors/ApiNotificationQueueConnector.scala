@@ -17,16 +17,16 @@
 package uk.gov.hmrc.apinotificationpull.connectors
 
 import javax.inject.Inject
-import uk.gov.hmrc.apinotificationpull.config.ServiceConfiguration
 import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.getHeadersFromHeaderCarrier
 import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ApiNotificationQueueConnector @Inject()(config: ServiceConfiguration, http: HttpClient, logger: NotificationLogger)(implicit ec: ExecutionContext) {
+class ApiNotificationQueueConnector @Inject()(config: ServicesConfig, http: HttpClient, logger: NotificationLogger)(implicit ec: ExecutionContext) {
 
   private lazy val serviceBaseUrl: String = config.baseUrl("api-notification-queue")
 

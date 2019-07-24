@@ -1,5 +1,5 @@
 ->            /                                                 health.Routes
-->            /                                                 definition.Routes
+->            /                                                 dynamicDefinition.Routes
 
 DELETE        /:notificationId                                  @uk.gov.hmrc.apinotificationpull.controllers.NotificationsController.delete(notificationId)
 

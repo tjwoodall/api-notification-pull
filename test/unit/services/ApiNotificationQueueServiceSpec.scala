@@ -19,16 +19,16 @@ package unit.services
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.ContentTypes.XML
 import play.api.http.HeaderNames.CONTENT_TYPE
 import play.api.http.Status.OK
+import play.api.test.Helpers
 import uk.gov.hmrc.apinotificationpull.connectors.ApiNotificationQueueConnector
 import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
 import uk.gov.hmrc.apinotificationpull.services.ApiNotificationQueueService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.test.UnitSpec
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 import scala.concurrent.Future
 
@@ -36,6 +36,7 @@ class ApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar with Ev
 
   private val hc = HeaderCarrier()
 
+  private implicit val ec = Helpers.stubControllerComponents().executionContext
   private val notifications = Notifications(List("/notification/123", "/notification/456"))
 
   trait Setup {

@@ -17,18 +17,22 @@
 package uk.gov.hmrc.apinotificationpull.validators
 
 import com.google.inject.Inject
+import javax.inject.Singleton
 import play.api.http.HeaderNames._
 import play.api.http.Status._
-import play.api.mvc.{ActionBuilder, Request, Result, Results}
+import play.api.mvc.{ActionBuilder, AnyContent, BodyParser, ControllerComponents, Request, Result, Results}
 import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.{ACCEPT_HEADER_VALUE, X_CLIENT_ID_HEADER_NAME, getHeadersFromRequest}
 import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class HeaderValidator @Inject()(logger: NotificationLogger) extends Results {
+@Singleton
+class HeaderValidator @Inject()(logger: NotificationLogger, cc: ControllerComponents) extends Results {
 
-  private def validateHeader(rules: Option[String] => Boolean, headerName: String, error: Result): ActionBuilder[Request] =
-    new ActionBuilder[Request] {
+  private def validateHeader(rules: Option[String] => Boolean, headerName: String, error: Result): ActionBuilder[Request, AnyContent] =
+    new ActionBuilder[Request, AnyContent] {
+      override protected def executionContext: ExecutionContext = cc.executionContext
+      override def parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
       override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
         implicit val implicitRequest: Request[A] = request
         val maybeHeader = request.headers.get(headerName)
@@ -45,6 +49,6 @@ class HeaderValidator @Inject()(logger: NotificationLogger) extends Results {
   private val acceptHeaderRules: Option[String] => Boolean = _ contains ACCEPT_HEADER_VALUE
   private val xClientIdHeaderRules: Option[String] => Boolean = _ exists (_ => true)
 
-  def validateAcceptHeader: ActionBuilder[Request] = validateHeader(acceptHeaderRules, ACCEPT, Status(NOT_ACCEPTABLE))
-  def validateXClientIdHeader: ActionBuilder[Request] = validateHeader(xClientIdHeaderRules, X_CLIENT_ID_HEADER_NAME, Status(INTERNAL_SERVER_ERROR))
+  def validateAcceptHeader: ActionBuilder[Request, AnyContent] = validateHeader(acceptHeaderRules, ACCEPT, Status(NOT_ACCEPTABLE))
+  def validateXClientIdHeader: ActionBuilder[Request, AnyContent] = validateHeader(xClientIdHeaderRules, X_CLIENT_ID_HEADER_NAME, Status(INTERNAL_SERVER_ERROR))
 }

@@ -18,7 +18,7 @@ package unit.logging
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
@@ -29,8 +29,6 @@ import unit.util.RequestHeaders.LoggingHeaders
 import util.MockitoPassByNameHelper.PassByNameVerifier
 
 class NotificationLoggerSpec extends UnitSpec with MockitoSugar {
-
-
 
   trait SetUp {
     val mockCdsLogger: CdsLogger = mock[CdsLogger]
@@ -110,7 +108,7 @@ class NotificationLoggerSpec extends UnitSpec with MockitoSugar {
       logger.error("msg", new Exception(""))
 
       PassByNameVerifier(mockCdsLogger, "error")
-        .withByNameParam("[clientId=client-id] msg\nheaders=List((X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml))")
+        .withByNameParam("[clientId=client-id] msg\nheaders=List((Host,localhost), (X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml))")
         .withByNameParamMatcher(any[Throwable])
         .verify()
     }

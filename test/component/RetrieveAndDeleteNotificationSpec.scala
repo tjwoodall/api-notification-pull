@@ -88,7 +88,7 @@ class RetrieveAndDeleteNotificationSpec extends ComponentSpec with Eventually wi
 
     scenario("Invalid Accept Header") {
       Given("You do not provide the Accept Header")
-      val request = validRequest.copyFakeRequest(headers = validRequest.headers.remove(ACCEPT))
+      val request = validRequest.withHeaders(validRequest.headers.remove(ACCEPT))
 
       When("You call make the 'DELETE' call, with a notification Id, to the api-notification-pull service")
       val result = route(app, request).value
@@ -100,7 +100,7 @@ class RetrieveAndDeleteNotificationSpec extends ComponentSpec with Eventually wi
 
     scenario(s"Missing $X_CLIENT_ID_HEADER_NAME Header") {
       Given(s"The platform does not inject a $X_CLIENT_ID_HEADER_NAME Header")
-      val request = validRequest.copyFakeRequest(headers = validRequest.headers.remove(X_CLIENT_ID_HEADER_NAME))
+      val request = validRequest.withHeaders(validRequest.headers.remove(X_CLIENT_ID_HEADER_NAME))
 
       When("You call make the 'DELETE' call, with a notification Id, to the api-notification-pull service ")
       val result = route(app, request).value

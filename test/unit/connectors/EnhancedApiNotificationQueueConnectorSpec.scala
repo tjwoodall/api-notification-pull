@@ -20,21 +20,19 @@ import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.Eventually
-import org.scalatest.mockito.MockitoSugar
-import uk.gov.hmrc.apinotificationpull.config.ServiceConfiguration
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.test.Helpers
 import uk.gov.hmrc.apinotificationpull.connectors.EnhancedApiNotificationQueueConnector
 import uk.gov.hmrc.apinotificationpull.model.NotificationStatus._
 import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
-import uk.gov.hmrc.customs.api.common.config.ServicesConfig
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.http.{NotFoundException, _}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
-import unit.util.RequestHeaders.X_CLIENT_ID_HEADER_NAME
+import unit.util.RequestHeaders.{ClientId, X_CLIENT_ID_HEADER, X_CLIENT_ID_HEADER_NAME}
 import unit.util.StubNotificationLogger
-import unit.util.RequestHeaders.{ClientId, X_CLIENT_ID_HEADER}
 
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import scala.concurrent.{ExecutionContext, Future}
 
 class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with Eventually {
@@ -43,18 +41,19 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
     implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders(X_CLIENT_ID_HEADER)
 
-    val mockServiceConfiguration: ServiceConfiguration = mock[ServiceConfiguration]
+    implicit val ec = Helpers.stubControllerComponents().executionContext
+    val mockServicesConfig: ServicesConfig = mock[ServicesConfig]
     val mockHttpClient: HttpClient = mock[HttpClient]
-    val mockHttpResponse = mock[HttpResponse]
+    val mockHttpResponse: HttpResponse = mock[HttpResponse]
     val notifications = Notifications(List("notification-1", "notification-2"))
 
     val notificationId = "some-notification-id"
     val headers = Map(X_CLIENT_ID_HEADER_NAME -> Seq(ClientId))
     val notification = Notification(notificationId, headers.map(h => h._1 -> h._2.head), "notification-payload")
     val stubLogger = new StubNotificationLogger(new CdsLogger(mock[ServicesConfig]))
-    val enhancedApiNotificationQueueConnector = new EnhancedApiNotificationQueueConnector(mockServiceConfiguration, mockHttpClient, stubLogger)
+    val enhancedApiNotificationQueueConnector = new EnhancedApiNotificationQueueConnector(mockServicesConfig, mockHttpClient, stubLogger)
 
-    when(mockServiceConfiguration.baseUrl("api-notification-queue")).thenReturn("http://api-notification-queue.url")
+    when(mockServicesConfig.baseUrl("api-notification-queue")).thenReturn("http://api-notification-queue.url")
     when(mockHttpResponse.allHeaders).thenReturn(headers)
     when(mockHttpResponse.body).thenReturn("notification-payload")
 

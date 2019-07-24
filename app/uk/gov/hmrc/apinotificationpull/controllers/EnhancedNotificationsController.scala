@@ -29,7 +29,7 @@ import uk.gov.hmrc.apinotificationpull.util.EnhancedXmlBuilder
 import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, ErrorNotFound, errorBadRequest}
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, NotFoundException}
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 import scala.concurrent.ExecutionContext
 
@@ -37,7 +37,10 @@ import scala.concurrent.ExecutionContext
 class EnhancedNotificationsController @Inject()(enhancedApiNotificationQueueService: EnhancedApiNotificationQueueService,
                                                 headerValidator: HeaderValidator,
                                                 enhancedXmlBuilder: EnhancedXmlBuilder,
-                                                logger: NotificationLogger)(implicit ec: ExecutionContext) extends BaseController {
+                                                cc: ControllerComponents,
+                                                logger: NotificationLogger)
+                                               (implicit ec: ExecutionContext)
+  extends BackendController(cc) {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 

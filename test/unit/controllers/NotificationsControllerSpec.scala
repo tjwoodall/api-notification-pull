@@ -23,32 +23,32 @@ import akka.stream.Materializer
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.HeaderNames.CONTENT_TYPE
 import play.api.http.MimeTypes
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.AnyContentAsEmpty
 import play.api.mvc.Results.Ok
-import play.api.test.FakeRequest
+import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.apinotificationpull.controllers.NotificationsController
 import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
 import uk.gov.hmrc.apinotificationpull.presenters.NotificationPresenter
 import uk.gov.hmrc.apinotificationpull.services.ApiNotificationQueueService
 import uk.gov.hmrc.apinotificationpull.util.XmlBuilder
-import uk.gov.hmrc.customs.api.common.config.ServicesConfig
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import unit.fakes.SuccessfulHeaderValidatorFake
-import unit.util.StubNotificationLogger
 import unit.util.RequestHeaders.{ACCEPT_HEADER, X_CLIENT_ID_HEADER}
+import unit.util.StubNotificationLogger
 import unit.util.XmlUtil.string2xml
 
 import scala.concurrent.Future
 
 class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with MockitoSugar with BeforeAndAfterEach {
 
+  private implicit val ec = Helpers.stubControllerComponents().executionContext
   private val mockApiNotificationQueueService = mock[ApiNotificationQueueService]
   private val notificationPresenter = mock[NotificationPresenter]
   private val mockXmlBuilder = mock[XmlBuilder]
@@ -72,9 +72,9 @@ class NotificationsControllerSpec extends UnitSpec with WithFakeApplication with
     val clientId = "client_id"
 
     val validHeaders = Seq(ACCEPT_HEADER, X_CLIENT_ID_HEADER)
-    val headerValidator = new SuccessfulHeaderValidatorFake(new StubNotificationLogger(new CdsLogger(mock[ServicesConfig])))
+    val headerValidator = new SuccessfulHeaderValidatorFake(new StubNotificationLogger(new CdsLogger(mock[ServicesConfig])), Helpers.stubControllerComponents())
 
-    val controller = new NotificationsController(mockApiNotificationQueueService, headerValidator, notificationPresenter, mockXmlBuilder, mockLogger)
+    val controller = new NotificationsController(mockApiNotificationQueueService, headerValidator, notificationPresenter, mockXmlBuilder, Helpers.stubControllerComponents(), mockLogger)
   }
 
   override def beforeEach(): Unit = {

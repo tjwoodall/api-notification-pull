@@ -79,7 +79,7 @@ class GetAllNotificationsSpec extends ComponentSpec with ExternalServices {
 
     scenario("Missing Accept Header") {
       Given("You do not provide the Accept Header")
-      val request = validRequest.copyFakeRequest(headers = validRequest.headers.remove(ACCEPT))
+      val request = validRequest.withHeaders(validRequest.headers.remove(ACCEPT))
 
       When("You call make the 'GET' call to the api-notification-pull service")
       val result = route(app, request).value
@@ -91,7 +91,7 @@ class GetAllNotificationsSpec extends ComponentSpec with ExternalServices {
 
     scenario(s"Missing $X_CLIENT_ID_HEADER_NAME Header") {
       Given(s"The platform does not inject a $X_CLIENT_ID_HEADER_NAME Header")
-      val request = validRequest.copyFakeRequest(headers = validRequest.headers.remove(X_CLIENT_ID_HEADER_NAME))
+      val request = validRequest.withHeaders(validRequest.headers.remove(X_CLIENT_ID_HEADER_NAME))
 
       When("You call make the 'GET' call to the api-notification-pull service ")
       val result = route(app, request).value

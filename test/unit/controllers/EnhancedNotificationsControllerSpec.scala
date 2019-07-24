@@ -22,31 +22,31 @@ import akka.stream.Materializer
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.HeaderNames.CONTENT_TYPE
 import play.api.http.MimeTypes
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.AnyContentAsEmpty
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController
 import uk.gov.hmrc.apinotificationpull.model.{Notification, NotificationStatus, Notifications}
 import uk.gov.hmrc.apinotificationpull.services.EnhancedApiNotificationQueueService
 import uk.gov.hmrc.apinotificationpull.util.EnhancedXmlBuilder
-import uk.gov.hmrc.customs.api.common.config.ServicesConfig
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import unit.fakes.SuccessfulHeaderValidatorFake
-import unit.util.StubNotificationLogger
 import unit.util.RequestHeaders.{ACCEPT_HEADER, X_CLIENT_ID_HEADER}
+import unit.util.StubNotificationLogger
 import unit.util.XmlUtil.string2xml
 
 import scala.concurrent.Future
 
 class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplication with MockitoSugar with BeforeAndAfterEach {
 
+  private implicit val ec = Helpers.stubControllerComponents().executionContext
   private val mockEnhancedApiNotificationQueueService = mock[EnhancedApiNotificationQueueService]
   private val mockAppContext: AppContext = mock[AppContext]
   private val xmlBuilder = new EnhancedXmlBuilder(mockAppContext)
@@ -79,9 +79,9 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
     val clientId = "client_id"
 
     val validHeaders = Seq(ACCEPT_HEADER, X_CLIENT_ID_HEADER)
-    val headerValidator = new SuccessfulHeaderValidatorFake(new StubNotificationLogger(new CdsLogger(mock[ServicesConfig])))
+    val headerValidator = new SuccessfulHeaderValidatorFake(new StubNotificationLogger(new CdsLogger(mock[ServicesConfig])), Helpers.stubControllerComponents())
 
-    val controller = new EnhancedNotificationsController(mockEnhancedApiNotificationQueueService, headerValidator, xmlBuilder, mockLogger)
+    val controller = new EnhancedNotificationsController(mockEnhancedApiNotificationQueueService, headerValidator, xmlBuilder, Helpers.stubControllerComponents(), mockLogger)
 
     val notificationId: String = UUID.randomUUID().toString
     val validRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().

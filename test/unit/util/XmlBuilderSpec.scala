@@ -17,7 +17,7 @@
 package unit.util
 
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.apinotificationpull.model.Notifications
 import uk.gov.hmrc.apinotificationpull.util.XmlBuilder

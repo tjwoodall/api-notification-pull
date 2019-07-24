@@ -16,18 +16,22 @@
 
 package unit.fakes
 
-import play.api.mvc.{ActionBuilder, Request, Result}
+import play.api.mvc._
 import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class SuccessfulHeaderValidatorFake(logger: NotificationLogger) extends HeaderValidator(logger) {
-  override def validateAcceptHeader: ActionBuilder[Request] = new ActionBuilder[Request] {
+class SuccessfulHeaderValidatorFake(logger: NotificationLogger, cc: ControllerComponents) extends HeaderValidator(logger, cc) {
+  override def validateAcceptHeader: ActionBuilder[Request, AnyContent] = new ActionBuilder[Request, AnyContent] {
+    override protected def executionContext: ExecutionContext = cc.executionContext
+    override def parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
     override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = block(request)
   }
 
-  override def validateXClientIdHeader: ActionBuilder[Request] = new ActionBuilder[Request] {
+  override def validateXClientIdHeader: ActionBuilder[Request, AnyContent] = new ActionBuilder[Request, AnyContent] {
+    override protected def executionContext: ExecutionContext = cc.executionContext
+    override def parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
     override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = block(request)
   }
 }
