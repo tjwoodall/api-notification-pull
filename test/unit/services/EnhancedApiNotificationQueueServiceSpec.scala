@@ -16,6 +16,9 @@
 
 package unit.services
 
+import java.util.UUID
+import java.util.UUID.fromString
+
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually
 import org.scalatestplus.mockito.MockitoSugar
@@ -34,6 +37,7 @@ class EnhancedApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar
   private val hc = HeaderCarrier()
 
   val notificationId = "some-notification-id"
+  val conversationId = fromString("6e97f91f-f0c0-43bd-a3e0-cfa3dbc0df4f")
 
   trait Setup {
     val mockEnhancedApiNotificationQueueConnector = mock[EnhancedApiNotificationQueueConnector]
@@ -64,6 +68,24 @@ class EnhancedApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar
       val result = await(enhancedApiNotificationQueueService.getNotificationBy(notificationId, Pulled)(hc))
 
       result shouldBe Right(notification)
+    }
+
+    "pass the conversation id to the connector" in new Setup {
+
+      when(mockEnhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId)(hc)).thenReturn(Future.successful(Notifications(List())))
+
+      val result = await(enhancedApiNotificationQueueService.getAllNotificationsBy(conversationId)(hc))
+
+      result shouldBe Notifications(List())
+    }
+
+    "pass the conversation id and notification status to the connector" in new Setup {
+
+      when(mockEnhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId, Unpulled)(hc)).thenReturn(Future.successful(Notifications(List())))
+
+      val result = await(enhancedApiNotificationQueueService.getAllNotificationsBy(conversationId, Unpulled)(hc))
+
+      result shouldBe Notifications(List())
     }
 
     "pass the notification status to the connector" in new Setup {

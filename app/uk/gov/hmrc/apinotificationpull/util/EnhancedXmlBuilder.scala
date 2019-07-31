@@ -16,11 +16,23 @@
 
 package uk.gov.hmrc.apinotificationpull.util
 
+import java.util.UUID
+
 import javax.inject.Inject
 import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.apinotificationpull.model.{NotificationStatus, Notifications}
 
 class EnhancedXmlBuilder @Inject()(appContext: AppContext) {
-  private def toXml(notificationLocation: String, notificationStatus: NotificationStatus.Value): scala.xml.Elem = <link rel="notification" href={s"/${appContext.apiContext}/$notificationStatus/${notificationLocation.split("/").last}"}/>
-  def toXml(notifications: Notifications, notificationStatus: NotificationStatus.Value): scala.xml.Elem = <resource href={s"/notifications/$notificationStatus/"}><link rel="self" href={s"/notifications/$notificationStatus/"}/>{notifications.notifications.map( n => toXml(n, notificationStatus))}</resource>
+
+  private def toXml(notificationLocation: String): scala.xml.Elem =
+      <link rel="notification" href={s"$notificationLocation"}/>
+
+  def toXml(notifications: Notifications, notificationStatus: NotificationStatus.Value): scala.xml.Elem =
+    <resource href={s"/notifications/$notificationStatus/"}><link rel="self" href={s"/notifications/$notificationStatus/"}/>{notifications.notifications.map(notificationLocation => toXml(notificationLocation))}</resource>
+
+  def toXml(notifications: Notifications, conversationId: UUID): scala.xml.Elem =
+    <resource href={s"/notifications/conversationId/$conversationId/"}><link rel="self" href={s"/notifications/conversationId/$conversationId/"}/>{notifications.notifications.map(notificationLocation => toXml(notificationLocation))}</resource>
+
+  def toXml(notifications: Notifications, conversationId: UUID, notificationStatus: NotificationStatus.Value): scala.xml.Elem =
+    <resource href={s"/notifications/conversationId/$conversationId/$notificationStatus/"}><link rel="self" href={s"/notifications/conversationId/$conversationId/$notificationStatus/"}/>{notifications.notifications.map(notificationLocation => toXml(notificationLocation))}</resource>
 }

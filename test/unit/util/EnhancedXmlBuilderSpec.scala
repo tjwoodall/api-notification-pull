@@ -36,7 +36,7 @@ class EnhancedXmlBuilderSpec extends UnitSpec with MockitoSugar {
   "XmlBuilder.toXml()" should {
 
     "convert pulled notifications to XML" in new Setup {
-      val notifications = Notifications(List("/notification/123", "/notification/456"))
+      val notifications = Notifications(List("/notifications/pulled/123", "/notifications/pulled/456"))
 
       val expectedXml = scala.xml.Utility.trim(
         <resource href="/notifications/pulled/">
@@ -62,7 +62,7 @@ class EnhancedXmlBuilderSpec extends UnitSpec with MockitoSugar {
     }
 
     "convert unpulled notifications to XML" in new Setup {
-      val notifications = Notifications(List("/notification/123", "/notification/456"))
+      val notifications = Notifications(List("/notifications/unpulled/123", "/notifications/unpulled/456"))
 
       val expectedXml = scala.xml.Utility.trim(
         <resource href="/notifications/unpulled/">

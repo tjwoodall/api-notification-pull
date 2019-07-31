@@ -15,3 +15,8 @@ GET           /pulled/:notificationId                           @uk.gov.hmrc.api
 
 GET           /pulled                                           @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.pulledList
 
+GET           /conversationId/:conversationId                   @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.listBy(conversationId: java.util.UUID)
+
+GET           /conversationId/:conversationId/unpulled          @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.listUnpulledBy(conversationId: java.util.UUID)
+
+GET           /conversationId/:conversationId/pulled            @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.listPulledBy(conversationId: java.util.UUID)

@@ -23,6 +23,79 @@ documentation:
     content: !include docs/testing.md
 
 /notifications:
+    /conversationId:
+      /{conversationId}:
+        uriParameters:
+          conversationId:
+            description: Conversation identifier UUID
+            type: string
+            example: "1446a875-eaa1-4d7a-903e-0604166d9557"
+        get:
+          displayName: Get a list of notifications by conversation identifier
+          description: Allows retrieval of notifications by conversation identifier
+          headers:
+            Accept:
+              description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+              type: string
+              required: true
+              example: application/vnd.hmrc.1.0+xml
+          securedBy: [ sec.x-application ]
+          responses:
+            200:
+              body:
+                application/xml:
+                  description: Valid XML Payload
+                  example: |
+                    <resource href="/notifications/conversationId/4cdc771e-c77a-438f-b293-e11ac4cc4e2e/">
+                        <link rel="self" href="/notifications/conversationId/4cdc771e-c77a-438f-b293-e11ac4cc4e2e"/>
+                        <link rel="notification" href="/notifications/unpulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+                        <link rel="notification" href="/notifications/pulled/1b941d3a-84cd-4127-a80f-36fa1f019359"/>
+                    </resource>
+        /unpulled:
+          /:
+          get:
+            displayName: Get a list of unpulled notifications by conversation identifier
+            description: Allows retrieval of unpulled notifications by conversation identifier
+            headers:
+              Accept:
+                description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+                type: string
+                required: true
+                example: application/vnd.hmrc.1.0+xml
+            securedBy: [ sec.x-application ]
+            responses:
+              200:
+                body:
+                  application/xml:
+                    description: Valid XML Payload
+                    example: |
+                      <resource href="/notifications/unpulled/">
+                          <link rel="self" href="/notifications/unpulled/"/>
+                          <link rel="notification" href="/notifications/unpulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+                      </resource>
+
+        /pulled:
+          /:
+          get:
+            displayName: Get a list of pulled notifications by conversation identifier
+            description: Allows retrieval of pulled notifications by conversation identifier
+            headers:
+              Accept:
+                description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+                type: string
+                required: true
+                example: application/vnd.hmrc.1.0+xml
+            securedBy: [ sec.x-application ]
+            responses:
+              200:
+                body:
+                  application/xml:
+                    description: Valid XML Payload
+                    example: |
+                      <resource href="/notifications/pulled/">
+                          <link rel="self" href="/notifications/pulled/"/>
+                          <link rel="notification" href="/notifications/pulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+                      </resource>
     /unpulled:
       /:
       get:

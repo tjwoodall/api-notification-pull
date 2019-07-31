@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.apinotificationpull.controllers
 
+import java.util.UUID
+
 import akka.util.ByteString
 import javax.inject.{Inject, Singleton}
 import play.api.http.HttpEntity
@@ -54,6 +56,35 @@ class EnhancedNotificationsController @Inject()(enhancedApiNotificationQueueServ
   def unpulled(notificationId: String): Action[AnyContent] = get(notificationId, Unpulled, badRequestUnpulledText)
 
   def unpulledList(): Action[AnyContent] = getList(Unpulled)
+
+  def listBy(conversationId: UUID): Action[AnyContent] = getListBy(conversationId)
+
+  def listUnpulledBy(conversationId: UUID): Action[AnyContent] = getListBy(conversationId, Unpulled)
+
+  def listPulledBy(conversationId: UUID): Action[AnyContent] = getListBy(conversationId, Pulled)
+
+
+  private def getListBy(conversationId: UUID): Action[AnyContent] =
+    (headerValidator.validateAcceptHeader andThen headerValidator.validateXClientIdHeader).async { implicit request =>
+      logger.debug("In EnhancedNotificationsController.getListBy")
+
+      implicit val hc: HeaderCarrier = buildHeaderCarrier()
+
+      enhancedApiNotificationQueueService.getAllNotificationsBy(conversationId).map { notifications =>
+        Ok(enhancedXmlBuilder.toXml(notifications, conversationId)).as(XML)
+      } recover recovery
+    }
+
+  private def getListBy(conversationId: UUID, notificationStatus: NotificationStatus.Value): Action[AnyContent] =
+    (headerValidator.validateAcceptHeader andThen headerValidator.validateXClientIdHeader).async { implicit request =>
+      logger.debug("In EnhancedNotificationsController.getListBy")
+
+      implicit val hc: HeaderCarrier = buildHeaderCarrier()
+
+      enhancedApiNotificationQueueService.getAllNotificationsBy(conversationId, notificationStatus).map { notifications =>
+        Ok(enhancedXmlBuilder.toXml(notifications, conversationId, notificationStatus)).as(XML)
+      } recover recovery
+    }
 
   private def getList(notificationStatus: NotificationStatus.Value): Action[AnyContent] =
   (headerValidator.validateAcceptHeader andThen headerValidator.validateXClientIdHeader).async { implicit request =>

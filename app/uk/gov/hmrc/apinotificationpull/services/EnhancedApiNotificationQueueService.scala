@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.apinotificationpull.services
 
+import java.util.UUID
+
 import javax.inject.Inject
 import uk.gov.hmrc.apinotificationpull.connectors.EnhancedApiNotificationQueueConnector
 import uk.gov.hmrc.apinotificationpull.model.{Notification, NotificationStatus, Notifications}
@@ -31,5 +33,13 @@ class EnhancedApiNotificationQueueService @Inject()(enhancedApiNotificationQueue
 
   def getAllNotificationsBy(notificationStatus: NotificationStatus.Value)(implicit hc: HeaderCarrier): Future[Notifications] = {
     enhancedApiNotificationQueueConnector.getAllNotificationsBy(notificationStatus)
+  }
+
+  def getAllNotificationsBy(conversationId: UUID)(implicit hc: HeaderCarrier): Future[Notifications] = {
+    enhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId)
+  }
+
+  def getAllNotificationsBy(conversationId: UUID, notificationStatus: NotificationStatus.Value)(implicit hc: HeaderCarrier): Future[Notifications] = {
+    enhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId, notificationStatus)
   }
 }

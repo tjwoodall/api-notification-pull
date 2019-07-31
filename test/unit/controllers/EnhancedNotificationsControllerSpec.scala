@@ -17,6 +17,7 @@
 package unit.controllers
 
 import java.util.UUID
+import java.util.UUID.fromString
 
 import akka.stream.Materializer
 import org.mockito.ArgumentMatchers.{eq => meq, _}
@@ -30,6 +31,7 @@ import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController
+import uk.gov.hmrc.apinotificationpull.model.NotificationStatus.{Pulled, Unpulled}
 import uk.gov.hmrc.apinotificationpull.model.{Notification, NotificationStatus, Notifications}
 import uk.gov.hmrc.apinotificationpull.services.EnhancedApiNotificationQueueService
 import uk.gov.hmrc.apinotificationpull.util.EnhancedXmlBuilder
@@ -77,6 +79,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
     implicit val materializer: Materializer = fakeApplication.materializer
 
     val clientId = "client_id"
+    val conversationId: UUID = fromString("19aaef3d-1c8d-4837-a290-90a09434e205")
 
     val validHeaders = Seq(ACCEPT_HEADER, X_CLIENT_ID_HEADER)
     val headerValidator = new SuccessfulHeaderValidatorFake(new StubNotificationLogger(new CdsLogger(mock[ServicesConfig])), Helpers.stubControllerComponents())
@@ -103,7 +106,8 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
     "return a list of unpulled notifications" in new SetUp {
 
       when(mockEnhancedApiNotificationQueueService.getAllNotificationsBy(any[NotificationStatus.Value])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Notifications(List("notification-unpulled-1", "notification-unpulled-2"))))
+        .thenReturn(Future.successful(Notifications(List("/api-notification-pull-context/unpulled/notification-unpulled-1",
+          "/api-notification-pull-context/unpulled/notification-unpulled-2"))))
 
       val result = await(controller.unpulledList().apply(validRequest))
 
@@ -123,7 +127,8 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
     "return a list of pulled notifications" in new SetUp {
 
       when(mockEnhancedApiNotificationQueueService.getAllNotificationsBy(any[NotificationStatus.Value])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Notifications(List("notification-pulled-1", "notification-pulled-2"))))
+        .thenReturn(Future.successful(Notifications(List("/api-notification-pull-context/pulled/notification-pulled-1",
+          "/api-notification-pull-context/pulled/notification-pulled-2"))))
 
       val result = await(controller.pulledList().apply(validRequest))
 
@@ -134,6 +139,71 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
           <link rel="self" href="/notifications/pulled/"/>
           <link rel="notification" href="/api-notification-pull-context/pulled/notification-pulled-1"/>
           <link rel="notification" href="/api-notification-pull-context/pulled/notification-pulled-2"/>
+        </resource>
+      )
+
+      string2xml(bodyOf(result)) shouldBe expectedXml
+    }
+
+    "return a list of notifications by conversation id" in new SetUp {
+
+      when(mockEnhancedApiNotificationQueueService.getAllNotificationsBy(meq(conversationId))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Notifications(List("/api-notification-pull-context/pulled/notification-pulled-1",
+          "/api-notification-pull-context/pulled/notification-pulled-2"))))
+
+      val result = await(controller.listBy(conversationId).apply(validRequest))
+
+      status(result) shouldBe OK
+
+      private val expectedXml = scala.xml.Utility.trim(
+        <resource href="/notifications/conversationId/19aaef3d-1c8d-4837-a290-90a09434e205/">
+          <link rel="self" href="/notifications/conversationId/19aaef3d-1c8d-4837-a290-90a09434e205/"/>
+          <link rel="notification" href="/api-notification-pull-context/pulled/notification-pulled-1"/>
+          <link rel="notification" href="/api-notification-pull-context/pulled/notification-pulled-2"/>
+        </resource>
+      )
+
+      string2xml(bodyOf(result)) shouldBe expectedXml
+    }
+
+    "return a list of pulled notifications by conversation id" in new SetUp {
+
+
+      when(mockEnhancedApiNotificationQueueService.getAllNotificationsBy(meq(conversationId), meq(Pulled))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Notifications(List("/api-notification-pull-context/pulled/notification-pulled-1",
+          "/api-notification-pull-context/pulled/notification-pulled-2"))))
+
+      val result = await(controller.listPulledBy(conversationId).apply(validRequest))
+
+      status(result) shouldBe OK
+
+      private val expectedXml = scala.xml.Utility.trim(
+        <resource href="/notifications/conversationId/19aaef3d-1c8d-4837-a290-90a09434e205/pulled/">
+          <link rel="self" href="/notifications/conversationId/19aaef3d-1c8d-4837-a290-90a09434e205/pulled/"/>
+          <link rel="notification" href="/api-notification-pull-context/pulled/notification-pulled-1"/>
+          <link rel="notification" href="/api-notification-pull-context/pulled/notification-pulled-2"/>
+        </resource>
+      )
+
+      string2xml(bodyOf(result)) shouldBe expectedXml
+    }
+
+    "return a list of unpulled notifications by conversation id" in new SetUp {
+
+
+      when(mockEnhancedApiNotificationQueueService.getAllNotificationsBy(meq(conversationId), meq(Unpulled))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Notifications(List("/api-notification-pull-context/unpulled/notification-unpulled-1",
+          "/api-notification-pull-context/unpulled/notification-unpulled-2"))))
+
+      val result = await(controller.listUnpulledBy(conversationId).apply(validRequest))
+
+      status(result) shouldBe OK
+
+      private val expectedXml = scala.xml.Utility.trim(
+        <resource href="/notifications/conversationId/19aaef3d-1c8d-4837-a290-90a09434e205/unpulled/">
+          <link rel="self" href="/notifications/conversationId/19aaef3d-1c8d-4837-a290-90a09434e205/unpulled/"/>
+          <link rel="notification" href="/api-notification-pull-context/unpulled/notification-unpulled-1"/>
+          <link rel="notification" href="/api-notification-pull-context/unpulled/notification-unpulled-2"/>
         </resource>
       )
 

@@ -16,6 +16,9 @@
 
 package unit.connectors
 
+import java.util.UUID
+import java.util.UUID.fromString
+
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
@@ -48,6 +51,7 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
     val notifications = Notifications(List("notification-1", "notification-2"))
 
     val notificationId = "some-notification-id"
+    val conversationId = UUID.fromString("0ad764d1-ba29-4bfb-b7f7-25adbede0002")
     val headers = Map(X_CLIENT_ID_HEADER_NAME -> Seq(ClientId))
     val notification = Notification(notificationId, headers.map(h => h._1 -> h._2.head), "notification-payload")
     val stubLogger = new StubNotificationLogger(new CdsLogger(mock[ServicesConfig]))
@@ -77,6 +81,16 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
         (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(notifications))
 
       val result: Notifications = await(enhancedApiNotificationQueueConnector.getAllNotificationsBy(Pulled))
+
+      result shouldBe notifications
+    }
+
+    "return a list of notifications by conversation id" in new Setup {
+
+      when(mockHttpClient.GET[Notifications](meq(s"http://api-notification-queue.url/notifications/conversationId/0ad764d1-ba29-4bfb-b7f7-25adbede0002"))
+        (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(notifications))
+
+      val result: Notifications = await(enhancedApiNotificationQueueConnector.getAllNotificationsBy(fromString("0ad764d1-ba29-4bfb-b7f7-25adbede0002")))
 
       result shouldBe notifications
     }
@@ -154,6 +168,36 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
         (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(Notifications(List())))
 
       val result = await(enhancedApiNotificationQueueConnector.getAllNotificationsBy(Pulled))
+
+      result shouldBe Notifications(List())
+    }
+
+    "return an empty list of notifications by conversation id when the downstream returns an empty list" in new Setup {
+
+      when(mockHttpClient.GET[Notifications](meq(s"http://api-notification-queue.url/notifications/conversationId/$conversationId"))
+        (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(Notifications(List())))
+
+      val result = await(enhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId))
+
+      result shouldBe Notifications(List())
+    }
+
+    "return an empty list of unpulled notifications by conversation id when the downstream returns an empty list" in new Setup {
+
+      when(mockHttpClient.GET[Notifications](meq(s"http://api-notification-queue.url/notifications/conversationId/$conversationId/unpulled"))
+        (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(Notifications(List())))
+
+      val result = await(enhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId, Unpulled))
+
+      result shouldBe Notifications(List())
+    }
+
+    "return an empty list of previously pulled notifications by conversation id when the downstream returns an empty list" in new Setup {
+
+      when(mockHttpClient.GET[Notifications](meq(s"http://api-notification-queue.url/notifications/conversationId/$conversationId/pulled"))
+        (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(Notifications(List())))
+
+      val result = await(enhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId, Pulled))
 
       result shouldBe Notifications(List())
     }

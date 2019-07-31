@@ -54,7 +54,7 @@ class GetPulledNotificationSpec extends ComponentSpec with ExternalServices {
 
       Given("There is list of pulled notification in the API Notification Queue")
 
-      val body = """{ "notifications": ["notification1", "notification2"] }""".stripMargin
+      val body = """{ "notifications": ["/notifications/pulled/notification1", "/notifications/pulled/notification2"] }""".stripMargin
 
       stubForExistingNotificationsList("/notifications/pulled", body,
         Seq(ACCEPT_HEADER, X_CLIENT_ID_HEADER))
