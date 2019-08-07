@@ -8,11 +8,12 @@ If a callback URL was not provided when subscribing to the CDS API the notificat
 
 Pull notifications remain queued for 14 days after which they are deleted from the queue automatically.
 
-## Recommended usage pattern
+You can get all of the notifications for your application or you can get them for a given conversation. We recommend getting them by conversation.
 
-1. Retrieve a list of notification identifiers by using the unpulled conversation identifier endpoint `GET /notifications/conversationId/{conversationId}/unpulled`
+## Getting notifications for a given conversation (trade test only)
 
-2. To retrieve each notification iterate over the list of returned notification identifiers by calling `GET /notifications/unpulled/{notificationId}`
+1. Get a list of unpulled notification identifiers for a given conversation by calling `GET /notifications/conversationId/{conversationId}/unpulled`
 
-3. In an exception case, to retrieve a notification again call `GET /notifications/pulled/{notificationId}`
+2. Iterate over this list of notification identifiers and get each unpulled notification from the unpulled queue by calling `GET /notifications/unpulled/{notificationId}`. When you get a notification from the unpulled queue it will move to the pulled queue.
 
+3. To get a notification again after you have retrieved it, get it from the pulled queue by calling `GET /notifications/pulled/{notificationId}`
