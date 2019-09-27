@@ -37,7 +37,7 @@ class HeaderValidator @Inject()(logger: NotificationLogger, cc: ControllerCompon
         implicit val implicitRequest: Request[A] = request
         val maybeHeader = request.headers.get(headerName)
         if (rules(maybeHeader)) {
-          logger.info(s"$headerName passed validation: $maybeHeader")
+          logger.debug(s"$headerName passed validation: $maybeHeader")
           block(request)
         } else {
           logger.info(s"$headerName failed validation: $maybeHeader")
