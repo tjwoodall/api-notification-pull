@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sbt clean coverage test it:test coverageOff coverageReport
+sbt clean scalastyle coverage test component:test coverageReport
