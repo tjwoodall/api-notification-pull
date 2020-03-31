@@ -10,7 +10,7 @@ Pull notifications remain queued for 14 days after which they are deleted from t
 
 You can get all of the notifications for your application, or you can get them for a given conversation. We recommend getting them by conversation.
 
-## Getting notifications for a given conversation (trade test only)
+## Getting notifications for a given conversation
 
 1. Get a list of unpulled notification identifiers for a given conversation by calling `GET /notifications/conversationId/{conversationId}/unpulled`
 
