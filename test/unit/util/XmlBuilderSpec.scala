@@ -21,7 +21,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.apinotificationpull.model.Notifications
 import uk.gov.hmrc.apinotificationpull.util.XmlBuilder
-import uk.gov.hmrc.play.test.UnitSpec
+import util.UnitSpec
 
 class XmlBuilderSpec extends UnitSpec with MockitoSugar {
 

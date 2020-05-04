@@ -16,16 +16,15 @@
 
 package unit.presenters
 
-import akka.stream.Materializer
 import play.api.http.ContentTypes.XML
 import play.api.http.HeaderNames.CONTENT_TYPE
 import play.api.http.Status._
 import uk.gov.hmrc.apinotificationpull.model.Notification
 import uk.gov.hmrc.apinotificationpull.presenters.NotificationPresenter
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import unit.util.MaterializerSupport
+import util.UnitSpec
 
-class NotificationPresenterSpec extends UnitSpec with WithFakeApplication {
-  private implicit val materializer: Materializer = fakeApplication.materializer
+class NotificationPresenterSpec extends UnitSpec with MaterializerSupport {
 
    "present" when {
      "no notification" should {

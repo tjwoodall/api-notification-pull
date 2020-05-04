@@ -16,7 +16,6 @@
 
 package unit.controllers
 
-import akka.stream.Materializer
 import controllers.Assets
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
@@ -25,12 +24,11 @@ import play.api.libs.json.Json
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.apinotificationpull.controllers.ApiDocumentationController
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import unit.util.MaterializerSupport
+import util.UnitSpec
 import views.txt
 
-class DefinitionControllerSpec extends UnitSpec with WithFakeApplication with MockitoSugar {
-
-  private implicit val materializer: Materializer = fakeApplication.materializer
+class DefinitionControllerSpec extends UnitSpec with MaterializerSupport with MockitoSugar {
 
   private val apiScope = "scope"
   private val apiContext = "context"

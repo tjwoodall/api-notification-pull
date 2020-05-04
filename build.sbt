@@ -24,7 +24,7 @@ import uk.gov.hmrc.gitstamp.GitStampPlugin._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 
 name := "api-notification-pull"
-scalaVersion := "2.12.10"
+scalaVersion := "2.12.11"
 targetJvm := "jvm-1.8"
 
 lazy val allResolvers = resolvers ++= Seq(
@@ -106,7 +106,7 @@ scalastyleConfig := baseDirectory.value / "project" / "scalastyle-config.xml"
 
 val compileDependencies = Seq(customsApiCommon)
 
-val testDependencies = Seq(hmrcTest, scalaTestPlusPlay, wireMock, mockito, customsApiCommonTests)
+val testDependencies = Seq(scalaTestPlusPlay, wireMock, mockito, customsApiCommonTests)
 
 unmanagedResourceDirectories in Compile += baseDirectory.value / "public"
 

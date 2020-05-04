@@ -19,7 +19,6 @@ package unit.controllers
 import java.util.UUID
 import java.util.UUID.fromString
 
-import akka.stream.Materializer
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -38,15 +37,15 @@ import uk.gov.hmrc.apinotificationpull.util.EnhancedXmlBuilder
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import unit.fakes.SuccessfulHeaderValidatorFake
 import unit.util.RequestHeaders.{ACCEPT_HEADER, X_CLIENT_ID_HEADER}
-import unit.util.StubNotificationLogger
 import unit.util.XmlUtil.string2xml
+import unit.util.{MaterializerSupport, StubNotificationLogger}
+import util.UnitSpec
 
 import scala.concurrent.Future
 
-class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplication with MockitoSugar with BeforeAndAfterEach {
+class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupport with MockitoSugar with BeforeAndAfterEach {
 
   private implicit val ec = Helpers.stubControllerComponents().executionContext
   private val mockEnhancedApiNotificationQueueService = mock[EnhancedApiNotificationQueueService]
@@ -76,8 +75,6 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with WithFakeApplicat
   )
 
   trait SetUp {
-    implicit val materializer: Materializer = fakeApplication.materializer
-
     val clientId = "client_id"
     val conversationId: UUID = fromString("19aaef3d-1c8d-4837-a290-90a09434e205")
 

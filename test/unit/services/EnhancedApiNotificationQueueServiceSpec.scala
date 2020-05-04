@@ -16,7 +16,6 @@
 
 package unit.services
 
-import java.util.UUID
 import java.util.UUID.fromString
 
 import org.mockito.Mockito._
@@ -27,8 +26,8 @@ import uk.gov.hmrc.apinotificationpull.model.NotificationStatus._
 import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
 import uk.gov.hmrc.apinotificationpull.services.EnhancedApiNotificationQueueService
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
 import unit.util.RequestHeaders.X_CLIENT_ID_HEADER
+import util.UnitSpec
 
 import scala.concurrent.Future
 

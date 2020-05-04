@@ -24,7 +24,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
+import util.UnitSpec
 import unit.util.RequestHeaders.LoggingHeaders
 import util.MockitoPassByNameHelper.PassByNameVerifier
 

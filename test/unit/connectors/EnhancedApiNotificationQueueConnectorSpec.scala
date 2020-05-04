@@ -32,7 +32,7 @@ import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.http.{NotFoundException, _}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.test.UnitSpec
+import util.UnitSpec
 import unit.util.RequestHeaders.{ClientId, X_CLIENT_ID_HEADER, X_CLIENT_ID_HEADER_NAME}
 import unit.util.StubNotificationLogger
 

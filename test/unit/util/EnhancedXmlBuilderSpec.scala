@@ -22,7 +22,7 @@ import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.apinotificationpull.model.NotificationStatus.{Pulled, Unpulled}
 import uk.gov.hmrc.apinotificationpull.model.Notifications
 import uk.gov.hmrc.apinotificationpull.util.EnhancedXmlBuilder
-import uk.gov.hmrc.play.test.UnitSpec
+import util.UnitSpec
 
 class EnhancedXmlBuilderSpec extends UnitSpec with MockitoSugar {
 
