@@ -63,14 +63,10 @@ lazy val microservice = (project in file("."))
   )
   .settings(majorVersion := 0)
 
-def onPackageName(rootPackage: String): String => Boolean = {
-  testName => testName startsWith rootPackage
-}
-
 lazy val unitTestSettings =
   inConfig(Test)(Defaults.testTasks) ++
     Seq(
-      testOptions in Test := Seq(Tests.Filter(onPackageName("unit"))),
+      testOptions in Test := Seq(Tests.Filter(unitTestFilter)),
       unmanagedSourceDirectories in Test := Seq((baseDirectory in Test).value / "test"),
       addTestReportOption(Test, "test-reports")
     )

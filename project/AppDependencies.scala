@@ -2,10 +2,10 @@ import sbt._
 
 object AppDependencies {
 
-  private val customsApiCommonVersion = "1.50.0"
-  private val mockitoVersion = "3.3.3"
-  private val scalaTestPlusPlayVersion = "3.1.3"
-  private val wireMockVersion = "2.26.3"
+  private val customsApiCommonVersion = "1.53.0"
+  private val mockitoVersion = "3.5.9"
+  private val scalaTestPlusPlayVersion = "4.0.3"
+  private val wireMockVersion = "2.27.2"
   private val testScope = "test,component"
 
   val customsApiCommon = "uk.gov.hmrc" %% "customs-api-common" % customsApiCommonVersion withSources()
