@@ -31,13 +31,11 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json.{stringify, toJson}
 import uk.gov.hmrc.apinotificationpull.connectors.ApiNotificationQueueConnector
 import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, Upstream5xxResponse}
-import uk.gov.hmrc.play.bootstrap.http.{DefaultHttpClient, HttpClient}
-import util.UnitSpec
-import unit.util.RequestHeaders.X_CLIENT_ID_HEADER_NAME
-import unit.util.RequestHeaders.ClientId
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpClient, Upstream5xxResponse}
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
+import unit.util.RequestHeaders.{ClientId, X_CLIENT_ID_HEADER_NAME}
 import util.ExternalServicesConfig.{Host, Port}
-import util.WireMockRunner
+import util.{UnitSpec, WireMockRunner}
 
 class ApiNotificationQueueConnectorSpec extends UnitSpec with ScalaFutures with BeforeAndAfterEach with BeforeAndAfterAll
   with GuiceOneAppPerSuite with MockitoSugar with Eventually with WireMockRunner {

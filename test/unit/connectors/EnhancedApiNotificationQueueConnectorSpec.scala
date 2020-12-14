@@ -31,7 +31,7 @@ import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.http.{NotFoundException, _}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 import util.UnitSpec
 import unit.util.RequestHeaders.{ClientId, X_CLIENT_ID_HEADER, X_CLIENT_ID_HEADER_NAME}
 import unit.util.StubNotificationLogger
@@ -58,7 +58,7 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
     val enhancedApiNotificationQueueConnector = new EnhancedApiNotificationQueueConnector(mockServicesConfig, mockHttpClient, stubLogger)
 
     when(mockServicesConfig.baseUrl("api-notification-queue")).thenReturn("http://api-notification-queue.url")
-    when(mockHttpResponse.allHeaders).thenReturn(headers)
+    when(mockHttpResponse.headers).thenReturn(headers)
     when(mockHttpResponse.body).thenReturn("notification-payload")
 
   }

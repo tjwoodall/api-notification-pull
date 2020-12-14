@@ -61,7 +61,7 @@ class ApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar with Ev
         val notificationId: String = "notificationId"
         val notification: Notification = Notification(notificationId, Map(CONTENT_TYPE -> XML), "notification")
         when(mockApiNotificationQueueConnector.getById(meq(notificationId))(any[HeaderCarrier])).thenReturn(Some(notification))
-        when(mockApiNotificationQueueConnector.delete(meq(notification))(any[HeaderCarrier])).thenReturn(Future.successful(HttpResponse(OK)))
+        when(mockApiNotificationQueueConnector.delete(meq(notification))(any[HeaderCarrier])).thenReturn(Future.successful(HttpResponse(OK, "")))
 
         val result: Option[Notification] = await(apiNotificationQueueService.getAndRemoveNotification(notificationId)(HeaderCarrier()))
       }

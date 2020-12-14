@@ -22,7 +22,8 @@ import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
+
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,7 +44,7 @@ class ApiNotificationQueueConnector @Inject()(config: ServicesConfig, http: Http
     http.GET[HttpResponse](url)
       .map { r =>
         logger.debug(s"Notification received successfully with id: $notificationId")
-        Some(Notification(notificationId, r.allHeaders.map(h => h._1 -> h._2.head), r.body))
+        Some(Notification(notificationId, r.headers.map(h => h._1 -> h._2.head), r.body))
       }
       .recover[Option[Notification]] {
       case _: NotFoundException =>
@@ -55,7 +56,7 @@ class ApiNotificationQueueConnector @Inject()(config: ServicesConfig, http: Http
   def delete(notification: Notification)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val url = s"$serviceBaseUrl/notification/${notification.id}"
     logger.debug(s"Calling delete notifications using url: $url")
-    http.DELETE(url)
+    http.DELETE[HttpResponse](url)
   }
 
 }

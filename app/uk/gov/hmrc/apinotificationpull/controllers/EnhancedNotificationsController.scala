@@ -31,7 +31,7 @@ import uk.gov.hmrc.apinotificationpull.util.EnhancedXmlBuilder
 import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, ErrorNotFound, errorBadRequest}
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, NotFoundException}
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.ExecutionContext
 

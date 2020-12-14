@@ -24,7 +24,8 @@ import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 import uk.gov.hmrc.apinotificationpull.model.{Notification, NotificationStatus, Notifications}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException, _}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
+
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -59,7 +60,7 @@ class EnhancedApiNotificationQueueConnector @Inject()(config: ServicesConfig, ht
     logger.debug(s"Calling get notifications by using url: $url")
     http.GET[HttpResponse](url)
       .map { r =>
-        Right(Notification(notificationId, r.allHeaders.map(h => h._1 -> h._2.head), r.body))
+        Right(Notification(notificationId, r.headers.map(h => h._1 -> h._2.head), r.body))
       }
       .recover[Either[HttpException, Notification]] {
       case nfe: NotFoundException => Left(nfe)
