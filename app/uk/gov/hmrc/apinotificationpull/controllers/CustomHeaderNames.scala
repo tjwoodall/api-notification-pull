@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ object CustomHeaderNames {
   val X_CLIENT_ID_HEADER_NAME = "X-Client-ID"
 
   val ACCEPT_HEADER_VALUE = "application/vnd.hmrc.1.0+xml"
+  
+  val X_CONVERSATION_ID_HEADER_NAME = "x-conversation-id"
 
   implicit def getHeadersFromHeaderCarrier[A](implicit hc: HeaderCarrier): SeqOfHeader = {
     hc.headers

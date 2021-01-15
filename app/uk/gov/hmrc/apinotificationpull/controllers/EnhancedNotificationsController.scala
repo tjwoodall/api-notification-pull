@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,10 @@
 
 package uk.gov.hmrc.apinotificationpull.controllers
 
-import java.util.UUID
-
 import akka.util.ByteString
-import javax.inject.{Inject, Singleton}
 import play.api.http.HttpEntity
 import play.api.mvc._
-import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.{X_CLIENT_ID_HEADER_NAME, getHeadersFromRequest}
+import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.{X_CLIENT_ID_HEADER_NAME, X_CONVERSATION_ID_HEADER_NAME, getHeadersFromRequest}
 import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 import uk.gov.hmrc.apinotificationpull.model.NotificationStatus
 import uk.gov.hmrc.apinotificationpull.model.NotificationStatus._
@@ -33,6 +30,8 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalSe
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -105,8 +104,8 @@ class EnhancedNotificationsController @Inject()(enhancedApiNotificationQueueServ
       enhancedApiNotificationQueueService.getNotificationBy(notificationId, notificationStatus)
         .map {
           case Right(n) =>
-            val conversationId = n.headers.get("X-Conversation-ID")
-            logger.info(s"Notification found for conversationId id: $conversationId with notification id: $notificationId")
+            val conversationId = n.headers.getOrElse(X_CONVERSATION_ID_HEADER_NAME, "None")
+            logger.info(s"Notification found for conversationId: $conversationId with notification id: $notificationId")
             Result(
               header = ResponseHeader(OK),
               body = HttpEntity.Strict(ByteString(n.payload), n.headers.get(CONTENT_TYPE)))
