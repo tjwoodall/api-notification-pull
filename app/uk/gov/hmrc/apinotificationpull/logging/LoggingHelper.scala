@@ -16,16 +16,20 @@
 
 package uk.gov.hmrc.apinotificationpull.logging
 
+import play.api.http.HeaderNames.AUTHORIZATION
 import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.X_CLIENT_ID_HEADER_NAME
 import uk.gov.hmrc.apinotificationpull.model.SeqOfHeader
 
 object LoggingHelper {
 
+  private val headerOverwriteValue = "value-not-logged"
+  private val headersToOverwrite = Set(AUTHORIZATION.toLowerCase, "x-client-authorization-token")
+
   def formatWithHeaders(msg: String, headers: SeqOfHeader): String = {
-    s"${formatLogPrefixWithHeaders(headers)} $msg\nheaders=$headers"
+    s"${formatLogPrefixWithClientId(headers)} $msg\nheaders=${overwriteHeaderValues(headers, headersToOverwrite)}"
   }
 
-  private def formatLogPrefixWithHeaders(headers: SeqOfHeader): String = {
+  private def formatLogPrefixWithClientId(headers: SeqOfHeader): String = {
     val maybeClientId = findHeaderValue(X_CLIENT_ID_HEADER_NAME, headers)
 
     maybeClientId.fold("")(clientId => s"[clientId=$clientId]")
@@ -36,4 +40,12 @@ object LoggingHelper {
         case header if header._1.equalsIgnoreCase(headerName) => header._2
     }
   }
+
+  private def overwriteHeaderValues(headers: SeqOfHeader, overwrittenHeaderNames: Set[String]): SeqOfHeader = {
+    headers map {
+      case (rewriteHeader, _) if overwrittenHeaderNames.contains(rewriteHeader) => rewriteHeader -> headerOverwriteValue
+      case header => header
+    }
+  }
+  
 }

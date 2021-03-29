@@ -29,7 +29,7 @@ class LoggingHelperSpec extends UnitSpec {
     "format with headers" in {
       val actual = LoggingHelper.formatWithHeaders(debugMsg, RequestHeaders.LoggingHeaders)
 
-      actual shouldBe "[clientId=client-id] DEBUG\nheaders=List((X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml))"
+      actual shouldBe "[clientId=client-id] DEBUG\nheaders=List((X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml), (authorization,value-not-logged), (x-client-authorization-token,value-not-logged))"
     }
 
     "format without headers" in {

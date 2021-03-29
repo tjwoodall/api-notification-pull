@@ -17,6 +17,7 @@
 package unit.util
 
 import play.api.http.HeaderNames.ACCEPT
+import play.api.http.HeaderNames.AUTHORIZATION
 
 object RequestHeaders {
 
@@ -25,11 +26,17 @@ object RequestHeaders {
   val X_CLIENT_ID_HEADER_NAME = "X-Client-ID"
 
   val ClientId = "client-id"
+  
+  val X_CLIENT_AUTHORIZATION_TOKEN_HEADER_NAME = "x-client-authorization-token"
 
   lazy val ACCEPT_HEADER: (String, String) = ACCEPT -> ACCEPT_HEADER_VALUE
 
+  lazy val AUTHORIZATION_HEADER: (String, String) = AUTHORIZATION.toLowerCase -> "Bearer 123456"
+
+  lazy val X_CLIENT_AUTHORIZATION_TOKEN_HEADER: (String, String) = X_CLIENT_AUTHORIZATION_TOKEN_HEADER_NAME -> "ABCD1234"
+
   lazy val X_CLIENT_ID_HEADER: (String, String) = X_CLIENT_ID_HEADER_NAME -> ClientId
 
-  val LoggingHeaders: Seq[(String, String)] = Seq(X_CLIENT_ID_HEADER, ACCEPT_HEADER)
+  val LoggingHeaders: Seq[(String, String)] = Seq(X_CLIENT_ID_HEADER, ACCEPT_HEADER, AUTHORIZATION_HEADER, X_CLIENT_AUTHORIZATION_TOKEN_HEADER)
 
 }

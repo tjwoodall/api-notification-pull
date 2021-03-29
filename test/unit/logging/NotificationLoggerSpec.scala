@@ -45,7 +45,7 @@ class NotificationLoggerSpec extends UnitSpec with MockitoSugar {
       logger.debug("msg")
 
       PassByNameVerifier(mockCdsLogger, "debug")
-        .withByNameParam("[clientId=client-id] msg\nheaders=List((X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml))")
+        .withByNameParam("[clientId=client-id] msg\nheaders=List((X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml), (authorization,value-not-logged), (x-client-authorization-token,value-not-logged))")
         .verify()
     }
 
@@ -55,7 +55,7 @@ class NotificationLoggerSpec extends UnitSpec with MockitoSugar {
       logger.info("msg", new Exception(""))
 
       PassByNameVerifier(mockCdsLogger, "info")
-        .withByNameParam("[clientId=client-id] msg\nheaders=List((X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml))")
+        .withByNameParam("[clientId=client-id] msg\nheaders=List((X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml), (authorization,value-not-logged), (x-client-authorization-token,value-not-logged))")
         .withByNameParamMatcher(any[Throwable])
         .verify()
     }
@@ -66,7 +66,7 @@ class NotificationLoggerSpec extends UnitSpec with MockitoSugar {
       logger.info("msg")
 
       PassByNameVerifier(mockCdsLogger, "info")
-        .withByNameParam("[clientId=client-id] msg\nheaders=List((X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml))")
+        .withByNameParam("[clientId=client-id] msg\nheaders=List((X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml), (authorization,value-not-logged), (x-client-authorization-token,value-not-logged))")
         .verify()
     }
 
@@ -76,7 +76,7 @@ class NotificationLoggerSpec extends UnitSpec with MockitoSugar {
       logger.warn("msg")
 
       PassByNameVerifier(mockCdsLogger, "warn")
-        .withByNameParam("[clientId=client-id] msg\nheaders=List((X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml))")
+        .withByNameParam("[clientId=client-id] msg\nheaders=List((X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml), (authorization,value-not-logged), (x-client-authorization-token,value-not-logged))")
         .verify()
     }
 
@@ -86,7 +86,7 @@ class NotificationLoggerSpec extends UnitSpec with MockitoSugar {
       logger.error("msg")
 
       PassByNameVerifier(mockCdsLogger, "error")
-        .withByNameParam("[clientId=client-id] msg\nheaders=List((X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml))")
+        .withByNameParam("[clientId=client-id] msg\nheaders=List((X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml), (authorization,value-not-logged), (x-client-authorization-token,value-not-logged))")
         .verify()
     }
 
@@ -96,7 +96,7 @@ class NotificationLoggerSpec extends UnitSpec with MockitoSugar {
       logger.error("msg", new Exception(""))
 
       PassByNameVerifier(mockCdsLogger, "error")
-        .withByNameParam("[clientId=client-id] msg\nheaders=List((X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml))")
+        .withByNameParam("[clientId=client-id] msg\nheaders=List((X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml), (authorization,value-not-logged), (x-client-authorization-token,value-not-logged))")
         .withByNameParamMatcher(any[Throwable])
         .verify()
     }
@@ -108,7 +108,7 @@ class NotificationLoggerSpec extends UnitSpec with MockitoSugar {
       logger.error("msg", new Exception(""))
 
       PassByNameVerifier(mockCdsLogger, "error")
-        .withByNameParam("[clientId=client-id] msg\nheaders=List((Host,localhost), (X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml))")
+        .withByNameParam("[clientId=client-id] msg\nheaders=List((Host,localhost), (X-Client-ID,client-id), (Accept,application/vnd.hmrc.1.0+xml), (authorization,value-not-logged), (x-client-authorization-token,value-not-logged))")
         .withByNameParamMatcher(any[Throwable])
         .verify()
     }
