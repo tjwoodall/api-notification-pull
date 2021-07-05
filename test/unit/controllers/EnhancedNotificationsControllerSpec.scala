@@ -240,7 +240,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
     "return a not found error for an unknown notification" in new SetUp {
 
       when(mockEnhancedApiNotificationQueueService.getNotificationBy(any[String], any[NotificationStatus.Value])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Left(new NotFoundException("not found exception"))))
+        .thenReturn(Future.successful(Left(UpstreamErrorResponse("not found exception", 404))))
 
       val result = await(controller.unpulled("unknown-notification-id").apply(validRequest))
 
@@ -252,7 +252,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
     "return a bad request error for a notification with wrong notification status" in new SetUp {
 
       when(mockEnhancedApiNotificationQueueService.getNotificationBy(any[String], any[NotificationStatus.Value])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Left(new BadRequestException("bad request exception"))))
+        .thenReturn(Future.successful(Left( UpstreamErrorResponse("bad request exception",400))))
 
       val result = await(controller.unpulled("pulled-notification-id").apply(validRequest))
 
@@ -264,7 +264,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
     "return an internal server error when an unexpected error is returned by downstream service" in new SetUp {
 
       when(mockEnhancedApiNotificationQueueService.getNotificationBy(any[String], any[NotificationStatus.Value])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Left(new InternalServerException("internal server exception"))))
+        .thenReturn(Future.successful(Left(UpstreamErrorResponse("internal server exception",500))))
 
       val result = await(controller.unpulled("internal-server-notification-id").apply(validRequest))
 

@@ -27,7 +27,7 @@ import uk.gov.hmrc.apinotificationpull.services.EnhancedApiNotificationQueueServ
 import uk.gov.hmrc.apinotificationpull.util.EnhancedXmlBuilder
 import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, ErrorNotFound, errorBadRequest}
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, NotFoundException}
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.util.UUID
@@ -110,10 +110,10 @@ class EnhancedNotificationsController @Inject()(enhancedApiNotificationQueueServ
               header = ResponseHeader(OK),
               body = HttpEntity.Strict(ByteString(n.payload), n.headers.get(CONTENT_TYPE)))
               .withHeaders(n.headers.toSeq: _*)
-          case Left(nfe: NotFoundException) =>
-            logger.info(s"Notification not found for id: $notificationId", nfe)
-            ErrorNotFound.XmlResult
-          case Left(bre: BadRequestException) =>
+          case Left(nfe: UpstreamErrorResponse) if nfe.statusCode == 404 =>
+              logger.info(s"Notification not found for id: $notificationId", nfe)
+                ErrorNotFound.XmlResult
+          case Left(bre: UpstreamErrorResponse) if bre.statusCode == 400 =>
             logger.info(s"$badRequestText for id: $notificationId", bre)
             errorBadRequest(badRequestText).XmlResult
           case Left(e) =>

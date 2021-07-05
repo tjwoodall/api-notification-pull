@@ -35,7 +35,8 @@ class NotificationLoggerSpec extends UnitSpec with MockitoSugar {
     val logger = new NotificationLogger(mockCdsLogger)
 
     implicit val mockHeaderCarrier: HeaderCarrier = mock[HeaderCarrier]
-    when(mockHeaderCarrier.headers).thenReturn(LoggingHeaders)
+    when(mockHeaderCarrier.headers(any())).thenReturn(LoggingHeaders)
+    when(mockHeaderCarrier.extraHeaders).thenReturn(Seq.empty)
   }
 
   "NotificationsLogger" should {

@@ -24,13 +24,9 @@ import uk.gov.hmrc.gitstamp.GitStampPlugin._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 
 name := "api-notification-pull"
-scalaVersion := "2.12.11"
+scalaVersion := "2.12.13"
 targetJvm := "jvm-1.8"
 
-lazy val allResolvers = resolvers ++= Seq(
-  Resolver.bintrayRepo("hmrc", "releases"),
-  Resolver.jcenterRepo
-)
 
 lazy val CdsComponentTest = config("component") extend Test
 
@@ -43,13 +39,12 @@ def forkedJvmPerTestConfig(tests: Seq[TestDefinition], packages: String*): Seq[G
   } toSeq
 
 lazy val testAll = TaskKey[Unit]("test-all")
-lazy val allTest = Seq(testAll := (test in CdsComponentTest).dependsOn(test in Test).value)
+lazy val allTest = Seq(testAll := (CdsComponentTest / test).dependsOn(Test / test).value)
 
 lazy val microservice = (project in file("."))
   .enablePlugins(PlayScala)
   .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
   .enablePlugins(SbtDistributablesPlugin)
-  .enablePlugins(SbtArtifactory)
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
   .configs(testConfig: _*)
   .settings(
@@ -58,27 +53,28 @@ lazy val microservice = (project in file("."))
     componentTestSettings,
     playPublishingSettings,
     allTest,
-    scoverageSettings,
-    allResolvers
+    scoverageSettings
   )
   .settings(majorVersion := 0)
+  .settings(scalacOptions += "-P:silencer:pathFilters=routes")
+  .settings(scalacOptions += "-P:silencer:globalFilters=Unused import")
 
 lazy val unitTestSettings =
   inConfig(Test)(Defaults.testTasks) ++
     Seq(
-      testOptions in Test := Seq(Tests.Filter(unitTestFilter)),
-      unmanagedSourceDirectories in Test := Seq((baseDirectory in Test).value / "test"),
+      Test / testOptions := Seq(Tests.Filter(unitTestFilter)),
+      Test / unmanagedSourceDirectories := Seq((Test / baseDirectory).value / "test"),
       addTestReportOption(Test, "test-reports")
     )
 
 lazy val componentTestSettings =
   inConfig(CdsComponentTest)(Defaults.testTasks) ++
     Seq(
-      testOptions in CdsComponentTest := Seq(Tests.Filter(componentTestFilter)),
-      fork in CdsComponentTest := false,
-      parallelExecution in CdsComponentTest := false,
+      CdsComponentTest / testOptions := Seq(Tests.Filter(componentTestFilter)),
+      CdsComponentTest /fork := false,
+      CdsComponentTest / parallelExecution := false,
       addTestReportOption(CdsComponentTest, "comp-test-reports"),
-      testGrouping in CdsComponentTest := forkedJvmPerTestConfig((definedTests in Test).value, "component")
+      CdsComponentTest / testGrouping := forkedJvmPerTestConfig((Test / definedTests).value, "component")
     )
 
 lazy val commonSettings: Seq[Setting[_]] = publishingSettings ++ gitStampSettings
@@ -89,10 +85,10 @@ lazy val playPublishingSettings: Seq[sbt.Setting[_]] = Seq(credentials += SbtCre
 
 lazy val scoverageSettings: Seq[Setting[_]] = Seq(
   coverageExcludedPackages := "<empty>;.*(Reverse|Routes).*;com.kenshoo.play.metrics.*;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;views.*;uk.gov.hmrc.apinotificationpull.config.*",
-  coverageMinimum := 96,
+  coverageMinimumStmtTotal := 96,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
-  parallelExecution in Test := false
+  Test / parallelExecution := false
 )
 
 def componentTestFilter(name: String): Boolean = name startsWith "component"
@@ -100,10 +96,10 @@ def unitTestFilter(name: String): Boolean = name startsWith "unit"
 
 scalastyleConfig := baseDirectory.value / "project" / "scalastyle-config.xml"
 
-val compileDependencies = Seq(customsApiCommon)
+val compileDependencies = Seq(customsApiCommon, silencerLib, silencerPlugin)
 
 val testDependencies = Seq(scalaTestPlusPlay, wireMock, mockito, customsApiCommonTests)
 
-unmanagedResourceDirectories in Compile += baseDirectory.value / "public"
+Compile / unmanagedResourceDirectories += baseDirectory.value / "public"
 
 libraryDependencies ++= compileDependencies ++ testDependencies
