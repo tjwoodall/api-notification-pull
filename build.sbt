@@ -98,7 +98,7 @@ scalastyleConfig := baseDirectory.value / "project" / "scalastyle-config.xml"
 
 val compileDependencies = Seq(customsApiCommon, silencerLib, silencerPlugin)
 
-val testDependencies = Seq(scalaTestPlusPlay, wireMock, mockito, customsApiCommonTests)
+val testDependencies = Seq(scalaTestPlusPlay, wireMock, mockito, flexmark, customsApiCommonTests)
 
 Compile / unmanagedResourceDirectories += baseDirectory.value / "public"
 

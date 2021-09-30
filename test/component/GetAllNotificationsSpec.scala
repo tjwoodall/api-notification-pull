@@ -46,14 +46,14 @@ class GetAllNotificationsSpec extends ComponentSpec with ExternalServices {
   }
 
 
-  feature("GET all notifications from the API Notification Pull service") {
+  Feature("GET all notifications from the API Notification Pull service") {
     info("As a 3rd Party")
     info("I want to successfully retrieve all notification locations by client id")
 
     val validRequest = FakeRequest("GET", "/").
       withHeaders(ACCEPT_HEADER, X_CLIENT_ID_HEADER)
 
-    scenario("Successful GET and 3rd party receives the notifications locations") {
+    Scenario("Successful GET and 3rd party receives the notifications locations") {
       Given("There are notifications in the API Notification Queue")
       stubForAllNotifications()
 
@@ -77,7 +77,7 @@ class GetAllNotificationsSpec extends ComponentSpec with ExternalServices {
       verify(getRequestedFor(urlMatching("/notifications")))
     }
 
-    scenario("Missing Accept Header") {
+    Scenario("Missing Accept Header") {
       Given("You do not provide the Accept Header")
       val request = validRequest.withHeaders(validRequest.headers.remove(ACCEPT))
 
@@ -89,7 +89,7 @@ class GetAllNotificationsSpec extends ComponentSpec with ExternalServices {
       contentAsString(result) shouldBe ""
     }
 
-    scenario(s"Missing $X_CLIENT_ID_HEADER_NAME Header") {
+    Scenario(s"Missing $X_CLIENT_ID_HEADER_NAME Header") {
       Given(s"The platform does not inject a $X_CLIENT_ID_HEADER_NAME Header")
       val request = validRequest.withHeaders(validRequest.headers.remove(X_CLIENT_ID_HEADER_NAME))
 

@@ -17,6 +17,7 @@
 package unit.controllers
 
 import controllers.Assets
+import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
 import play.api.http.Status._
@@ -52,7 +53,7 @@ class DefinitionControllerSpec extends UnitSpec with MaterializerSupport with Mo
   }
 
   private def getDefinition(controller: ApiDocumentationController) = {
-    await(controller.definition().apply(FakeRequest("GET", "/api/definition")))
+    controller.definition().apply(FakeRequest("GET", "/api/definition")).futureValue
   }
 
 }

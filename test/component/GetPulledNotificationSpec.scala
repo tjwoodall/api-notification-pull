@@ -49,8 +49,8 @@ class GetPulledNotificationSpec extends ComponentSpec with ExternalServices {
   val validListRequest = FakeRequest("GET", s"/pulled").
     withHeaders(ACCEPT_HEADER, X_CLIENT_ID_HEADER)
 
-  feature("GET a list of pulled notifications") {
-    scenario("I want to successfully retrieve a list of pulled notifications") {
+  Feature("GET a list of pulled notifications") {
+    Scenario("I want to successfully retrieve a list of pulled notifications") {
 
       Given("There is list of pulled notification in the API Notification Queue")
 
@@ -76,7 +76,7 @@ class GetPulledNotificationSpec extends ComponentSpec with ExternalServices {
       string2xml(contentAsString(result)) shouldBe expectedXml
     }
 
-    scenario("I want to successfully retrieve an empty list of notifications") {
+    Scenario("I want to successfully retrieve an empty list of notifications") {
 
       Given("There are no notification in the API Notification Queue")
 
@@ -101,9 +101,9 @@ class GetPulledNotificationSpec extends ComponentSpec with ExternalServices {
     }
   }
 
-  feature("GET a pulled notification by id") {
+  Feature("GET a pulled notification by id") {
 
-    scenario("I want to successfully retrieve a notification by notification id") {
+    Scenario("I want to successfully retrieve a notification by notification id") {
       Given("There is a pulled notification in the API Notification Queue")
 
       val body = """<notification>some-notification</notification>""".stripMargin
@@ -121,7 +121,7 @@ class GetPulledNotificationSpec extends ComponentSpec with ExternalServices {
 
     }
 
-    scenario("I try to GET a pulled notification") {
+    Scenario("I try to GET a pulled notification") {
       Given("A notification that is unpulled or doesn't exist")
 
       When("I call the GET pulled notification endpoint")

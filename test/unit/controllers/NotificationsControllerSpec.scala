@@ -18,10 +18,10 @@ package unit.controllers
 
 import java.util.UUID
 import java.util.concurrent.TimeoutException
-
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.HeaderNames.CONTENT_TYPE
 import play.api.http.MimeTypes
@@ -96,7 +96,7 @@ class NotificationsControllerSpec extends UnitSpec with MaterializerSupport with
 
       when(notificationPresenter.present(Some(notification))).thenReturn(presentedNotification)
 
-      val result = await(controller.delete(notificationId).apply(validRequest))
+      val result = controller.delete(notificationId).apply(validRequest).futureValue
 
       result shouldBe presentedNotification
     }
@@ -105,7 +105,7 @@ class NotificationsControllerSpec extends UnitSpec with MaterializerSupport with
       when(mockApiNotificationQueueService.getAndRemoveNotification(anyString)(any(classOf[HeaderCarrier])))
         .thenReturn(Future.failed(new TimeoutException()))
 
-      val result = await(controller.delete(notificationId).apply(validRequest))
+      val result = (controller.delete(notificationId).apply(validRequest)).futureValue
 
       status(result) shouldBe INTERNAL_SERVER_ERROR
       string2xml(bodyOf(result)) shouldBe errorXml
@@ -129,7 +129,7 @@ class NotificationsControllerSpec extends UnitSpec with MaterializerSupport with
 
       when(mockXmlBuilder.toXml(notifications)).thenReturn(xmlNotifications)
 
-      val result = await(controller.getAll().apply(validRequest))
+      val result = controller.getAll().apply(validRequest).futureValue
 
       status(result) shouldBe OK
 
@@ -140,7 +140,7 @@ class NotificationsControllerSpec extends UnitSpec with MaterializerSupport with
       when(mockApiNotificationQueueService.getNotifications()(any(classOf[HeaderCarrier])))
         .thenReturn(Future.failed(new TimeoutException()))
 
-      val result = await(controller.getAll().apply(validRequest))
+      val result = controller.getAll().apply(validRequest).futureValue
 
       status(result) shouldBe INTERNAL_SERVER_ERROR
 

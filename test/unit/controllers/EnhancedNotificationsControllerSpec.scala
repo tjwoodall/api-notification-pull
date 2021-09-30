@@ -18,10 +18,10 @@ package unit.controllers
 
 import java.util.UUID
 import java.util.UUID.fromString
-
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.HeaderNames.CONTENT_TYPE
 import play.api.http.MimeTypes
@@ -106,7 +106,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
         .thenReturn(Future.successful(Notifications(List("/api-notification-pull-context/unpulled/notification-unpulled-1",
           "/api-notification-pull-context/unpulled/notification-unpulled-2"))))
 
-      val result = await(controller.unpulledList().apply(validRequest))
+      val result = (controller.unpulledList().apply(validRequest).futureValue)
 
       status(result) shouldBe OK
 
@@ -127,7 +127,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
         .thenReturn(Future.successful(Notifications(List("/api-notification-pull-context/pulled/notification-pulled-1",
           "/api-notification-pull-context/pulled/notification-pulled-2"))))
 
-      val result = await(controller.pulledList().apply(validRequest))
+      val result = controller.pulledList().apply(validRequest).futureValue
 
       status(result) shouldBe OK
 
@@ -148,7 +148,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
         .thenReturn(Future.successful(Notifications(List("/api-notification-pull-context/pulled/notification-pulled-1",
           "/api-notification-pull-context/pulled/notification-pulled-2"))))
 
-      val result = await(controller.listBy(conversationId).apply(validRequest))
+      val result = controller.listBy(conversationId).apply(validRequest).futureValue
 
       status(result) shouldBe OK
 
@@ -170,7 +170,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
         .thenReturn(Future.successful(Notifications(List("/api-notification-pull-context/pulled/notification-pulled-1",
           "/api-notification-pull-context/pulled/notification-pulled-2"))))
 
-      val result = await(controller.listPulledBy(conversationId).apply(validRequest))
+      val result = controller.listPulledBy(conversationId).apply(validRequest).futureValue
 
       status(result) shouldBe OK
 
@@ -192,7 +192,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
         .thenReturn(Future.successful(Notifications(List("/api-notification-pull-context/unpulled/notification-unpulled-1",
           "/api-notification-pull-context/unpulled/notification-unpulled-2"))))
 
-      val result = await(controller.listUnpulledBy(conversationId).apply(validRequest))
+      val result = controller.listUnpulledBy(conversationId).apply(validRequest).futureValue
 
       status(result) shouldBe OK
 
@@ -212,7 +212,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
       when(mockEnhancedApiNotificationQueueService.getAllNotificationsBy(any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.failed(new UnauthorizedException("unauthorised exception")))
 
-      val result = await(controller.unpulledList().apply(validRequest))
+      val result = controller.unpulledList().apply(validRequest).futureValue
 
       status(result) shouldBe INTERNAL_SERVER_ERROR
 
@@ -231,7 +231,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
       when(mockEnhancedApiNotificationQueueService.getNotificationBy(meq(notificationId), any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Right(notification)))
 
-      val result = await(controller.unpulled(notificationId).apply(validRequest))
+      val result = controller.unpulled(notificationId).apply(validRequest).futureValue
 
       bodyOf(result) shouldBe "notification"
       status(result) shouldBe OK
@@ -242,7 +242,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
       when(mockEnhancedApiNotificationQueueService.getNotificationBy(any[String], any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(UpstreamErrorResponse("not found exception", 404))))
 
-      val result = await(controller.unpulled("unknown-notification-id").apply(validRequest))
+      val result = controller.unpulled("unknown-notification-id").apply(validRequest).futureValue
 
       string2xml(bodyOf(result)) shouldBe errorNotFoundXml
       status(result) shouldBe NOT_FOUND
@@ -254,7 +254,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
       when(mockEnhancedApiNotificationQueueService.getNotificationBy(any[String], any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Left( UpstreamErrorResponse("bad request exception",400))))
 
-      val result = await(controller.unpulled("pulled-notification-id").apply(validRequest))
+      val result = controller.unpulled("pulled-notification-id").apply(validRequest).futureValue
 
       string2xml(bodyOf(result)) shouldBe errorBadRequestXml
       status(result) shouldBe BAD_REQUEST
@@ -266,7 +266,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
       when(mockEnhancedApiNotificationQueueService.getNotificationBy(any[String], any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(UpstreamErrorResponse("internal server exception",500))))
 
-      val result = await(controller.unpulled("internal-server-notification-id").apply(validRequest))
+      val result = controller.unpulled("internal-server-notification-id").apply(validRequest).futureValue
 
       string2xml(bodyOf(result)) shouldBe errorInternalServerXml
       status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -278,7 +278,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
       when(mockEnhancedApiNotificationQueueService.getNotificationBy(any[String], any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.failed(new Exception("exception")))
 
-      val result = await(controller.unpulled("internal-server-notification-id").apply(validRequest))
+      val result = controller.unpulled("internal-server-notification-id").apply(validRequest).futureValue
 
       string2xml(bodyOf(result)) shouldBe errorInternalServerXml
       status(result) shouldBe INTERNAL_SERVER_ERROR

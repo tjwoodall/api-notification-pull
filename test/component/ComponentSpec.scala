@@ -17,12 +17,14 @@
 package component
 
 import org.scalatest._
+import org.scalatest.featurespec.AnyFeatureSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import util.ExternalServicesConfig.{Host, Port}
 
-abstract class ComponentSpec extends FeatureSpec with GivenWhenThen with Matchers with GuiceOneAppPerTest
+abstract class ComponentSpec extends AnyFeatureSpec with GivenWhenThen with Matchers with GuiceOneAppPerTest
   with BeforeAndAfterEach with BeforeAndAfterAll {
 
   override def newAppForTest(testData: TestData): Application = new GuiceApplicationBuilder().configure(Map(

@@ -64,7 +64,7 @@ class NotificationPresenterSpec extends UnitSpec with MaterializerSupport {
        }
 
        "return headers" in new PresentSomeNotification {
-         await(result.header.headers) should contain allOf(header1, header2)
+         result.header.headers should contain allOf(header1, header2)
        }
      }
    }

@@ -17,10 +17,10 @@
 package component
 
 import java.util.UUID
-
 import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
 import org.scalatest.OptionValues._
 import org.scalatest.concurrent.Eventually
+import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import unit.util.RequestHeaders.X_CLIENT_ID_HEADER_NAME
@@ -44,7 +44,7 @@ class RetrieveAndDeleteNotificationSpec extends ComponentSpec with Eventually wi
     stopMockServer()
   }
 
-  feature("Retrieve(DELETE) a single notification from the API Notification Pull service") {
+  Feature("Retrieve(DELETE) a single notification from the API Notification Pull service") {
     info("As a 3rd Party")
     info("I want to successfully retrieve a notification waiting for me")
     info("So that I can progress my original declaration submission")
@@ -52,7 +52,7 @@ class RetrieveAndDeleteNotificationSpec extends ComponentSpec with Eventually wi
     val validRequest = FakeRequest("DELETE", s"/$notificationId").
       withHeaders(ACCEPT_HEADER, X_CLIENT_ID_HEADER)
 
-    scenario("Successful DELETE and 3rd party receives the notification") {
+    Scenario("Successful DELETE and 3rd party receives the notification") {
       Given("There is a notification waiting in the API Notification Queue and you have the correct notification Id")
       val header1 = "header1-name" -> "header1-val"
       val header2 = "header2-name" -> "header2-val"
@@ -65,13 +65,13 @@ class RetrieveAndDeleteNotificationSpec extends ComponentSpec with Eventually wi
       Then("You will receive the notification")
       status(result) shouldBe OK
       contentAsString(result).stripMargin shouldBe notificationBody
-      await(result).header.headers should contain allOf(header1, header2)
+      result.futureValue.header.headers should contain allOf(header1, header2)
 
       And("The notification will be DELETED")
       verify(eventually(deleteRequestedFor(urlMatching(s"/notification/$notificationId"))))
     }
 
-    scenario("3rd party provides notification Id but there are no notifications available or matching the Notification Id") {
+    Scenario("3rd party provides notification Id but there are no notifications available or matching the Notification Id") {
       Given("A notification has already been retrieved using the correct notification Id")
 
       stubFor(get(urlMatching(s"/notification/$notificationId"))
@@ -86,7 +86,7 @@ class RetrieveAndDeleteNotificationSpec extends ComponentSpec with Eventually wi
       contentAsString(result) shouldBe "NOT FOUND"
     }
 
-    scenario("Invalid Accept Header") {
+    Scenario("Invalid Accept Header") {
       Given("You do not provide the Accept Header")
       val request = validRequest.withHeaders(validRequest.headers.remove(ACCEPT))
 
@@ -98,7 +98,7 @@ class RetrieveAndDeleteNotificationSpec extends ComponentSpec with Eventually wi
       contentAsString(result) shouldBe ""
     }
 
-    scenario(s"Missing $X_CLIENT_ID_HEADER_NAME Header") {
+    Scenario(s"Missing $X_CLIENT_ID_HEADER_NAME Header") {
       Given(s"The platform does not inject a $X_CLIENT_ID_HEADER_NAME Header")
       val request = validRequest.withHeaders(validRequest.headers.remove(X_CLIENT_ID_HEADER_NAME))
 

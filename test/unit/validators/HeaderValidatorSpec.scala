@@ -16,6 +16,7 @@
 
 package unit.validators
 
+import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
@@ -53,7 +54,7 @@ class HeaderValidatorSpec extends UnitSpec with MockitoSugar {
     }
 
     s"return result from block if Accept header is $ACCEPT_HEADER_VALUE" in {
-      await(validateAccept.apply(FakeRequest().withHeaders(ACCEPT_HEADER))) shouldBe expectedResult
+      validateAccept.apply(FakeRequest().withHeaders(ACCEPT_HEADER)).futureValue shouldBe expectedResult
     }
   }
 
@@ -64,7 +65,7 @@ class HeaderValidatorSpec extends UnitSpec with MockitoSugar {
     }
 
     s"return result from block if $X_CLIENT_ID_HEADER_NAME header is present" in {
-      await(validateXClientId.apply(FakeRequest().withHeaders(X_CLIENT_ID_HEADER))) shouldBe expectedResult
+      validateXClientId.apply(FakeRequest().withHeaders(X_CLIENT_ID_HEADER)).futureValue shouldBe expectedResult
     }
   }
 }

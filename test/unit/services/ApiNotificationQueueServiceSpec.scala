@@ -19,6 +19,7 @@ package unit.services
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually
+import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.ContentTypes.XML
 import play.api.http.HeaderNames.CONTENT_TYPE
@@ -48,7 +49,7 @@ class ApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar with Ev
 
     "return the expected notifications from the `api-notification-queue` connector" in new Setup {
       when(mockApiNotificationQueueConnector.getNotifications()(hc)).thenReturn(Future.successful(notifications))
-      await(apiNotificationQueueService.getNotifications()(hc)) shouldBe notifications
+      (apiNotificationQueueService.getNotifications()(hc)).futureValue shouldBe notifications
       verify(mockApiNotificationQueueConnector).getNotifications()(hc)
     }
 
@@ -63,7 +64,7 @@ class ApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar with Ev
         when(mockApiNotificationQueueConnector.getById(meq(notificationId))(any[HeaderCarrier])).thenReturn(Some(notification))
         when(mockApiNotificationQueueConnector.delete(meq(notification))(any[HeaderCarrier])).thenReturn(Future.successful(HttpResponse(OK, "")))
 
-        val result: Option[Notification] = await(apiNotificationQueueService.getAndRemoveNotification(notificationId)(HeaderCarrier()))
+        val result: Option[Notification] = apiNotificationQueueService.getAndRemoveNotification(notificationId)(HeaderCarrier()).futureValue
       }
 
       "return the notification" in new GetAndRemoveExistingNotification {
@@ -71,7 +72,7 @@ class ApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar with Ev
       }
 
       "delete the notification" in new GetAndRemoveExistingNotification {
-        eventually(verify(mockApiNotificationQueueConnector).delete(meq(notification))(any[HeaderCarrier]))
+        verify(mockApiNotificationQueueConnector).delete(meq(notification))(any[HeaderCarrier])
       }
     }
 
@@ -85,7 +86,7 @@ class ApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar with Ev
 
       "return a failed future" in new GetAndFailRemovingExistingNotification {
         intercept[RuntimeException] {
-          await(apiNotificationQueueService.getAndRemoveNotification(notificationId)(HeaderCarrier()))
+          (apiNotificationQueueService.getAndRemoveNotification(notificationId)(HeaderCarrier())).futureValue
         }
       }
     }
@@ -95,8 +96,8 @@ class ApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar with Ev
         val notificationId: String = "notificationId"
         when(mockApiNotificationQueueConnector.getById(meq(notificationId))(any[HeaderCarrier])).thenReturn(None)
 
-        val result: Option[Notification] = await(
-          apiNotificationQueueService.getAndRemoveNotification(notificationId)(HeaderCarrier()))
+        val result: Option[Notification] =
+          apiNotificationQueueService.getAndRemoveNotification(notificationId)(HeaderCarrier()).futureValue
       }
 
       "return None" in new GetAndRemoveNoNotification {

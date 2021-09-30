@@ -17,9 +17,9 @@
 package unit.services
 
 import java.util.UUID.fromString
-
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually
+import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.apinotificationpull.connectors.EnhancedApiNotificationQueueConnector
 import uk.gov.hmrc.apinotificationpull.model.NotificationStatus._
@@ -52,7 +52,7 @@ class EnhancedApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar
 
       when(mockEnhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unpulled)(hc)).thenReturn(Future.successful(Right(notification)))
 
-      val result = await(enhancedApiNotificationQueueService.getNotificationBy(notificationId, Unpulled)(hc))
+      val result = (enhancedApiNotificationQueueService.getNotificationBy(notificationId, Unpulled)(hc)).futureValue
 
       result shouldBe Right(notification)
     }
@@ -64,7 +64,7 @@ class EnhancedApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar
 
       when(mockEnhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Pulled)(hc)).thenReturn(Future.successful(Right(notification)))
 
-      val result = await(enhancedApiNotificationQueueService.getNotificationBy(notificationId, Pulled)(hc))
+      val result = (enhancedApiNotificationQueueService.getNotificationBy(notificationId, Pulled)(hc)).futureValue
 
       result shouldBe Right(notification)
     }
@@ -73,7 +73,7 @@ class EnhancedApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar
 
       when(mockEnhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId)(hc)).thenReturn(Future.successful(Notifications(List())))
 
-      val result = await(enhancedApiNotificationQueueService.getAllNotificationsBy(conversationId)(hc))
+      val result = (enhancedApiNotificationQueueService.getAllNotificationsBy(conversationId)(hc)).futureValue
 
       result shouldBe Notifications(List())
     }
@@ -82,7 +82,7 @@ class EnhancedApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar
 
       when(mockEnhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId, Unpulled)(hc)).thenReturn(Future.successful(Notifications(List())))
 
-      val result = await(enhancedApiNotificationQueueService.getAllNotificationsBy(conversationId, Unpulled)(hc))
+      val result = (enhancedApiNotificationQueueService.getAllNotificationsBy(conversationId, Unpulled)(hc)).futureValue
 
       result shouldBe Notifications(List())
     }
@@ -91,7 +91,7 @@ class EnhancedApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar
 
       when(mockEnhancedApiNotificationQueueConnector.getAllNotificationsBy(Pulled)(hc)).thenReturn(Future.successful(Notifications(List())))
 
-      val result = await(enhancedApiNotificationQueueService.getAllNotificationsBy(Pulled)(hc))
+      val result = (enhancedApiNotificationQueueService.getAllNotificationsBy(Pulled)(hc)).futureValue
 
       result shouldBe Notifications(List())
     }

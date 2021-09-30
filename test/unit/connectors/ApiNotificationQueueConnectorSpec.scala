@@ -81,7 +81,7 @@ class ApiNotificationQueueConnectorSpec extends UnitSpec with ScalaFutures with 
             .withBody(stringify(toJson(notifications))))
       )
 
-      val result: Notifications = await(connector.getNotifications())
+      val result: Notifications = (connector.getNotifications()).futureValue
 
       result shouldBe notifications
     }
@@ -127,7 +127,7 @@ class ApiNotificationQueueConnectorSpec extends UnitSpec with ScalaFutures with 
             aResponse()
               .withStatus(NOT_FOUND)))
 
-        val result: Option[Notification] = await(connector.getById(notificationId))
+        val result: Option[Notification] = connector.getById(notificationId).futureValue
 
         result shouldBe None
       }
@@ -146,7 +146,7 @@ class ApiNotificationQueueConnectorSpec extends UnitSpec with ScalaFutures with 
               .withBody(notificationPayload)
               .withHeader(CONTENT_TYPE, XML)))
 
-        val result: Notification = await(connector.getById(notificationId)).get
+        val result: Notification = connector.getById(notificationId).futureValue.get
 
         result.id shouldBe notificationId
         result.payload shouldBe notification.payload
@@ -164,8 +164,7 @@ class ApiNotificationQueueConnectorSpec extends UnitSpec with ScalaFutures with 
       stubFor(delete(url).withHeader(USER_AGENT, equalTo("api-notification-pull"))
         .willReturn(aResponse().withStatus(OK)))
 
-      await(connector.delete(notification))
-
+      connector.delete(notification).futureValue
       eventually {
         wverify(deleteRequestedFor(url))
       }
