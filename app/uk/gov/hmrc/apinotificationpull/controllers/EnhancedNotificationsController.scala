@@ -19,6 +19,7 @@ package uk.gov.hmrc.apinotificationpull.controllers
 import akka.util.ByteString
 import play.api.http.HttpEntity
 import play.api.mvc._
+import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.{X_CLIENT_ID_HEADER_NAME, X_CONVERSATION_ID_HEADER_NAME, getHeadersFromRequest}
 import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 import uk.gov.hmrc.apinotificationpull.model.NotificationStatus
@@ -39,7 +40,8 @@ class EnhancedNotificationsController @Inject()(enhancedApiNotificationQueueServ
                                                 headerValidator: HeaderValidator,
                                                 enhancedXmlBuilder: EnhancedXmlBuilder,
                                                 cc: ControllerComponents,
-                                                logger: NotificationLogger)
+                                                logger: NotificationLogger,
+                                                appContext: AppContext)
                                                (implicit ec: ExecutionContext)
   extends BackendController(cc) {
 
@@ -94,13 +96,11 @@ class EnhancedNotificationsController @Inject()(enhancedApiNotificationQueueServ
 
     enhancedApiNotificationQueueService.getAllNotificationsBy(notificationStatus).map { notifications =>
 
-      val sizeLimit = 2
+      val sizeLimit = appContext.notificationsLimit.toInt
       val originalList = notifications.notifications
 
       val list = originalList.slice(0, sizeLimit)
       logger.info(s"Returning [${notificationStatus}] notifications list. There are [${originalList.size}] returning first [$sizeLimit]")
-      //TODO this would need to return a sized list
-      //TODO log the message count and what setting to return x values
       val newNotificatons = notifications.copy(list)
       Ok(enhancedXmlBuilder.toXml(newNotificatons, notificationStatus)).as(XML)
     } recover recovery

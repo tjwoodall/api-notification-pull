@@ -81,7 +81,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
     val validHeaders = Seq(ACCEPT_HEADER, X_CLIENT_ID_HEADER)
     val headerValidator = new SuccessfulHeaderValidatorFake(new StubNotificationLogger(new CdsLogger(mock[ServicesConfig])), Helpers.stubControllerComponents())
 
-    val controller = new EnhancedNotificationsController(mockEnhancedApiNotificationQueueService, headerValidator, xmlBuilder, Helpers.stubControllerComponents(), mockLogger)
+    val controller = new EnhancedNotificationsController(mockEnhancedApiNotificationQueueService, headerValidator, xmlBuilder, Helpers.stubControllerComponents(), mockLogger, mockAppContext)
 
     val notificationId: String = UUID.randomUUID().toString
     val validRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().
@@ -91,6 +91,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
     val notification = Notification(notificationId, headers, "notification")
 
     when(mockAppContext.apiContext).thenReturn("api-notification-pull-context")
+    when(mockAppContext.notificationsLimit).thenReturn("2")
   }
 
   override def beforeEach(): Unit = {
