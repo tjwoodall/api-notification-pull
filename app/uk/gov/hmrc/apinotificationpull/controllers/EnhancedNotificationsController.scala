@@ -93,7 +93,16 @@ class EnhancedNotificationsController @Inject()(enhancedApiNotificationQueueServ
     implicit val hc: HeaderCarrier = buildHeaderCarrier()
 
     enhancedApiNotificationQueueService.getAllNotificationsBy(notificationStatus).map { notifications =>
-      Ok(enhancedXmlBuilder.toXml(notifications, notificationStatus)).as(XML)
+
+      val sizeLimit = 2
+      val originalList = notifications.notifications
+
+      val list = originalList.slice(0, sizeLimit)
+      logger.info(s"Returning [${notificationStatus}] notifications list. There are [${originalList.size}] returning first [$sizeLimit]")
+      //TODO this would need to return a sized list
+      //TODO log the message count and what setting to return x values
+      val newNotificatons = notifications.copy(list)
+      Ok(enhancedXmlBuilder.toXml(newNotificatons, notificationStatus)).as(XML)
     } recover recovery
   }
 

@@ -103,11 +103,14 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
     "return a list of unpulled notifications" in new SetUp {
 
       when(mockEnhancedApiNotificationQueueService.getAllNotificationsBy(any[NotificationStatus.Value])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Notifications(List("/api-notification-pull-context/unpulled/notification-unpulled-1",
-          "/api-notification-pull-context/unpulled/notification-unpulled-2"))))
+        .thenReturn(Future.successful(Notifications(
+          List("/api-notification-pull-context/unpulled/notification-unpulled-1",
+                "/api-notification-pull-context/unpulled/notification-unpulled-2",
+                "/api-notification-pull-context/unpulled/notification-unpulled-3"))))
 
       val result = (controller.unpulledList().apply(validRequest).futureValue)
 
+      println(s"result [$result]")
       status(result) shouldBe OK
 
       private val expectedXml = scala.xml.Utility.trim(
@@ -117,7 +120,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
           <link rel="notification" href="/api-notification-pull-context/unpulled/notification-unpulled-2"/>
         </resource>
       )
-
+     println(s"bodyOf(result) ${bodyOf(result)}")
       string2xml(bodyOf(result)) shouldBe expectedXml
     }
 
