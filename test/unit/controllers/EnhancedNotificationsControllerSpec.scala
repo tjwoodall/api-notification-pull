@@ -128,7 +128,8 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
 
       when(mockEnhancedApiNotificationQueueService.getAllNotificationsBy(any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Notifications(List("/api-notification-pull-context/pulled/notification-pulled-1",
-          "/api-notification-pull-context/pulled/notification-pulled-2"))))
+          "/api-notification-pull-context/pulled/notification-pulled-2",
+          "/api-notification-pull-context/pulled/notification-pulled-3"))))
 
       val result = controller.pulledList().apply(validRequest).futureValue
 
