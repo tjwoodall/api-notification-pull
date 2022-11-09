@@ -81,7 +81,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
     val validHeaders = Seq(ACCEPT_HEADER, X_CLIENT_ID_HEADER)
     val headerValidator = new SuccessfulHeaderValidatorFake(new StubNotificationLogger(new CdsLogger(mock[ServicesConfig])), Helpers.stubControllerComponents())
 
-    val controller = new EnhancedNotificationsController(mockEnhancedApiNotificationQueueService, headerValidator, xmlBuilder, Helpers.stubControllerComponents(), mockLogger)
+    val controller = new EnhancedNotificationsController(mockEnhancedApiNotificationQueueService, headerValidator, xmlBuilder, Helpers.stubControllerComponents(), mockLogger, mockAppContext)
 
     val notificationId: String = UUID.randomUUID().toString
     val validRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().
@@ -91,6 +91,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
     val notification = Notification(notificationId, headers, "notification")
 
     when(mockAppContext.apiContext).thenReturn("api-notification-pull-context")
+    when(mockAppContext.notificationsLimit).thenReturn("2")
   }
 
   override def beforeEach(): Unit = {
@@ -103,11 +104,14 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
     "return a list of unpulled notifications" in new SetUp {
 
       when(mockEnhancedApiNotificationQueueService.getAllNotificationsBy(any[NotificationStatus.Value])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Notifications(List("/api-notification-pull-context/unpulled/notification-unpulled-1",
-          "/api-notification-pull-context/unpulled/notification-unpulled-2"))))
+        .thenReturn(Future.successful(Notifications(
+          List("/api-notification-pull-context/unpulled/notification-unpulled-1",
+                "/api-notification-pull-context/unpulled/notification-unpulled-2",
+                "/api-notification-pull-context/unpulled/notification-unpulled-3"))))
 
       val result = (controller.unpulledList().apply(validRequest).futureValue)
 
+      println(s"result [$result]")
       status(result) shouldBe OK
 
       private val expectedXml = scala.xml.Utility.trim(
@@ -117,7 +121,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
           <link rel="notification" href="/api-notification-pull-context/unpulled/notification-unpulled-2"/>
         </resource>
       )
-
+     println(s"bodyOf(result) ${bodyOf(result)}")
       string2xml(bodyOf(result)) shouldBe expectedXml
     }
 
@@ -125,7 +129,8 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
 
       when(mockEnhancedApiNotificationQueueService.getAllNotificationsBy(any[NotificationStatus.Value])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Notifications(List("/api-notification-pull-context/pulled/notification-pulled-1",
-          "/api-notification-pull-context/pulled/notification-pulled-2"))))
+          "/api-notification-pull-context/pulled/notification-pulled-2",
+          "/api-notification-pull-context/pulled/notification-pulled-3"))))
 
       val result = controller.pulledList().apply(validRequest).futureValue
 

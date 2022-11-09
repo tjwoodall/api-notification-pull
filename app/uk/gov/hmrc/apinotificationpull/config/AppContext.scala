@@ -24,7 +24,9 @@ import play.api.Configuration
 class AppContext @Inject()(configuration: Configuration) {
   private val apiScopeConfigKey = "api.definition.scope"
   private val apiContextConfigKey = "api.context"
+  private val notificationsLimitConfigKey = "notifications.limit"
   private def apiConfigException(apiConfigKey: String) = new IllegalStateException(s"$apiConfigKey is not configured")
   lazy val apiScopeKey: String = configuration.getOptional[String](apiScopeConfigKey).getOrElse(throw apiConfigException(apiScopeConfigKey))
   lazy val apiContext: String = configuration.getOptional[String](apiContextConfigKey).getOrElse(throw apiConfigException(apiContextConfigKey))
+  lazy val notificationsLimit: String = configuration.getOptional[String](notificationsLimitConfigKey).getOrElse(throw apiConfigException(notificationsLimitConfigKey))
 }
