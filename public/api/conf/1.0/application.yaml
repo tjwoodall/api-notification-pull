@@ -1,0 +1,688 @@
+openapi: 3.0.0
+info:
+  title: Pull Notifications
+  contact: {}
+  version: '1.0'
+servers:
+- url: https://api.service.hmrc.gov.uk/
+  variables: {}
+paths:
+  /notifications/conversationId/{conversationId}:
+    get:
+      tags:
+      - notifications
+      summary: Get all notifications for a conversation
+      description: Get a list of all notification identifiers for the given conversation identifier.
+      operationId: Getallnotificationsforaconversation
+      parameters:
+      - name: conversationId
+        in: path
+        description: Conversation identifier UUID
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: 1446a875-eaa1-4d7a-903e-0604166d9557
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/xml:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/resource'
+                - description: Valid XML Payload
+                  xml:
+                    name: resource
+                    attribute: false
+                    wrapped: false
+      deprecated: false
+  /notifications/conversationId/{conversationId}/unpulled:
+    get:
+      tags:
+      - notifications
+      summary: Get unpulled notifications for a conversation
+      description: Get a list of unpulled notification identifiers for the given conversation identifier
+      operationId: Getunpullednotificationsforaconversation
+      parameters:
+      - name: conversationId
+        in: path
+        description: Conversation identifier UUID
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: 1446a875-eaa1-4d7a-903e-0604166d9557
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/xml:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/resource'
+                - description: Valid XML Payload
+                  xml:
+                    name: resource
+                    attribute: false
+                    wrapped: false
+      deprecated: false
+  /notifications/conversationId/{conversationId}/pulled:
+    get:
+      tags:
+      - notifications
+      summary: Get pulled notifications for a conversation
+      description: Get a list of pulled notification identifiers for the given conversation identifier
+      operationId: Getpullednotificationsforaconversation
+      parameters:
+      - name: conversationId
+        in: path
+        description: Conversation identifier UUID
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: 1446a875-eaa1-4d7a-903e-0604166d9557
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/xml:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/resource'
+                - description: Valid XML Payload
+                  xml:
+                    name: resource
+                    attribute: false
+                    wrapped: false
+      deprecated: false
+  /notifications/unpulled:
+    get:
+      tags:
+      - notifications
+      summary: Get unpulled notifications
+      description: Get a list of unpulled notification identifiers for the subscribed application
+      operationId: Getunpullednotifications
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/xml:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/resource'
+                - description: Valid XML Payload
+                  xml:
+                    name: resource
+                    attribute: false
+                    wrapped: false
+      deprecated: false
+  /notifications/unpulled/{notificationId}:
+    get:
+      tags:
+      - notifications
+      summary: Get an unpulled notification
+      description: Get an unpulled notification with the given notification identifier
+      operationId: Getanunpullednotification
+      parameters:
+      - name: notificationId
+        in: path
+        description: Notification identifier UUID
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: 3851c039-107a-42c9-94a9-180893e5f0d5
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/xml:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/MetaData'
+                - description: Valid XML Payload
+                  xml:
+                    name: MetaData
+                    attribute: false
+                    wrapped: false
+        '400':
+          description: ''
+          headers: {}
+          content:
+            application/xml:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/errorResponse2'
+                - description: Invalid XML Payload
+                  xml:
+                    name: errorResponse
+                    attribute: false
+                    wrapped: false
+        '404':
+          description: ''
+          headers: {}
+          content:
+            application/xml:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/errorResponse2'
+                - description: Invalid XML Payload
+                  xml:
+                    name: errorResponse
+                    attribute: false
+                    wrapped: false
+      deprecated: false
+  /notifications/pulled:
+    get:
+      tags:
+      - notifications
+      summary: Get pulled notifications
+      description: Get a list of pulled notification identifiers for the subscribed application
+      operationId: Getpullednotifications
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/xml:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/resource'
+                - description: Valid XML Payload
+                  xml:
+                    name: resource
+                    attribute: false
+                    wrapped: false
+      deprecated: false
+  /notifications/pulled/{notificationId}:
+    get:
+      tags:
+      - notifications
+      summary: Get a pulled notification
+      description: Get a pulled notification with the given notification identifier
+      operationId: Getapullednotification
+      parameters:
+      - name: notificationId
+        in: path
+        description: Notification identifier UUID
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: 3851c039-107a-42c9-94a9-180893e5f0d5
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/xml:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/MetaData'
+                - description: Valid XML Payload
+                  xml:
+                    name: MetaData
+                    attribute: false
+                    wrapped: false
+        '400':
+          description: ''
+          headers: {}
+          content:
+            application/xml:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/errorResponse2'
+                - description: Invalid XML Payload
+                  xml:
+                    name: errorResponse
+                    attribute: false
+                    wrapped: false
+        '404':
+          description: ''
+          headers: {}
+          content:
+            application/xml:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/errorResponse2'
+                - description: Invalid XML Payload
+                  xml:
+                    name: errorResponse
+                    attribute: false
+                    wrapped: false
+      deprecated: false
+  /notifications/:
+    get:
+      tags:
+      - notifications
+      summary: Get all available notifications (deprecated)
+      description: >
+        *This endpoint has been deprecated. It will be removed in a future release.*
+
+
+
+
+        Get a list of all notification identifiers for the subscribed application.
+      operationId: Getallavailablenotifications(deprecated)
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/xml:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/resource'
+                - description: Valid XML Payload
+                  xml:
+                    name: resource
+                    attribute: false
+                    wrapped: false
+      deprecated: false
+  /notifications/{id}:
+    delete:
+      tags:
+      - notifications
+      summary: Retrieve and delete a notification from the queue (deprecated)
+      description: >
+        *This endpoint has been deprecated. It will be removed in a future release.*
+
+
+
+
+        Get a notification with the given notification identifier. The notification will be returned in the response body and then deleted from the queue.
+      operationId: Retrieveanddeleteanotificationfromthequeue(deprecated)
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/xml:
+              schema:
+                type: string
+                description: The saved message
+                xml:
+                  name: response200
+                  attribute: false
+                  wrapped: false
+        '404':
+          description: ''
+          headers: {}
+          content: {}
+      deprecated: false
+components:
+  schemas:
+    errorResponse:
+      title: errorResponse
+      required:
+      - code
+      type: object
+      properties:
+        code:
+          type: string
+    DateTimeString:
+      title: DateTimeString
+      required:
+      - formatCode
+      type: object
+      properties:
+        formatCode:
+          type: integer
+          format: int32
+          xml:
+            name: formatCode
+            attribute: true
+            wrapped: false
+      xml:
+        name: DateTimeString
+        namespace: urn:wco:datamodel:WCO:Response_DS:DMS:2
+        prefix: _2_2
+        attribute: false
+        wrapped: false
+    Declaration:
+      title: Declaration
+      required:
+      - FunctionalReferenceID
+      - ID
+      - RejectionDateTime
+      - VersionID
+      type: object
+      properties:
+        FunctionalReferenceID:
+          type: string
+          xml:
+            name: FunctionalReferenceID
+            namespace: urn:wco:datamodel:WCO:RES-DMS:2
+            prefix: _2_1
+            attribute: false
+            wrapped: false
+        ID:
+          type: string
+          xml:
+            name: ID
+            namespace: urn:wco:datamodel:WCO:RES-DMS:2
+            prefix: _2_1
+            attribute: false
+            wrapped: false
+        RejectionDateTime:
+          allOf:
+          - $ref: '#/components/schemas/RejectionDateTime'
+          - xml:
+              name: RejectionDateTime
+              namespace: urn:wco:datamodel:WCO:RES-DMS:2
+              prefix: _2_1
+              attribute: false
+              wrapped: false
+        VersionID:
+          type: integer
+          format: int32
+          xml:
+            name: VersionID
+            namespace: urn:wco:datamodel:WCO:RES-DMS:2
+            prefix: _2_1
+            attribute: false
+            wrapped: false
+      xml:
+        name: Declaration
+        namespace: urn:wco:datamodel:WCO:RES-DMS:2
+        prefix: _2_1
+        attribute: false
+        wrapped: false
+    Error:
+      title: Error
+      required:
+      - ValidationCode
+      - Pointer
+      type: object
+      properties:
+        ValidationCode:
+          type: string
+          xml:
+            name: ValidationCode
+            namespace: urn:wco:datamodel:WCO:RES-DMS:2
+            prefix: _2_1
+            attribute: false
+            wrapped: false
+        Pointer:
+          allOf:
+          - $ref: '#/components/schemas/Pointer'
+          - xml:
+              name: Pointer
+              namespace: urn:wco:datamodel:WCO:RES-DMS:2
+              prefix: _2_1
+              attribute: false
+              wrapped: false
+      xml:
+        name: Error
+        namespace: urn:wco:datamodel:WCO:RES-DMS:2
+        prefix: _2_1
+        attribute: false
+        wrapped: false
+    errorResponse2:
+      title: errorResponse2
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: string
+          xml:
+            name: code
+            namespace: ''
+            attribute: false
+            wrapped: false
+        message:
+          type: string
+          xml:
+            name: message
+            namespace: ''
+            attribute: false
+            wrapped: false
+      xml:
+        name: errorResponse
+        namespace: ''
+        attribute: false
+        wrapped: false
+    IssueDateTime:
+      title: IssueDateTime
+      required:
+      - DateTimeString
+      type: object
+      properties:
+        DateTimeString:
+          allOf:
+          - $ref: '#/components/schemas/DateTimeString'
+          - xml:
+              name: DateTimeString
+              namespace: urn:wco:datamodel:WCO:Response_DS:DMS:2
+              prefix: _2_2
+              attribute: false
+              wrapped: false
+      xml:
+        name: IssueDateTime
+        namespace: urn:wco:datamodel:WCO:RES-DMS:2
+        prefix: _2_1
+        attribute: false
+        wrapped: false
+    link:
+      title: link
+      required:
+      - rel
+      - href
+      type: object
+      properties:
+        rel:
+          type: string
+          xml:
+            name: rel
+            attribute: true
+            wrapped: false
+        href:
+          type: string
+          xml:
+            name: href
+            attribute: true
+            wrapped: false
+      xml:
+        name: link
+        namespace: ''
+        attribute: false
+        wrapped: false
+    MetaData:
+      title: MetaData
+      required:
+      - WCODataModelVersionCode
+      - WCOTypeName
+      - Response
+      type: object
+      properties:
+        WCODataModelVersionCode:
+          type: number
+          xml:
+            name: WCODataModelVersionCode
+            namespace: urn:wco:datamodel:WCO:DocumentMetaData-DMS:2
+            prefix: _2
+            attribute: false
+            wrapped: false
+        WCOTypeName:
+          type: string
+          xml:
+            name: WCOTypeName
+            namespace: urn:wco:datamodel:WCO:DocumentMetaData-DMS:2
+            prefix: _2
+            attribute: false
+            wrapped: false
+        Response:
+          allOf:
+          - $ref: '#/components/schemas/Response'
+          - xml:
+              name: Response
+              namespace: urn:wco:datamodel:WCO:RES-DMS:2
+              prefix: _2_1
+              attribute: false
+              wrapped: false
+      xml:
+        name: MetaData
+        namespace: urn:wco:datamodel:WCO:DocumentMetaData-DMS:2
+        prefix: _2
+        attribute: false
+        wrapped: false
+    Pointer:
+      title: Pointer
+      required:
+      - DocumentSectionCode
+      - TagID
+      type: object
+      properties:
+        DocumentSectionCode:
+          type: string
+          xml:
+            name: DocumentSectionCode
+            namespace: urn:wco:datamodel:WCO:RES-DMS:2
+            prefix: _2_1
+            attribute: false
+            wrapped: false
+        TagID:
+          type: string
+          xml:
+            name: TagID
+            namespace: urn:wco:datamodel:WCO:RES-DMS:2
+            prefix: _2_1
+            attribute: false
+            wrapped: false
+      xml:
+        name: Pointer
+        namespace: urn:wco:datamodel:WCO:RES-DMS:2
+        prefix: _2_1
+        attribute: false
+        wrapped: false
+    RejectionDateTime:
+      title: RejectionDateTime
+      required:
+      - DateTimeString
+      type: object
+      properties:
+        DateTimeString:
+          allOf:
+          - $ref: '#/components/schemas/DateTimeString'
+          - xml:
+              name: DateTimeString
+              namespace: urn:wco:datamodel:WCO:Response_DS:DMS:2
+              prefix: _2_2
+              attribute: false
+              wrapped: false
+      xml:
+        name: RejectionDateTime
+        namespace: urn:wco:datamodel:WCO:RES-DMS:2
+        prefix: _2_1
+        attribute: false
+        wrapped: false
+    resource:
+      title: resource
+      required:
+      - href
+      - link
+      type: object
+      properties:
+        href:
+          type: string
+          xml:
+            name: href
+            attribute: true
+            wrapped: false
+        link:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+          description: ''
+          xml:
+            namespace: ''
+            attribute: false
+            wrapped: false
+      xml:
+        name: resource
+        namespace: ''
+        attribute: false
+        wrapped: false
+    Response:
+      title: Response
+      required:
+      - FunctionCode
+      - FunctionalReferenceID
+      - IssueDateTime
+      - Error
+      - Declaration
+      type: object
+      properties:
+        FunctionCode:
+          type: string
+          xml:
+            name: FunctionCode
+            namespace: urn:wco:datamodel:WCO:RES-DMS:2
+            prefix: _2_1
+            attribute: false
+            wrapped: false
+        FunctionalReferenceID:
+          type: string
+          xml:
+            name: FunctionalReferenceID
+            namespace: urn:wco:datamodel:WCO:RES-DMS:2
+            prefix: _2_1
+            attribute: false
+            wrapped: false
+        IssueDateTime:
+          allOf:
+          - $ref: '#/components/schemas/IssueDateTime'
+          - xml:
+              name: IssueDateTime
+              namespace: urn:wco:datamodel:WCO:RES-DMS:2
+              prefix: _2_1
+              attribute: false
+              wrapped: false
+        Error:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+          description: ''
+          xml:
+            namespace: urn:wco:datamodel:WCO:RES-DMS:2
+            prefix: _2_1
+            attribute: false
+            wrapped: false
+        Declaration:
+          allOf:
+          - $ref: '#/components/schemas/Declaration'
+          - xml:
+              name: Declaration
+              namespace: urn:wco:datamodel:WCO:RES-DMS:2
+              prefix: _2_1
+              attribute: false
+              wrapped: false
+      xml:
+        name: Response
+        namespace: urn:wco:datamodel:WCO:RES-DMS:2
+        prefix: _2_1
+        attribute: false
+        wrapped: false
+tags:
+- name: notifications
+  description: ''
