@@ -42,7 +42,9 @@ info:
     * 400 to 499 if it failed because of a client error by your application
     * 500 to 599 if it failed because of an error on our server
     
-    Errors specific to each API are shown in the Endpoints section, under Response. See our [reference guide](https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/errors.md) for more on errors.
+    Errors specific to each API are shown in the Endpoints section, under Response.
+    
+    For error scenarios that are common across all APIs, and for error formats, see our [reference guide](https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/errors.md).
     
     # Testing
     You can use the sandbox environment to [test this API](https://developer.service.hmrc.gov.uk/api-documentation/docs/testing).
@@ -296,7 +298,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/metaDataExample1'
         '400':
-          description: ''
+          description: 'Invalid XML payload'
           headers: {}
           content:
             application/xml:
@@ -306,7 +308,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/errorResponseExample1'
         '404':
-          description: ''
+          description: 'Invalid XML payload'
           headers: {}
           content:
             application/xml:
@@ -407,7 +409,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/metaDataExample1'
         '400':
-          description: ''
+          description: 'Invalid XML payload'
           headers: { }
           content:
             application/xml:
@@ -417,7 +419,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/errorResponseExample1'
         '404':
-          description: ''
+          description: 'Invalid XML payload'
           headers: { }
           content:
             application/xml:
