@@ -1,0 +1,818 @@
+openapi: 3.0.0
+info:
+  title: Pull Notifications API
+  contact: {}
+  version: '1.0'
+  description: |
+    # Overview
+    Use this API to “pull” business event notifications that CDS generates in response to requests submitted using the CDS APIs.
+    
+    When a declaration is submitted to a CDS API a HTTP status code 202 is returned. As the declaration is processed notifications are generated.
+    
+    If a callback URL was provided when subscribing to the CDS API the notifications are pushed to that URL.
+  
+    If a callback URL was not provided when subscribing to the CDS API the notifications are sent to this pull queue.
+  
+    Pull notifications remain queued for 14 days after which they are deleted from the queue automatically.
+  
+    You can get all of the notifications for your application, or you can get them for a given conversation. We recommend getting them by conversation.
+    
+    # Getting notifications for a given conversation
+    1. Get a list of unpulled notification identifiers for a given conversation by calling
+    
+    `GET /notifications/conversationId/{conversationId}/unpulled`
+
+    2. Iterate over this list of notification identifiers and get each unpulled notification from the unpulled queue by calling
+    
+    `GET /notifications/unpulled/{notificationId}`
+    
+    , when you get a notification from the unpulled queue, it will move to the pulled queue.
+
+    3. To get a notification again after you have retrieved it, get it from the pulled queue by calling
+    
+    `GET /notifications/pulled/{notificationId}`
+
+    # Versioning
+    When an API changes in a way that is backwards-incompatible, we increase the version number of the API. See our [reference guide](https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/versioning.md) for more on versioning.
+    
+    # Errors
+    We use standard HTTP status codes to show whether an API request succeeded or not. They are usually in the range:
+
+    * 200 to 299 if it succeeded, including code 202 if it was accepted by an API that needs to wait for further action
+    * 400 to 499 if it failed because of a client error by your application
+    * 500 to 599 if it failed because of an error on our server
+    
+    Errors specific to each API are shown in the Endpoints section, under Response.
+    
+    For error scenarios that are common across all APIs, and for error formats, see our [reference guide](https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/errors.md).
+    
+    # Testing
+    You can use the sandbox environment to [test this API](https://developer.service.hmrc.gov.uk/api-documentation/docs/testing).
+    
+    See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/)
+servers:
+  - url: https://test-api.service.hmrc.gov.uk
+    description: Sandbox
+  - url: https://api.service.hmrc.gov.uk/
+    description: Production
+    variables: {}
+paths:
+  /notifications/conversationId/{conversationId}:
+    get:
+      tags:
+      - Notifications
+      summary: Get all notifications for a conversation
+      description: |-
+        Get a list of all notification identifiers for the given conversation identifier.
+        #### Authorisation
+        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
+        
+        See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      operationId: Getallnotificationsforaconversation
+      parameters:
+      - name: conversationId
+        in: path
+        description: Conversation identifier UUID
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: 1446a875-eaa1-4d7a-903e-0604166d9557
+      - name: Accept
+        in: header
+        description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+xml
+        type: string
+        required: true
+      - name: Authorisation
+        in: header
+        description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+        schema:
+          type: string
+          example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
+        type: string
+        required: true
+      responses:
+        '200':
+          description:
+          headers: { }
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/resource'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/resourceExample1'
+      security:
+        - applicationRestricted: [ ]
+  /notifications/conversationId/{conversationId}/unpulled:
+    get:
+      tags:
+        - Notifications
+      summary: Get unpulled notifications for a conversation
+      description: |-
+        Get a list of unpulled notification identifiers for the given conversation identifier
+        #### Authorisation
+        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+
+        See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      operationId: Getallnotificationsforaconversation
+      parameters:
+        - name: conversationId
+          in: path
+          description: Conversation identifier UUID
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 1446a875-eaa1-4d7a-903e-0604166d9557
+        - name: Accept
+          in: header
+          description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          schema:
+            type: string
+            example: application/vnd.hmrc.1.0+xml
+          type: string
+          required: true
+        - name: Authorisation
+          in: header
+          description: OAuth 2.0 Bearer Token with applicationRestricted scope.
+          schema:
+            type: string
+            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
+          type: string
+          required: true
+      responses:
+        '200':
+          description:
+          headers: { }
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/resource'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/resourceExample2'
+      security:
+        - applicationRestricted: []
+  /notifications/conversationId/{conversationId}/pulled:
+    get:
+      tags:
+        - Notifications
+      summary: Get pulled notifications for a conversation
+      description: |-
+        Get a list of pulled notification identifiers for the given conversation identifier
+        #### Authorisation
+        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
+
+        See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      operationId: Getallnotificationsforaconversation
+      parameters:
+        - name: conversationId
+          in: path
+          description: Conversation identifier UUID
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 1446a875-eaa1-4d7a-903e-0604166d9557
+        - name: Accept
+          in: header
+          description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          schema:
+            type: string
+            example: application/vnd.hmrc.1.0+xml
+          type: string
+          required: true
+        - name: Authorisation
+          in: header
+          description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+          schema:
+            type: string
+            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
+          type: string
+          required: true
+      responses:
+        '200':
+          description:
+          headers: { }
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/resource'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/resourceExample3'
+      security:
+        - applicationRestricted: [ ]
+  /notifications/unpulled:
+    get:
+      tags:
+        - Notifications
+      summary: Get a list of unpulled notification identifiers for the subscribed application
+      description: |-
+        Get a list of unpulled notification identifiers for the subscribed application
+        #### Authorisation
+        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
+
+        See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      operationId: Getallnotificationsforaconversation
+      parameters:
+        - name: Accept
+          in: header
+          description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          schema:
+            type: string
+            example: application/vnd.hmrc.1.0+xml
+          type: string
+          required: true
+        - name: Authorisation
+          in: header
+          description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+          schema:
+            type: string
+            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
+          type: string
+          required: true
+      responses:
+        '200':
+          description:
+          headers: { }
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/resource'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/resourceExample2'
+      security:
+        - applicationRestricted: [ ]
+  /notifications/unpulled/{notificationId}:
+    get:
+      tags:
+        - Notifications
+      summary: Get an unpulled notification
+      description: |-
+        Get an unpulled notification with the given notification identifier
+        #### Authorisation
+        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
+
+        See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      operationId: Getallnotificationsforaconversation
+      parameters:
+        - name: notificationId
+          in: path
+          description: Notification identifier UUID
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 3851c039-107a-42c9-94a9-180893e5f0d5
+        - name: Accept
+          in: header
+          description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          schema:
+            type: string
+            example: application/vnd.hmrc.1.0+xml
+          type: string
+          required: true
+        - name: Authorisation
+          in: header
+          description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+          schema:
+            type: string
+            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
+          type: string
+          required: true
+      responses:
+        '200':
+          description:
+          headers: { }
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/MetaData'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/metaDataExample1'
+        '400':
+          description: 'Invalid XML payload'
+          headers: {}
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/errorResponseExample1'
+        '404':
+          description: 'Invalid XML payload'
+          headers: {}
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/errorResponseExample2'
+      security:
+        - applicationRestricted: [ ]
+  /notifications/pulled:
+    get:
+      tags:
+        - Notifications
+      summary: Get pulled notifications
+      description: |-
+        Get a list of pulled notification identifiers for the subscribed application
+        #### Authorisation
+        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
+
+        See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      operationId: Getallnotificationsforaconversation
+      parameters:
+        - name: Accept
+          in: header
+          description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          schema:
+            type: string
+            example: application/vnd.hmrc.1.0+xml
+          type: string
+          required: true
+        - name: Authorisation
+          in: header
+          description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+          schema:
+            type: string
+            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
+          type: string
+          required: true
+      responses:
+        '200':
+          description:
+          headers: { }
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/resource'
+                objectExample:
+                  $ref: '#/components/examples/errorResponseExample3'
+      security:
+        - applicationRestricted: [ ]
+  /notifications/pulled/{notificationId}:
+    get:
+      tags:
+        - Notifications
+      summary: Get a pulled notification
+      description: |-
+        Get a pulled notification with the given notification identifier
+        #### Authorisation
+        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
+
+        See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      operationId: Getallnotificationsforaconversation
+      parameters:
+        - name: notificationId
+          in: path
+          description: Notification identifier UUID
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 3851c039-107a-42c9-94a9-180893e5f0d5
+        - name: Accept
+          in: header
+          description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          schema:
+            type: string
+            example: application/vnd.hmrc.1.0+xml
+          type: string
+          required: true
+        - name: Authorisation
+          in: header
+          description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+          schema:
+            type: string
+            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
+          type: string
+          required: true
+      responses:
+        '200':
+          description:
+          headers: { }
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/MetaData'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/metaDataExample1'
+        '400':
+          description: 'Invalid XML payload'
+          headers: { }
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/errorResponseExample1'
+        '404':
+          description: 'Invalid XML payload'
+          headers: { }
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/errorResponseExample2'
+      security:
+        - applicationRestricted: [ ]
+  /notifications/:
+    get:
+      tags:
+        - Notifications
+      summary: Get all notifications (deprecated)
+      description: |-
+        *This endpoint has been deprecated. It will be removed in a future release.*
+        Get a list of all notification identifiers for the subscribed application.
+        #### Authorisation
+        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
+
+        See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      operationId: Getallnotificationsforaconversation
+      parameters:
+        - name: Accept
+          in: header
+          description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          schema:
+            type: string
+            example: application/vnd.hmrc.1.0+xml
+          type: string
+          required: true
+        - name: Authorisation
+          in: header
+          description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+          schema:
+            type: string
+            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
+          type: string
+          required: true
+      responses:
+        '200':
+          description:
+          headers: { }
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/resource'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/resourceExample4'
+      security:
+        - applicationRestricted: [ ]
+  /notifications/{id}:
+    delete:
+      tags:
+      - Notifications
+      summary: Retrieve and delete a notification from the queue (deprecated)
+      description: >
+        *This endpoint has been deprecated. It will be removed in a future release.*
+        Get a notification with the given notification identifier. The notification will be returned in the response body and then deleted from the queue.
+      operationId: Retrieveanddeleteanotificationfromthequeue(deprecated)
+      parameters:
+        - name: Accept
+          in: header
+          description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          schema:
+            type: string
+            example: application/vnd.hmrc.1.0+xml
+          type: string
+          required: true
+        - name: Authorisation
+          in: header
+          description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+          schema:
+            type: string
+            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
+          type: string
+          required: true
+      responses:
+        '200':
+          description:
+          headers: { }
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/testResponse'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/testResponseExample'
+      security:
+        - applicationRestricted: [ ]
+components:
+  schemas:
+    resource:
+      type: object
+      properties:
+        href:
+          type: string
+          xml:
+            attribute: true
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+
+    link:
+      type: object
+      properties:
+        rel:
+          type: string
+          xml:
+            attribute: true
+        href:
+          type: string
+          xml:
+            attribute: true
+
+    MetaData:
+      type: object
+      xml:
+        prefix: '_2'
+        namespace: 'urn:wco:datamodel:WCO:DocumentMetaData-DMS:2'
+      properties:
+        WCODataModelVersionCode:
+          type: string
+          xml:
+            prefix: '_2'
+        WCOTypeName:
+          type: string
+          xml:
+            prefix: '_2'
+        ResponsibleCountryCode:
+          type: string
+          xml:
+            prefix: '_2'
+          properties:
+            value:
+              type: string
+              xml:
+                attribute: true
+        ResponsibleAgencyName:
+          type: string
+          xml:
+            prefix: '_2'
+          properties:
+            value:
+              type: string
+              xml:
+                attribute: true
+        AgencyAssignedCustomizationCode:
+          type: string
+          xml:
+            prefix: '_2'
+          properties:
+            value:
+              type: string
+              xml:
+                attribute: true
+        AgencyAssignedCustomizationVersionCode:
+          type: string
+          xml:
+            prefix: '_2'
+          properties:
+            value:
+              type: string
+              xml:
+                attribute: true
+        Response:
+          type: object
+          properties:
+            response:
+              $ref: '#/components/schemas/response'
+
+    Response:
+      type: object
+      xml:
+        prefix: '_2_1'
+        namespace: 'urn:wco:datamodel:WCO:RES-DMS:2'
+      properties:
+        FunctionCode:
+          type: string
+          xml:
+            prefix: '_2_1'
+        FunctionalReferenceID:
+          type: string
+          xml:
+            prefix: '_2_1'
+        IssueDateTime:
+          type: object
+          properties:
+            IssueDateTime:
+              $ref: '#/components/schemas/IssueDateTime'
+        Errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+        Declaration:
+          type: object
+          properties:
+            Declaration:
+              $ref: '#/components/schemas/Declaration'
+
+    Error:
+      type: object
+      xml:
+        prefix: '_2_1'
+      properties:
+        ValidationCode:
+          type: string
+          xml:
+            prefix: '_2_1'
+        Pointer:
+          type: object
+          properties:
+            Pointer:
+              $ref: '#/components/schemas/Pointer'
+
+    Pointer:
+      type: object
+      xml:
+        prefix: '_2_1'
+      properties:
+        DocumentSectionCode:
+          type: string
+          xml:
+            prefix: '_2_1'
+        TagID:
+          type: string
+          xml:
+            prefix: '_2_1'
+
+    Declaration:
+      type: object
+      xml:
+        prefix: '_2_1'
+      properties:
+        FunctionalReferenceID:
+          type: string
+          xml:
+            prefix: '_2_1'
+        ID:
+          type: string
+          xml:
+            prefix: '_2_1'
+        RejectionDateTime:
+          type: object
+          properties:
+            RejectionDateTime:
+              $ref: '#/components/schemas/RejectionDateTime'
+        VersionID:
+          type: string
+          xml:
+            prefix: '_2_1'
+
+    IssueDateTime:
+      type: object
+      xml:
+        prefix: '_2_1'
+      properties:
+        DateTimeString:
+          $ref: '#/components/schemas/DateTimeString'
+
+    RejectionDateTime:
+      type: object
+      xml:
+        prefix: '_2_1'
+      properties:
+        DateTimeString:
+          $ref: '#/components/schemas/DateTimeString'
+
+    DateTimeString:
+      type: string
+      xml:
+        prefix: '_2_2'
+        namespace: 'urn:wco:datamodel:WCO:Response_DS:DMS:2'
+      properties:
+        formatCode:
+          type: string
+          xml:
+            attribute: true
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+
+    TestResponse:
+      type: string
+      xml:
+        name: example
+
+  examples:
+    resourceExample1:
+      summary: A sample Resource
+      value: |
+        <resource href="/notifications/conversationId/4cdc771e-c77a-438f-b293-e11ac4cc4e2e/">
+          <link rel="self" href="/notifications/conversationId/4cdc771e-c77a-438f-b293-e11ac4cc4e2e"/>
+          <link rel="notification" href="/notifications/unpulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+          <link rel="notification" href="/notifications/pulled/1b941d3a-84cd-4127-a80f-36fa1f019359"/>
+        </resource>
+    resourceExample2:
+      summary: A sample Resource
+      value: |
+        <resource href="/notifications/unpulled/">
+          <link rel="self" href="/notifications/unpulled/"/>
+          <link rel="notification" href="/notifications/unpulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+        </resource>
+    resourceExample3:
+      summary : A sample Resource
+      value: |
+        <resource href="/notifications/pulled/">
+          <link rel="self" href="/notifications/pulled/"/>
+          <link rel="notification" href="/notifications/pulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+        </resource>'
+    resourceExample4:
+        summary: A sample Resource
+        value: |
+          <resource href="/notifications/">
+            <link rel="self" href="/notifications/"/>
+            <link rel="notification" href="/notifications/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+          </resource>
+    metaDataExample1:
+      summary: A sample MetaData
+      value: |
+          <_2:MetaData xmlns:_2="urn:wco:datamodel:WCO:DocumentMetaData-DMS:2">
+            <_2:WCODataModelVersionCode>3.6</_2:WCODataModelVersionCode>
+            <_2:WCOTypeName>RES</_2:WCOTypeName>
+            <_2:ResponsibleCountryCode/>
+            <_2:ResponsibleAgencyName/>
+            <_2:AgencyAssignedCustomizationCode/>
+            <_2:AgencyAssignedCustomizationVersionCode/>
+            <_2_1:Response xmlns:_2_1="urn:wco:datamodel:WCO:RES-DMS:2">
+              <_2_1:FunctionCode>03</_2_1:FunctionCode>
+              <_2_1:FunctionalReferenceID>0f3ec64eec704999995ddf5a3ca9cc0b</_2_1:FunctionalReferenceID>
+              <_2_1:IssueDateTime>
+                <_2_2:DateTimeString formatCode="304" xmlns:_2_2="urn:wco:datamodel:WCO:Response_DS:DMS:2">20190220165953Z</_2_2:DateTimeString>
+              </_2_1:IssueDateTime>
+              <_2_1:Error>
+                <_2_1:ValidationCode>CDS12014</_2_1:ValidationCode>
+                <_2_1:Pointer>
+                  <_2_1:DocumentSectionCode>42A</_2_1:DocumentSectionCode>
+                  <_2_1:TagID>D013</_2_1:TagID>
+                </_2_1:Pointer>
+              </_2_1:Error>
+              <_2_1:Error>
+                <_2_1:ValidationCode>CDS12015</_2_1:ValidationCode>
+                <_2_1:Pointer>
+                <_2_1:DocumentSectionCode>42A</_2_1:DocumentSectionCode>
+                <_2_1:TagID>D014</_2_1:TagID>
+                </_2_1:Pointer>
+              </_2_1:Error>
+              <_2_1:Declaration>
+                <_2_1:FunctionalReferenceID>gq8lPty99999NLgUQMSAmg</_2_1:FunctionalReferenceID>
+                <_2_1:ID>19GB20GF2F99999VR4</_2_1:ID>
+                <_2_1:RejectionDateTime>
+                  <_2_2:DateTimeString formatCode="304" xmlns:_2_2="urn:wco:datamodel:WCO:Response_DS:DMS:2">20190220165953Z</_2_2:DateTimeString>
+                </_2_1:RejectionDateTime>
+                <_2_1:VersionID>1</_2_1:VersionID>
+               </_2_1:Declaration>
+            </_2_1:Response>
+          </_2:MetaData>
+    errorResponseExample1:
+      summary: A sample error response
+      value: |
+        <errorResponse>
+          <code>BAD_REQUEST</code>
+          <message>Notification is unpulled</message>
+        </errorResponse>
+    errorResponseExample2:
+      summary: A sample error response
+      value: |
+        <errorResponse>
+          <code>NOT_FOUND</code>
+          <message>Resource was not found</message>
+        </errorResponse>
+    testResponseExample:
+       summary: A sample error response
+       value:
+         <example>Saved Message</example>
+  securitySchemes:
+    applicationRestricted:
+      type: oauth2
+      description: |
+        HMRC supports OAuth 2.0 for authenticating application restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.
+        See https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints for details.
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          scopes: {}
+tags:
+- name: Notifications
+  description: ''
