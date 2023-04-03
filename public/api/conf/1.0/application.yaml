@@ -49,7 +49,7 @@ info:
     # Testing
     You can use the sandbox environment to [test this API](https://developer.service.hmrc.gov.uk/api-documentation/docs/testing).
     
-    See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/)
+    See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
 servers:
   - url: https://test-api.service.hmrc.gov.uk
     description: Sandbox
@@ -70,33 +70,31 @@ paths:
         See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
       operationId: Getallnotificationsforaconversation
       parameters:
-      - name: conversationId
-        in: path
-        description: Conversation identifier UUID
-        required: true
-        style: simple
-        schema:
-          type: string
-          example: 1446a875-eaa1-4d7a-903e-0604166d9557
-      - name: Accept
-        in: header
-        description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
-        schema:
-          type: string
-          example: application/vnd.hmrc.1.0+xml
-        type: string
-        required: true
-      - name: Authorisation
-        in: header
-        description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
-        schema:
-          type: string
-          example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
-        type: string
-        required: true
+        - in: path
+          name: conversationId
+          description: Conversation identifier UUID
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 1446a875-eaa1-4d7a-903e-0604166d9557
+        - in: header
+          name: Accept
+          description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          required: true
+          schema:
+            type: string
+            example: application/vnd.hmrc.1.0+xml
+        - in: header
+          name: Authorisation
+          description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+          required: true
+          schema:
+            type: string
+            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
       responses:
         '200':
-          description:
+          description: ''
           headers: { }
           content:
             application/xml:
@@ -120,33 +118,31 @@ paths:
         See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
       operationId: Getallnotificationsforaconversation
       parameters:
-        - name: conversationId
-          in: path
+        - in: path
+          name: conversationId
           description: Conversation identifier UUID
           required: true
           style: simple
           schema:
             type: string
             example: 1446a875-eaa1-4d7a-903e-0604166d9557
-        - name: Accept
-          in: header
+        - in: header
+          name: Accept
           description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          required: true
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-          type: string
-          required: true
-        - name: Authorisation
-          in: header
+        - in: header
+          name: Authorisation
           description: OAuth 2.0 Bearer Token with applicationRestricted scope.
+          required: true
           schema:
             type: string
             example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
-          type: string
-          required: true
       responses:
         '200':
-          description:
+          description: ''
           headers: { }
           content:
             application/xml:
@@ -170,33 +166,31 @@ paths:
         See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
       operationId: Getallnotificationsforaconversation
       parameters:
-        - name: conversationId
-          in: path
+        - in: path
+          name: conversationId
           description: Conversation identifier UUID
           required: true
           style: simple
           schema:
             type: string
             example: 1446a875-eaa1-4d7a-903e-0604166d9557
-        - name: Accept
-          in: header
+        - in: header
+          name: Accept
           description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          required: true
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-          type: string
-          required: true
-        - name: Authorisation
-          in: header
+        - in: header
+          name: Authorisation
           description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+          required: true
           schema:
             type: string
             example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
-          type: string
-          required: true
       responses:
         '200':
-          description:
+          description: ''
           headers: { }
           content:
             application/xml:
@@ -220,25 +214,23 @@ paths:
         See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
       operationId: Getallnotificationsforaconversation
       parameters:
-        - name: Accept
-          in: header
+        - in: header
+          name: Accept
           description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          required: true
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-          type: string
-          required: true
-        - name: Authorisation
-          in: header
+        - in: header
+          name: Authorisation
           description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+          required: true
           schema:
             type: string
             example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
-          type: string
-          required: true
       responses:
         '200':
-          description:
+          description: ''
           headers: { }
           content:
             application/xml:
@@ -262,33 +254,31 @@ paths:
         See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
       operationId: Getallnotificationsforaconversation
       parameters:
-        - name: notificationId
-          in: path
+        - in: path
+          name: notificationId
           description: Notification identifier UUID
           required: true
           style: simple
           schema:
             type: string
             example: 3851c039-107a-42c9-94a9-180893e5f0d5
-        - name: Accept
-          in: header
+        - in: header
+          name: Accept
           description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          required: true
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-          type: string
-          required: true
-        - name: Authorisation
-          in: header
+        - in: header
+          name: Authorisation
           description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+          required: true
           schema:
             type: string
             example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
-          type: string
-          required: true
       responses:
         '200':
-          description:
+          description: ''
           headers: { }
           content:
             application/xml:
@@ -332,32 +322,31 @@ paths:
         See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
       operationId: Getallnotificationsforaconversation
       parameters:
-        - name: Accept
-          in: header
+        - in: header
+          name: Accept
           description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          required: true
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-          type: string
-          required: true
-        - name: Authorisation
-          in: header
+        - in: header
+          name: Authorisation
           description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+          required: true
           schema:
             type: string
             example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
-          type: string
-          required: true
       responses:
         '200':
-          description:
+          description: ''
           headers: { }
           content:
             application/xml:
               schema:
                 $ref: '#/components/schemas/resource'
+              examples:
                 objectExample:
-                  $ref: '#/components/examples/errorResponseExample3'
+                  $ref: '#/components/examples/resourceExample3'
       security:
         - applicationRestricted: [ ]
   /notifications/pulled/{notificationId}:
@@ -373,33 +362,31 @@ paths:
         See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
       operationId: Getallnotificationsforaconversation
       parameters:
-        - name: notificationId
-          in: path
+        - in: path
+          name: notificationId
           description: Notification identifier UUID
           required: true
           style: simple
           schema:
             type: string
             example: 3851c039-107a-42c9-94a9-180893e5f0d5
-        - name: Accept
-          in: header
+        - in: header
+          name: Accept
           description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          required: true
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-          type: string
-          required: true
-        - name: Authorisation
-          in: header
+        - in: header
+          name: Authorisation
           description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+          required: true
           schema:
             type: string
             example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
-          type: string
-          required: true
       responses:
         '200':
-          description:
+          description: ''
           headers: { }
           content:
             application/xml:
@@ -444,25 +431,23 @@ paths:
         See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
       operationId: Getallnotificationsforaconversation
       parameters:
-        - name: Accept
-          in: header
+        - in: header
+          name: Accept
           description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          required: true
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-          type: string
-          required: true
-        - name: Authorisation
-          in: header
+        - in: header
+          name: Authorisation
           description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+          required: true
           schema:
             type: string
             example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
-          type: string
-          required: true
       responses:
         '200':
-          description:
+          description: ''
           headers: { }
           content:
             application/xml:
@@ -483,30 +468,28 @@ paths:
         Get a notification with the given notification identifier. The notification will be returned in the response body and then deleted from the queue.
       operationId: Retrieveanddeleteanotificationfromthequeue(deprecated)
       parameters:
-        - name: Accept
-          in: header
+        - in: header
+          name: Accept
           description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
+          required: true
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-          type: string
-          required: true
-        - name: Authorisation
-          in: header
+        - in: header
+          name: Authorisation
           description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
+          required: true
           schema:
             type: string
             example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
-          type: string
-          required: true
       responses:
         '200':
-          description:
+          description: ''
           headers: { }
           content:
             application/xml:
               schema:
-                $ref: '#/components/schemas/testResponse'
+                $ref: '#/components/schemas/TestResponse'
               examples:
                 objectExample:
                   $ref: '#/components/examples/testResponseExample'
@@ -524,7 +507,7 @@ components:
         links:
           type: array
           items:
-            $ref: '#/components/schemas/Link'
+            $ref: '#/components/schemas/link'
 
     link:
       type: object
@@ -591,8 +574,8 @@ components:
         Response:
           type: object
           properties:
-            response:
-              $ref: '#/components/schemas/response'
+            Response:
+              $ref: '#/components/schemas/Response'
 
     Response:
       type: object
