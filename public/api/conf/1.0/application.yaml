@@ -85,13 +85,6 @@ paths:
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-        - in: header
-          name: Authorisation
-          description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
-          required: true
-          schema:
-            type: string
-            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
       responses:
         '200':
           description: ''
@@ -104,7 +97,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/resourceExample1'
       security:
-        - applicationRestricted: [ ]
+      - applicationRestricted: [ ]
   /notifications/conversationId/{conversationId}/unpulled:
     get:
       tags:
@@ -133,13 +126,6 @@ paths:
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-        - in: header
-          name: Authorisation
-          description: OAuth 2.0 Bearer Token with applicationRestricted scope.
-          required: true
-          schema:
-            type: string
-            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
       responses:
         '200':
           description: ''
@@ -152,7 +138,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/resourceExample2'
       security:
-        - applicationRestricted: []
+      - applicationRestricted: []
   /notifications/conversationId/{conversationId}/pulled:
     get:
       tags:
@@ -181,13 +167,6 @@ paths:
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-        - in: header
-          name: Authorisation
-          description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
-          required: true
-          schema:
-            type: string
-            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
       responses:
         '200':
           description: ''
@@ -200,7 +179,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/resourceExample3'
       security:
-        - applicationRestricted: [ ]
+      - applicationRestricted: [ ]
   /notifications/unpulled:
     get:
       tags:
@@ -221,13 +200,6 @@ paths:
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-        - in: header
-          name: Authorisation
-          description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
-          required: true
-          schema:
-            type: string
-            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
       responses:
         '200':
           description: ''
@@ -240,7 +212,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/resourceExample2'
       security:
-        - applicationRestricted: [ ]
+      - applicationRestricted: [ ]
   /notifications/unpulled/{notificationId}:
     get:
       tags:
@@ -269,13 +241,6 @@ paths:
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-        - in: header
-          name: Authorisation
-          description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
-          required: true
-          schema:
-            type: string
-            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
       responses:
         '200':
           description: ''
@@ -308,7 +273,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/errorResponseExample2'
       security:
-        - applicationRestricted: [ ]
+      - applicationRestricted: [ ]
   /notifications/pulled:
     get:
       tags:
@@ -329,13 +294,6 @@ paths:
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-        - in: header
-          name: Authorisation
-          description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
-          required: true
-          schema:
-            type: string
-            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
       responses:
         '200':
           description: ''
@@ -348,7 +306,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/resourceExample3'
       security:
-        - applicationRestricted: [ ]
+      - applicationRestricted: [ ]
   /notifications/pulled/{notificationId}:
     get:
       tags:
@@ -377,13 +335,6 @@ paths:
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-        - in: header
-          name: Authorisation
-          description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
-          required: true
-          schema:
-            type: string
-            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
       responses:
         '200':
           description: ''
@@ -416,7 +367,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/errorResponseExample2'
       security:
-        - applicationRestricted: [ ]
+      - applicationRestricted: [ ]
   /notifications/:
     get:
       tags:
@@ -438,13 +389,6 @@ paths:
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-        - in: header
-          name: Authorisation
-          description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
-          required: true
-          schema:
-            type: string
-            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
       responses:
         '200':
           description: ''
@@ -457,7 +401,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/resourceExample4'
       security:
-        - applicationRestricted: [ ]
+      - applicationRestricted: [ ]
   /notifications/{id}:
     delete:
       tags:
@@ -475,13 +419,6 @@ paths:
           schema:
             type: string
             example: application/vnd.hmrc.1.0+xml
-        - in: header
-          name: Authorisation
-          description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
-          required: true
-          schema:
-            type: string
-            example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
       responses:
         '200':
           description: ''
@@ -494,7 +431,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/testResponseExample'
       security:
-        - applicationRestricted: [ ]
+      - applicationRestricted: [ ]
 components:
   schemas:
     resource:
