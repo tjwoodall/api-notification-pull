@@ -402,7 +402,7 @@ paths:
                   $ref: '#/components/examples/resourceExample4'
       security:
       - applicationRestricted: [ ]
-  /notifications/{id}:
+  /notifications/{notificationId}:
     delete:
       tags:
       - Notifications
@@ -412,6 +412,14 @@ paths:
         Get a notification with the given notification identifier. The notification will be returned in the response body and then deleted from the queue.
       operationId: Retrieveanddeleteanotificationfromthequeue(deprecated)
       parameters:
+        - in: path
+          name: notificationId
+          description: Notification identifier UUID
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 3851c039-107a-42c9-94a9-180893e5f0d5
         - in: header
           name: Accept
           description: Specifies the version of the API that you want to call. See [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning).
