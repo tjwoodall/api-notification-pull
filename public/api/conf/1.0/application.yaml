@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
   title: Pull Notifications API
   contact: {}
@@ -109,7 +109,7 @@ paths:
         This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
 
         See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
-      operationId: Getallnotificationsforaconversation
+      operationId: Getunpullednotificationsforaconversation
       parameters:
         - in: path
           name: conversationId
@@ -150,7 +150,7 @@ paths:
         This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
 
         See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
-      operationId: Getallnotificationsforaconversation
+      operationId: Getpullednotificationsforaconversation
       parameters:
         - in: path
           name: conversationId
@@ -191,7 +191,7 @@ paths:
         This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
 
         See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
-      operationId: Getallnotificationsforaconversation
+      operationId: Getalistofunpullednotificationidentifieirsforthesubscribedapplication
       parameters:
         - in: header
           name: Accept
@@ -224,7 +224,7 @@ paths:
         This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
 
         See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
-      operationId: Getallnotificationsforaconversation
+      operationId: Getanunpullednotification
       parameters:
         - in: path
           name: notificationId
@@ -285,7 +285,7 @@ paths:
         This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
 
         See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
-      operationId: Getallnotificationsforaconversation
+      operationId: Getpullednotifications
       parameters:
         - in: header
           name: Accept
@@ -318,7 +318,7 @@ paths:
         This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
 
         See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
-      operationId: Getallnotificationsforaconversation
+      operationId: Getapullednotification
       parameters:
         - in: path
           name: notificationId
@@ -380,7 +380,7 @@ paths:
         This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
 
         See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
-      operationId: Getallnotificationsforaconversation
+      operationId: Getallnotifications(deprecated)
       parameters:
         - in: header
           name: Accept
