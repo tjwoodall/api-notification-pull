@@ -10,11 +10,11 @@ info:
     When a declaration is submitted to a CDS API a HTTP status code 202 is returned. As the declaration is processed notifications are generated.
     
     If a callback URL was provided when subscribing to the CDS API the notifications are pushed to that URL.
-  
+    
     If a callback URL was not provided when subscribing to the CDS API the notifications are sent to this pull queue.
-  
+    
     Pull notifications remain queued for 14 days after which they are deleted from the queue automatically.
-  
+    
     You can get all of the notifications for your application, or you can get them for a given conversation. We recommend getting them by conversation.
     
     # Getting notifications for a given conversation
@@ -60,7 +60,7 @@ paths:
   /notifications/conversationId/{conversationId}:
     get:
       tags:
-      - Notifications
+        - Notifications
       summary: Get all notifications for a conversation
       description: |-
         Get a list of all notification identifiers for the given conversation identifier.
@@ -97,7 +97,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/resourceExample1'
       security:
-      - applicationRestricted: [ ]
+        - applicationRestricted: [ ]
   /notifications/conversationId/{conversationId}/unpulled:
     get:
       tags:
@@ -138,7 +138,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/resourceExample2'
       security:
-      - applicationRestricted: []
+        - applicationRestricted: []
   /notifications/conversationId/{conversationId}/pulled:
     get:
       tags:
@@ -179,12 +179,12 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/resourceExample3'
       security:
-      - applicationRestricted: [ ]
+        - applicationRestricted: [ ]
   /notifications/unpulled:
     get:
       tags:
         - Notifications
-      summary: Get a list of unpulled notification identifiers for the subscribed application
+      summary: Get unpulled notifications
       description: |-
         Get a list of unpulled notification identifiers for the subscribed application
         #### Authorisation
@@ -212,7 +212,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/resourceExample2'
       security:
-      - applicationRestricted: [ ]
+        - applicationRestricted: [ ]
   /notifications/unpulled/{notificationId}:
     get:
       tags:
@@ -273,7 +273,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/errorResponseExample2'
       security:
-      - applicationRestricted: [ ]
+        - applicationRestricted: [ ]
   /notifications/pulled:
     get:
       tags:
@@ -306,7 +306,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/resourceExample3'
       security:
-      - applicationRestricted: [ ]
+        - applicationRestricted: [ ]
   /notifications/pulled/{notificationId}:
     get:
       tags:
@@ -367,12 +367,12 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/errorResponseExample2'
       security:
-      - applicationRestricted: [ ]
+        - applicationRestricted: [ ]
   /notifications/:
     get:
       tags:
         - Notifications
-      summary: Get all notifications (deprecated)
+      summary: Get all available notifications (deprecated)
       description: |-
         *This endpoint has been deprecated. It will be removed in a future release.*
         Get a list of all notification identifiers for the subscribed application.
@@ -401,11 +401,11 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/resourceExample4'
       security:
-      - applicationRestricted: [ ]
+        - applicationRestricted: [ ]
   /notifications/{id}:
     delete:
       tags:
-      - Notifications
+        - Notifications
       summary: Retrieve and delete a notification from the queue (deprecated)
       description: >
         *This endpoint has been deprecated. It will be removed in a future release.*
@@ -439,7 +439,7 @@ paths:
                 objectExample:
                   $ref: '#/components/examples/testResponseExample'
       security:
-      - applicationRestricted: [ ]
+        - applicationRestricted: [ ]
 components:
   schemas:
     resource:
@@ -667,52 +667,52 @@ components:
           <link rel="notification" href="/notifications/pulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
         </resource>'
     resourceExample4:
-        summary: A sample Resource
-        value: |
-          <resource href="/notifications/">
-            <link rel="self" href="/notifications/"/>
-            <link rel="notification" href="/notifications/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
-          </resource>
+      summary: A sample Resource
+      value: |
+        <resource href="/notifications/">
+          <link rel="self" href="/notifications/"/>
+          <link rel="notification" href="/notifications/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+        </resource>
     metaDataExample1:
       summary: A sample MetaData
       value: |
-          <_2:MetaData xmlns:_2="urn:wco:datamodel:WCO:DocumentMetaData-DMS:2">
-            <_2:WCODataModelVersionCode>3.6</_2:WCODataModelVersionCode>
-            <_2:WCOTypeName>RES</_2:WCOTypeName>
-            <_2:ResponsibleCountryCode/>
-            <_2:ResponsibleAgencyName/>
-            <_2:AgencyAssignedCustomizationCode/>
-            <_2:AgencyAssignedCustomizationVersionCode/>
-            <_2_1:Response xmlns:_2_1="urn:wco:datamodel:WCO:RES-DMS:2">
-              <_2_1:FunctionCode>03</_2_1:FunctionCode>
-              <_2_1:FunctionalReferenceID>0f3ec64eec704999995ddf5a3ca9cc0b</_2_1:FunctionalReferenceID>
-              <_2_1:IssueDateTime>
-                <_2_2:DateTimeString formatCode="304" xmlns:_2_2="urn:wco:datamodel:WCO:Response_DS:DMS:2">20190220165953Z</_2_2:DateTimeString>
-              </_2_1:IssueDateTime>
-              <_2_1:Error>
-                <_2_1:ValidationCode>CDS12014</_2_1:ValidationCode>
-                <_2_1:Pointer>
-                  <_2_1:DocumentSectionCode>42A</_2_1:DocumentSectionCode>
-                  <_2_1:TagID>D013</_2_1:TagID>
-                </_2_1:Pointer>
-              </_2_1:Error>
-              <_2_1:Error>
-                <_2_1:ValidationCode>CDS12015</_2_1:ValidationCode>
-                <_2_1:Pointer>
+        <_2:MetaData xmlns:_2="urn:wco:datamodel:WCO:DocumentMetaData-DMS:2">
+          <_2:WCODataModelVersionCode>3.6</_2:WCODataModelVersionCode>
+          <_2:WCOTypeName>RES</_2:WCOTypeName>
+          <_2:ResponsibleCountryCode/>
+          <_2:ResponsibleAgencyName/>
+          <_2:AgencyAssignedCustomizationCode/>
+          <_2:AgencyAssignedCustomizationVersionCode/>
+          <_2_1:Response xmlns:_2_1="urn:wco:datamodel:WCO:RES-DMS:2">
+            <_2_1:FunctionCode>03</_2_1:FunctionCode>
+            <_2_1:FunctionalReferenceID>0f3ec64eec704999995ddf5a3ca9cc0b</_2_1:FunctionalReferenceID>
+            <_2_1:IssueDateTime>
+              <_2_2:DateTimeString formatCode="304" xmlns:_2_2="urn:wco:datamodel:WCO:Response_DS:DMS:2">20190220165953Z</_2_2:DateTimeString>
+            </_2_1:IssueDateTime>
+            <_2_1:Error>
+              <_2_1:ValidationCode>CDS12014</_2_1:ValidationCode>
+              <_2_1:Pointer>
                 <_2_1:DocumentSectionCode>42A</_2_1:DocumentSectionCode>
-                <_2_1:TagID>D014</_2_1:TagID>
-                </_2_1:Pointer>
-              </_2_1:Error>
-              <_2_1:Declaration>
-                <_2_1:FunctionalReferenceID>gq8lPty99999NLgUQMSAmg</_2_1:FunctionalReferenceID>
-                <_2_1:ID>19GB20GF2F99999VR4</_2_1:ID>
-                <_2_1:RejectionDateTime>
-                  <_2_2:DateTimeString formatCode="304" xmlns:_2_2="urn:wco:datamodel:WCO:Response_DS:DMS:2">20190220165953Z</_2_2:DateTimeString>
-                </_2_1:RejectionDateTime>
-                <_2_1:VersionID>1</_2_1:VersionID>
-               </_2_1:Declaration>
-            </_2_1:Response>
-          </_2:MetaData>
+                <_2_1:TagID>D013</_2_1:TagID>
+              </_2_1:Pointer>
+            </_2_1:Error>
+            <_2_1:Error>
+              <_2_1:ValidationCode>CDS12015</_2_1:ValidationCode>
+              <_2_1:Pointer>
+              <_2_1:DocumentSectionCode>42A</_2_1:DocumentSectionCode>
+              <_2_1:TagID>D014</_2_1:TagID>
+              </_2_1:Pointer>
+            </_2_1:Error>
+            <_2_1:Declaration>
+              <_2_1:FunctionalReferenceID>gq8lPty99999NLgUQMSAmg</_2_1:FunctionalReferenceID>
+              <_2_1:ID>19GB20GF2F99999VR4</_2_1:ID>
+              <_2_1:RejectionDateTime>
+                <_2_2:DateTimeString formatCode="304" xmlns:_2_2="urn:wco:datamodel:WCO:Response_DS:DMS:2">20190220165953Z</_2_2:DateTimeString>
+              </_2_1:RejectionDateTime>
+              <_2_1:VersionID>1</_2_1:VersionID>
+             </_2_1:Declaration>
+          </_2_1:Response>
+        </_2:MetaData>
     errorResponseExample1:
       summary: A sample error response
       value: |
@@ -728,9 +728,9 @@ components:
           <message>Resource was not found</message>
         </errorResponse>
     testResponseExample:
-       summary: A sample error response
-       value:
-         <example>Saved Message</example>
+      summary: A sample error response
+      value:
+        <example>Saved Message</example>
   securitySchemes:
     applicationRestricted:
       type: oauth2
@@ -742,5 +742,5 @@ components:
           tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
           scopes: {}
 tags:
-- name: Notifications
-  description: ''
+  - name: Notifications
+    description: ''
