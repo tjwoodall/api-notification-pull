@@ -184,7 +184,7 @@ paths:
     get:
       tags:
         - Notifications
-      summary: Get a list of unpulled notification identifiers for the subscribed application
+      summary: Get unpulled notifications
       description: |-
         Get a list of unpulled notification identifiers for the subscribed application
         #### Authorisation
@@ -372,7 +372,7 @@ paths:
     get:
       tags:
         - Notifications
-      summary: Get all notifications (deprecated)
+      summary: Get all available notifications (deprecated)
       description: |-
         *This endpoint has been deprecated. It will be removed in a future release.*
         Get a list of all notification identifiers for the subscribed application.
@@ -415,7 +415,7 @@ paths:
         - in: path
           name: id
           description: Notification identifier UUID
-          required: true
+          requi'\'\\red: true
           style: simple
           schema:
             type: string
