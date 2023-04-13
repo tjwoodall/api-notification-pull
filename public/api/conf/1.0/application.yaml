@@ -44,7 +44,7 @@ info:
     
     Errors specific to each API are shown in the Endpoints section, under Response.
     
-    For error scenarios that are common across all APIs, and for error formats, see our [reference guide](https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/errors.md).
+    For error scenarios that are common across all APIs, and for error formats, see our [reference guide](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#errors).
     
     # Testing
     You can use the sandbox environment to [test this API](https://developer.service.hmrc.gov.uk/api-documentation/docs/testing).
@@ -62,12 +62,7 @@ paths:
       tags:
         - Notifications
       summary: Get all notifications for a conversation
-      description: |-
-        Get a list of all notification identifiers for the given conversation identifier.
-        #### Authorisation
-        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
-        
-        See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      description: Get a list of all notification identifiers for the given conversation identifier.
       operationId: Getallnotificationsforaconversation
       parameters:
         - in: path
@@ -103,12 +98,7 @@ paths:
       tags:
         - Notifications
       summary: Get unpulled notifications for a conversation
-      description: |-
-        Get a list of unpulled notification identifiers for the given conversation identifier
-        #### Authorisation
-        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints).
-
-        See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      description: Get a list of unpulled notification identifiers for the given conversation identifier
       operationId: Getunpullednotificationsforaconversation
       parameters:
         - in: path
@@ -144,12 +134,7 @@ paths:
       tags:
         - Notifications
       summary: Get pulled notifications for a conversation
-      description: |-
-        Get a list of pulled notification identifiers for the given conversation identifier
-        #### Authorisation
-        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
-
-        See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      description: Get a list of pulled notification identifiers for the given conversation identifier
       operationId: Getpullednotificationsforaconversation
       parameters:
         - in: path
@@ -185,12 +170,7 @@ paths:
       tags:
         - Notifications
       summary: Get unpulled notifications
-      description: |-
-        Get a list of unpulled notification identifiers for the subscribed application
-        #### Authorisation
-        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
-
-        See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      description: Get a list of unpulled notification identifiers for the subscribed application
       operationId: Getalistofunpullednotificationidentifieirsforthesubscribedapplication
       parameters:
         - in: header
@@ -218,12 +198,7 @@ paths:
       tags:
         - Notifications
       summary: Get an unpulled notification
-      description: |-
-        Get an unpulled notification with the given notification identifier
-        #### Authorisation
-        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
-
-        See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      description: Get an unpulled notification with the given notification identifier
       operationId: Getanunpullednotification
       parameters:
         - in: path
@@ -279,12 +254,7 @@ paths:
       tags:
         - Notifications
       summary: Get pulled notifications
-      description: |-
-        Get a list of pulled notification identifiers for the subscribed application
-        #### Authorisation
-        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
-
-        See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      description: Get a list of pulled notification identifiers for the subscribed application
       operationId: Getpullednotifications
       parameters:
         - in: header
@@ -312,12 +282,7 @@ paths:
       tags:
         - Notifications
       summary: Get a pulled notification
-      description: |-
-        Get a pulled notification with the given notification identifier
-        #### Authorisation
-        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
-
-        See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      description: Get a pulled notification with the given notification identifier
       operationId: Getapullednotification
       parameters:
         - in: path
@@ -373,13 +338,10 @@ paths:
       tags:
         - Notifications
       summary: Get all available notifications (deprecated)
-      description: |-
+      description: |
         *This endpoint has been deprecated. It will be removed in a future release.*
+        
         Get a list of all notification identifiers for the subscribed application.
-        #### Authorisation
-        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
-
-        See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
       operationId: Getallnotifications(deprecated)
       parameters:
         - in: header
@@ -407,8 +369,9 @@ paths:
       tags:
         - Notifications
       summary: Retrieve and delete a notification from the queue (deprecated)
-      description: >
+      description: |
         *This endpoint has been deprecated. It will be removed in a future release.*
+        
         Get a notification with the given notification identifier. The notification will be returned in the response body and then deleted from the queue.
       operationId: Retrieveanddeleteanotificationfromthequeue(deprecated)
       parameters:
