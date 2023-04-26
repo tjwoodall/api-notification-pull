@@ -3,53 +3,6 @@ info:
   title: Pull Notifications API
   contact: {}
   version: '1.0'
-  description: |
-    # Overview
-    Use this API to “pull” business event notifications that CDS generates in response to requests submitted using the CDS APIs.
-    
-    When a declaration is submitted to a CDS API a HTTP status code 202 is returned. As the declaration is processed notifications are generated.
-    
-    If a callback URL was provided when subscribing to the CDS API the notifications are pushed to that URL.
-    
-    If a callback URL was not provided when subscribing to the CDS API the notifications are sent to this pull queue.
-    
-    Pull notifications remain queued for 14 days after which they are deleted from the queue automatically.
-    
-    You can get all of the notifications for your application, or you can get them for a given conversation. We recommend getting them by conversation.
-    
-    # Getting notifications for a given conversation
-    1. Get a list of unpulled notification identifiers for a given conversation by calling
-    
-    `GET /notifications/conversationId/{conversationId}/unpulled`
-
-    2. Iterate over this list of notification identifiers and get each unpulled notification from the unpulled queue by calling
-    
-    `GET /notifications/unpulled/{notificationId}`
-    
-    , when you get a notification from the unpulled queue, it will move to the pulled queue.
-
-    3. To get a notification again after you have retrieved it, get it from the pulled queue by calling
-    
-    `GET /notifications/pulled/{notificationId}`
-
-    # Versioning
-    When an API changes in a way that is backwards-incompatible, we increase the version number of the API. See our [reference guide](https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/versioning.md) for more on versioning.
-    
-    # Errors
-    We use standard HTTP status codes to show whether an API request succeeded or not. They are usually in the range:
-
-    * 200 to 299 if it succeeded, including code 202 if it was accepted by an API that needs to wait for further action
-    * 400 to 499 if it failed because of a client error by your application
-    * 500 to 599 if it failed because of an error on our server
-    
-    Errors specific to each API are shown in the Endpoints section, under Response.
-    
-    For error scenarios that are common across all APIs, and for error formats, see our [reference guide](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#errors).
-    
-    # Testing
-    You can use the sandbox environment to [test this API](https://developer.service.hmrc.gov.uk/api-documentation/docs/testing).
-    
-    See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
 servers:
   - url: https://test-api.service.hmrc.gov.uk
     description: Sandbox
@@ -60,7 +13,7 @@ paths:
   /notifications/conversationId/{conversationId}:
     get:
       tags:
-        - Notifications
+        - Endpoints
       summary: Get all notifications for a conversation
       description: Get a list of all notification identifiers for the given conversation identifier.
       operationId: Getallnotificationsforaconversation
@@ -96,7 +49,7 @@ paths:
   /notifications/conversationId/{conversationId}/unpulled:
     get:
       tags:
-        - Notifications
+        - Endpoints
       summary: Get unpulled notifications for a conversation
       description: Get a list of unpulled notification identifiers for the given conversation identifier
       operationId: Getunpullednotificationsforaconversation
@@ -132,7 +85,7 @@ paths:
   /notifications/conversationId/{conversationId}/pulled:
     get:
       tags:
-        - Notifications
+        - Endpoints
       summary: Get pulled notifications for a conversation
       description: Get a list of pulled notification identifiers for the given conversation identifier
       operationId: Getpullednotificationsforaconversation
@@ -168,7 +121,7 @@ paths:
   /notifications/unpulled:
     get:
       tags:
-        - Notifications
+        - Endpoints
       summary: Get unpulled notifications
       description: Get a list of unpulled notification identifiers for the subscribed application
       operationId: Getalistofunpullednotificationidentifieirsforthesubscribedapplication
@@ -196,7 +149,7 @@ paths:
   /notifications/unpulled/{notificationId}:
     get:
       tags:
-        - Notifications
+        - Endpoints
       summary: Get an unpulled notification
       description: Get an unpulled notification with the given notification identifier
       operationId: Getanunpullednotification
@@ -252,7 +205,7 @@ paths:
   /notifications/pulled:
     get:
       tags:
-        - Notifications
+        - Endpoints
       summary: Get pulled notifications
       description: Get a list of pulled notification identifiers for the subscribed application
       operationId: Getpullednotifications
@@ -280,7 +233,7 @@ paths:
   /notifications/pulled/{notificationId}:
     get:
       tags:
-        - Notifications
+        - Endpoints
       summary: Get a pulled notification
       description: Get a pulled notification with the given notification identifier
       operationId: Getapullednotification
@@ -336,7 +289,7 @@ paths:
   /notifications/:
     get:
       tags:
-        - Notifications
+        - Endpoints
       summary: Get all available notifications (deprecated)
       description: |
         *This endpoint has been deprecated. It will be removed in a future release.*
@@ -367,7 +320,7 @@ paths:
   /notifications/{id}:
     delete:
       tags:
-        - Notifications
+        - Endpoints
       summary: Retrieve and delete a notification from the queue (deprecated)
       description: |
         *This endpoint has been deprecated. It will be removed in a future release.*
@@ -705,5 +658,5 @@ components:
           tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
           scopes: {}
 tags:
-  - name: Notifications
+  - name: Endpoints
     description: ''
