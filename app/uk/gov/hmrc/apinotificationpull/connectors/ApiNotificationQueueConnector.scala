@@ -42,7 +42,8 @@ class ApiNotificationQueueConnector @Inject()(config: ServicesConfig, http: Http
     logger.debug(s"Getting notification by id using url: $url")
     http.GET[HttpResponse](url)
       .map { r =>
-        if(r.status == 404){throw UpstreamErrorResponse("Notification not found", 404)}
+        val NOT_FOUND_STATUS = 404
+        if (r.status == NOT_FOUND_STATUS) {throw UpstreamErrorResponse("Notification not found", NOT_FOUND_STATUS)}
 
         logger.debug(s"Notification received successfully with id: $notificationId")
         Some(Notification(notificationId, r.headers.map(h => h._1 -> h._2.head), r.body))

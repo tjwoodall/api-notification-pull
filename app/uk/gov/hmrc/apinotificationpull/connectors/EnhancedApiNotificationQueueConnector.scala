@@ -56,19 +56,21 @@ class EnhancedApiNotificationQueueConnector @Inject()(config: ServicesConfig, ht
   }
 
   def getNotificationBy(notificationId: String, notificationStatus: NotificationStatus.Value)(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, Notification]] = {
-
+    val BAD_REQUEST_STATUS = 400
+    val NOT_FOUND_STATUS = 404
+    val INTERNAL_SERVER_ERROR = 500
     val url = s"$serviceBaseUrl/notifications/${notificationStatus.toString}/$notificationId"
     logger.debug(s"Calling get notifications by using url: $url")
     http.GET[HttpResponse](url)
       .map {
-        case r if r.status == 404 =>throw UpstreamErrorResponse("Notifications not found", 404)
-        case r if r.status == 400 =>throw UpstreamErrorResponse("Bad Request to Notifications", 400)
+        case r if r.status == NOT_FOUND_STATUS =>throw UpstreamErrorResponse("Notifications not found", NOT_FOUND_STATUS)
+        case r if r.status == BAD_REQUEST_STATUS =>throw UpstreamErrorResponse("Bad Request to Notifications", BAD_REQUEST_STATUS)
         case r => Right(Notification(notificationId, r.headers.map(h => h._1 -> h._2.head), r.body))
       }
       .recover[Either[UpstreamErrorResponse, Notification]] {
-      case nfe: UpstreamErrorResponse if nfe.statusCode == 404 => Left(nfe)
-      case bre: UpstreamErrorResponse if bre.statusCode == 400 => Left(bre)
-      case ise => Left(UpstreamErrorResponse(ise.getMessage, 500))
+      case nfe: UpstreamErrorResponse if nfe.statusCode == NOT_FOUND_STATUS => Left(nfe)
+      case bre: UpstreamErrorResponse if bre.statusCode == BAD_REQUEST_STATUS => Left(bre)
+      case ise => Left(UpstreamErrorResponse(ise.getMessage, INTERNAL_SERVER_ERROR))
     }
   }
 }
