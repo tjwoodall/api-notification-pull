@@ -33,7 +33,7 @@ class GetUnpulledNotificationSpec extends ComponentSpec with ExternalServices {
     startMockServer()
   }
 
-  override protected def beforeEach() {
+  override protected def beforeEach(): Unit = {
     resetMockServer()
   }
 

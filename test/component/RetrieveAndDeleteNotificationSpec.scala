@@ -36,7 +36,7 @@ class RetrieveAndDeleteNotificationSpec extends ComponentSpec with Eventually wi
     startMockServer()
   }
 
-  override protected def beforeEach() {
+  override protected def beforeEach(): Unit = {
     resetMockServer()
   }
 

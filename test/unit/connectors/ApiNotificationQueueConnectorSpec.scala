@@ -59,11 +59,11 @@ class ApiNotificationQueueConnectorSpec extends UnitSpec with ScalaFutures with 
     startMockServer()
   }
 
-  override def beforeEach() {
+  override def beforeEach(): Unit = {
     resetMockServer()
   }
 
-  override def afterAll() {
+  override def afterAll(): Unit = {
     stopMockServer()
   }
 
