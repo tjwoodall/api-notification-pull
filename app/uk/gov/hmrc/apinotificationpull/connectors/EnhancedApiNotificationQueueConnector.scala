@@ -23,6 +23,7 @@ import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.getHeadersF
 import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 import uk.gov.hmrc.apinotificationpull.model.{Notification, NotificationStatus, Notifications}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, _}
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -56,21 +57,17 @@ class EnhancedApiNotificationQueueConnector @Inject()(config: ServicesConfig, ht
   }
 
   def getNotificationBy(notificationId: String, notificationStatus: NotificationStatus.Value)(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, Notification]] = {
-    val BAD_REQUEST_STATUS = 400
-    val NOT_FOUND_STATUS = 404
-    val INTERNAL_SERVER_ERROR = 500
     val url = s"$serviceBaseUrl/notifications/${notificationStatus.toString}/$notificationId"
     logger.debug(s"Calling get notifications by using url: $url")
     http.GET[HttpResponse](url)
       .map {
-        case r if r.status == NOT_FOUND_STATUS =>throw UpstreamErrorResponse("Notifications not found", NOT_FOUND_STATUS)
-        case r if r.status == BAD_REQUEST_STATUS =>throw UpstreamErrorResponse("Bad Request to Notifications", BAD_REQUEST_STATUS)
+        case r if List(BAD_REQUEST, NOT_FOUND).contains(r.status) => throw UpstreamErrorResponse("Notifications not found", r.status)
         case r => Right(Notification(notificationId, r.headers.map(h => h._1 -> h._2.head), r.body))
       }
       .recover[Either[UpstreamErrorResponse, Notification]] {
-      case nfe: UpstreamErrorResponse if nfe.statusCode == NOT_FOUND_STATUS => Left(nfe)
-      case bre: UpstreamErrorResponse if bre.statusCode == BAD_REQUEST_STATUS => Left(bre)
-      case ise => Left(UpstreamErrorResponse(ise.getMessage, INTERNAL_SERVER_ERROR))
-    }
+        case e: UpstreamErrorResponse if List(BAD_REQUEST, NOT_FOUND).contains(e.statusCode) => Left(e)
+        case ise => Left(UpstreamErrorResponse(ise.getMessage, INTERNAL_SERVER_ERROR))
+      }
   }
+
 }
