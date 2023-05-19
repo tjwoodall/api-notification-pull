@@ -23,9 +23,6 @@ import uk.gov.hmrc.gitstamp.GitStampPlugin._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 
 name := "api-notification-pull"
-scalaVersion := "2.12.13"
-targetJvm := "jvm-1.8"
-
 
 lazy val CdsComponentTest = config("component") extend Test
 
@@ -47,6 +44,8 @@ lazy val microservice = (project in file("."))
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
   .configs(testConfig: _*)
   .settings(
+    scalaVersion := "2.13.10",
+    targetJvm := "jvm-11",
     commonSettings,
     unitTestSettings,
     componentTestSettings,
@@ -54,8 +53,6 @@ lazy val microservice = (project in file("."))
     scoverageSettings
   )
   .settings(majorVersion := 0)
-  .settings(scalacOptions += "-P:silencer:pathFilters=routes")
-  .settings(scalacOptions += "-P:silencer:globalFilters=Unused import")
 
 lazy val unitTestSettings =
   inConfig(Test)(Defaults.testTasks) ++
@@ -90,10 +87,12 @@ def unitTestFilter(name: String): Boolean = name startsWith "unit"
 
 scalastyleConfig := baseDirectory.value / "project" / "scalastyle-config.xml"
 
-val compileDependencies = Seq(customsApiCommon, silencerLib, silencerPlugin)
+val compileDependencies = Seq(customsApiCommon)
 
 val testDependencies = Seq(scalaTestPlusPlay, wireMock, mockito, flexmark, customsApiCommonTests)
 
 Compile / unmanagedResourceDirectories += baseDirectory.value / "public"
 
 libraryDependencies ++= compileDependencies ++ testDependencies
+// To resolve a bug with version 2.x.x of the scoverage plugin - https://github.com/sbt/sbt/issues/6997
+libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always

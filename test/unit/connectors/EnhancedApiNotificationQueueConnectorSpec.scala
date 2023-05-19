@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -148,8 +148,8 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       val result: Either[UpstreamErrorResponse, Notification] = enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unpulled).futureValue
 
-      result.left.get.message shouldBe "unauthorised exception"
-      result.left.get.statusCode shouldBe 500
+      result.swap.getOrElse(null).message shouldBe "unauthorised exception"
+      result.swap.getOrElse(null).statusCode shouldBe 500
     }
 
     "return an empty list of unpulled notifications when the downstream returns an empty list" in new Setup {

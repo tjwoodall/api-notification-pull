@@ -3,17 +3,17 @@
 
 DELETE        /:notificationId                                  @uk.gov.hmrc.apinotificationpull.controllers.NotificationsController.delete(notificationId)
 
-GET           /                                                 @uk.gov.hmrc.apinotificationpull.controllers.NotificationsController.getAll
+GET           /                                                 @uk.gov.hmrc.apinotificationpull.controllers.NotificationsController.getAll()
 
-GET           /admin/metrics                                    @com.kenshoo.play.metrics.MetricsController.metrics
+GET           /admin/metrics                                    @com.kenshoo.play.metrics.MetricsController.metrics()
 
 GET           /unpulled/:notificationId                         @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.unpulled(notificationId)
 
-GET           /unpulled                                         @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.unpulledList
+GET           /unpulled                                         @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.unpulledList()
 
 GET           /pulled/:notificationId                           @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.pulled(notificationId)
 
-GET           /pulled                                           @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.pulledList
+GET           /pulled                                           @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.pulledList()
 
 GET           /conversationId/:conversationId                   @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.listBy(conversationId: java.util.UUID)
 

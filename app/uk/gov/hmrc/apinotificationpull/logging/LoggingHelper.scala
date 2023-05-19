@@ -47,5 +47,5 @@ object LoggingHelper {
       case header => header
     }
   }
-  
+
 }
