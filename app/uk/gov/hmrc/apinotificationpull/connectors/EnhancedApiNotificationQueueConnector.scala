@@ -61,7 +61,8 @@ class EnhancedApiNotificationQueueConnector @Inject()(config: ServicesConfig, ht
     logger.debug(s"Calling get notifications by using url: $url")
     http.GET[HttpResponse](url)
       .map {
-        case r if List(BAD_REQUEST, NOT_FOUND).contains(r.status) => throw UpstreamErrorResponse("Notifications not found", r.status)
+        case r if r.status == NOT_FOUND => throw UpstreamErrorResponse("Notifications not found", NOT_FOUND)
+        case r if r.status == BAD_REQUEST => throw UpstreamErrorResponse("Bad Request to Notifications", BAD_REQUEST)
         case r => Right(Notification(notificationId, r.headers.map(h => h._1 -> h._2.head), r.body))
       }
       .recover[Either[UpstreamErrorResponse, Notification]] {
