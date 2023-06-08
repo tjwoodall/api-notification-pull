@@ -76,7 +76,7 @@ class NotificationsControllerSpec extends UnitSpec with MaterializerSupport with
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(notificationPresenter, mockApiNotificationQueueService, mockXmlBuilder)
+    reset[Any](notificationPresenter, mockApiNotificationQueueService, mockXmlBuilder)
   }
 
   "delete notification by id" should {
