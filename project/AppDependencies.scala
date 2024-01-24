@@ -11,5 +11,4 @@ object AppDependencies {
   val flexmark              = "com.vladsch.flexmark"                       %  "flexmark-all"              % "0.35.10"          % testScope
   val mockito               = "org.scalatestplus"                          %% "mockito-3-4"               % "3.2.10.0"         % testScope
   val customsApiCommonTests = "uk.gov.hmrc"                                %% "customs-api-common"        % apiCommonVersion   % testScope classifier "tests"
-  val bootstrapTestPlay     = "uk.gov.hmrc"                                %% "bootstrap-test-play-28"    % "8.2.0"            % testScope
 }
