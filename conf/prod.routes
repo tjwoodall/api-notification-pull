@@ -5,8 +5,6 @@ DELETE        /:notificationId                                  @uk.gov.hmrc.api
 
 GET           /                                                 @uk.gov.hmrc.apinotificationpull.controllers.NotificationsController.getAll()
 
-GET           /admin/metrics                                    @com.kenshoo.play.metrics.MetricsController.metrics()
-
 GET           /unpulled/:notificationId                         @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.unpulled(notificationId)
 
 GET           /unpulled                                         @uk.gov.hmrc.apinotificationpull.controllers.EnhancedNotificationsController.unpulledList()

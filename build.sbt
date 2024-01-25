@@ -75,7 +75,7 @@ lazy val componentTestSettings =
       CdsComponentTest / testGrouping := forkedJvmPerTestConfig((Test / definedTests).value, "component")
     )
 
-lazy val commonSettings: Seq[Setting[_]] = publishingSettings ++ gitStampSettings
+lazy val commonSettings: Seq[Setting[_]] = gitStampSettings
 
 lazy val scoverageSettings: Seq[Setting[_]] = Seq(
   coverageExcludedPackages := "<empty>;.*(Reverse|Routes).*;com.kenshoo.play.metrics.*;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;views.*;uk.gov.hmrc.apinotificationpull.config.*",
