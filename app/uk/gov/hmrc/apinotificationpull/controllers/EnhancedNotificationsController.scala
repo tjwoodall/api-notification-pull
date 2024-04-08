@@ -104,7 +104,7 @@ class EnhancedNotificationsController @Inject()(enhancedApiNotificationQueueServ
         case listSize if listSize >= sizeLimit =>
           logger.warn(s"MAX LIMIT REACHED: Returning [${notificationStatus}] notifications list. There are [${listSize}] returning first [$sizeLimit]")
         case _ =>
-          logger.info(s"Returning [${notificationStatus}] notifications list. There are [${originalList.size}] returning first [$sizeLimit]")
+          logger.warn(s"Returning [${notificationStatus}] notifications list. There are [${originalList.size}] returning first [$sizeLimit]")
       }
 
       val newNotificatons = notifications.copy(list)
