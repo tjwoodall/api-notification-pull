@@ -100,7 +100,13 @@ class EnhancedNotificationsController @Inject()(enhancedApiNotificationQueueServ
       val originalList = notifications.notifications
 
       val list = originalList.slice(0, sizeLimit)
-      logger.info(s"Returning [${notificationStatus}] notifications list. There are [${originalList.size}] returning first [$sizeLimit]")
+      originalList.size match {
+        case listSize if listSize >= sizeLimit =>
+          logger.warn(s"MAX LIMIT REACHED: Returning [${notificationStatus}] notifications list. There are [${listSize}] returning first [$sizeLimit]")
+        case _ =>
+          logger.warn(s"Returning [${notificationStatus}] notifications list. There are [${originalList.size}] returning first [$sizeLimit]")
+      }
+
       val newNotificatons = notifications.copy(list)
       Ok(enhancedXmlBuilder.toXml(newNotificatons, notificationStatus)).as(XML)
     } recover recovery
