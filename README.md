@@ -1,280 +1,57 @@
 # Pull Notifications API
 
-# Introduction
-This API allows third party developers to collect notifications.
+The Pull Notifications API is used by external client applications to "pull" business event notifications that CDS generates in response to requests submitted using the CDS APIs.
+For more information about the API, see the [API documentation](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/api-notification-pull).
 
----
+## Development Setup
+- Run locally: `sbt run` which runs on port `9649` by default
+- Run with test endpoints: `sbt 'run -Dapplication.router=testOnlyDoNotUseInAppConf.Routes'`
 
-## Endpoints
+##  Service Manager Profiles
+The API Notification Pull service can be run locally from Service Manager, using the following profiles:
 
-### GET `/conversationId/{conversationId}`
 
-Get a list of notifications by conversation ID
+| Profile Details                       | Command                                                           | Description                                                    |
+|---------------------------------------|:------------------------------------------------------------------|----------------------------------------------------------------|
+| CUSTOMS_DECLARATION_ALL               | sm2 --start CUSTOMS_DECLARATION_ALL                               | To run all CDS applications.                                   |
+| CUSTOMS_INVENTORY_LINKING_EXPORTS_ALL | sm2 --start CUSTOMS_INVENTORY_LINKING_EXPORTS_ALL                 | To run all CDS Inventory Linking Exports related applications. |
+| CUSTOMS_INVENTORY_LINKING_IMPORTS_ALL | sm2 --start CUSTOMS_INVENTORY_LINKING_IMPORTS_ALL                 | To run all CDS Inventory Linking Imports related applications. |
 
-Required Headers:
-  - `X-Client-ID`
-  - `Accept`
 
-```
-curl -v -X GET "http://localhost:9649/conversationId/dc7cb9ef-75db-4adc-b2cb-e2b86bdbc478" \
-  -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
-  -H "Accept: application/vnd.hmrc.1.0+xml"
-```
+## Run Tests
+- Run Unit Tests: `sbt test`
+- Run Integration Tests: `sbt IntegrationTest/test`
+- Run Unit and Integration Tests: `sbt test IntegrationTest/test`
+- Run Unit and Integration Tests with coverage report: `./run_all_tests.sh`<br/> which runs `clean scalastyle coverage test it:test coverageReport dependencyUpdates"`
 
-#### Responses
-##### Success
-```
-200 OK
- <resource href="/notifications/conversationId/dc7cb9ef-75db-4adc-b2cb-e2b86bdbc478/">
-    <link rel="self" href="/notifications/conversationId/dc7cb9ef-75db-4adc-b2cb-e2b86bdbc478/"/>
-    <link rel="notification" href="/notifications/unpulled/f1065d30-7854-44e8-a3bb-53986ad98e43"/>
-    <link rel="notification" href="/notifications/pulled/7dbada32-3f0f-4784-8290-6fc86cff3528"/>
- </resource>
-```
+### Acceptance Tests
+To run the CDS acceptance tests, see [here](https://github.com/hmrc/customs-automation-test).
 
+### Performance Tests
+To run performance tests, see [here](https://github.com/hmrc/api-notification-pull-performance-test).
 
-### GET `/conversationId/{conversationId}/unpulled`
 
-Get a list of unpulled notifications by conversation ID
+## API documentation
+For Notification Pull API documentation, see [here](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/api-notification-pull/1.0/oas/page).
 
-Required Headers:
-  - `X-Client-ID`
-  - `Accept`
 
-```
-curl -v -X GET "http://localhost:9649/conversationId/dc7cb9ef-75db-4adc-b2cb-e2b86bdbc478/unpulled" \
-  -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
-  -H "Accept: application/vnd.hmrc.1.0+xml"
-```
+### API Notification Pull specific routes
+| Path - internal routes prefixed by `/notifications` | Supported Methods | Description                                                                           |
+|-----------------------------------------------------|:-----------------:|---------------------------------------------------------------------------------------|
+| `/:notificationId`                                  |      DELETE       | Retrieves and deletes a notification from `api-notification-queue`.                   |
+| `/`                                                 |        GET        | Retrieves all notifications, for a specific client id, from `api-notification-queue`. |
+| `/unpulled/:notificationId`                         |        GET        | Get an unpulled notification by notification ID.                                      |
+| `/unpulled`                                         |        GET        | Get a list of unpulled notifications.                                                 |
+| `/pulled/:notificationId`                           |        GET        | Get a pulled notification by notification ID.                                         |
+| `/pulled`                                           |        GET        | Get a list of pulled notifications.                                                   |
+| `/conversationId/:conversationId`                   |        GET        | Get a list of notifications by conversation ID.                                       |
+| `/conversationId/:conversationId/unpulled`          |        GET        | Get a list of unpulled notifications by conversation ID.                              |
+| `/conversationId/:conversationId/pulled`            |        GET        | Get a list of pulled notifications by conversation ID.                                |
 
-#### Responses
-##### Success
-```
-200 OK
- <resource href="/notifications/conversationId/dc7cb9ef-75db-4adc-b2cb-e2b86bdbc478/unpulled/">
-    <link rel="self" href="/notifications/conversationId/dc7cb9ef-75db-4adc-b2cb-e2b86bdbc478/unpulled/"/>
-    <link rel="notification" href="/notifications/unpulled/f1065d30-7854-44e8-a3bb-53986ad98e43"/>
-    <link rel="notification" href="/notifications/unpulled/7dbada32-3f0f-4784-8290-6fc86cff3528"/>
- </resource>
-```
 
-### GET `/conversationId/{conversationId}/pulled`
+### Test-only specific routes
+This service does not have any specific test-only endpoints.
 
-Get a list of pulled notifications by conversation ID
-
-Required Headers:
-  - `X-Client-ID`
-  - `Accept`
-
-```
-curl -v -X GET "http://localhost:9649/conversationId/dc7cb9ef-75db-4adc-b2cb-e2b86bdbc478/pulled" \
-  -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
-  -H "Accept: application/vnd.hmrc.1.0+xml"
-```
-
-#### Responses
-##### Success
-```
-200 OK
- <resource href="/notifications/conversationId/dc7cb9ef-75db-4adc-b2cb-e2b86bdbc478/pulled/">
-    <link rel="self" href="/notifications/conversationId/dc7cb9ef-75db-4adc-b2cb-e2b86bdbc478/pulled/"/>
-    <link rel="notification" href="/notifications/pulled/f1065d30-7854-44e8-a3bb-53986ad98e43"/>
-    <link rel="notification" href="/notifications/pulled/7dbada32-3f0f-4784-8290-6fc86cff3528"/>
- </resource>
-```
-
-### GET `/unpulled`
-
-Get a list of unpulled notifications
-
-Required Headers:
-  - `X-Client-ID`
-  - `Accept`
-
-```
-curl -v -X GET "http://localhost:9649/unpulled" \
-  -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
-  -H "Accept: application/vnd.hmrc.1.0+xml"
-```
-
-#### Responses
-##### Success
-```
-200 OK
- <resource href="/notifications/unpulled/">
-    <link rel="self" href="/notifications/unpulled/"/>
-    <link rel="notification" href="/notifications/unpulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
- </resource>
-```
-
-### GET `/unpulled/{notificationId}`
-
-Get an unpulled notification
-
-Required Headers:
-  - `X-Client-ID`
-  - `Accept`
-
-```
-curl -v -X GET "http://localhost:9649/unpulled/{notificationId}" \
-  -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
-  -H "Accept: application/vnd.hmrc.1.0+xml"
-```
-
-#### Responses
-##### Success
-```
-200 OK
- Notification
-```
-
-##### Bad Request
- ```
-400 Bad Request
-    <errorResponse>
-        <code>BAD_REQUEST</code>
-        <message>Notification has been pulled</message>
-    </errorResponse>
-```
-
-##### Not Found
-```
-404 Not Found
-    <errorResponse>
-        <code>NOT_FOUND</code>
-        <message>Resource was not found</message>
-    </errorResponse>
-```
-
-### GET `/pulled`
-
-Get a list of pulled notifications
-
-Required Headers:
-  - `X-Client-ID`
-  - `Accept`
-
-```
-curl -v -X GET "http://localhost:9649/pulled" \
-  -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
-  -H "Accept: application/vnd.hmrc.1.0+xml"
-```
-
-#### Responses
-##### Success
-```
-200 OK
- <resource href="/notifications/pulled/">
-    <link rel="self" href="/notifications/pulled/"/>
-    <link rel="notification" href="/notifications/pulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
- </resource>
-```
-
-### GET `/pulled/{notificationId}`
-
-Get a pulled notification
-
-Required Headers:
-  - `X-Client-ID`
-  - `Accept`
-
-```
-curl -v -X GET "http://localhost:9649/pulled/{notificationId}" \
-  -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
-  -H "Accept: application/vnd.hmrc.1.0+xml"
-```
-
-#### Responses
-##### Success
-```
-200 OK
-
-Notification 
-```
-
-##### Bad Request
-
-```
-400 Bad Request
-
-    <errorResponse>
-        <code>BAD_REQUEST</code>
-        <message>Notification is unpulled</message>
-    </errorResponse>
-```
-
-##### Not Found
-
-```
-404 Not Found
-
-    <errorResponse>
-        <code>NOT_FOUND</code>
-        <message>Resource was not found</message>
-    </errorResponse>
-```
-
-### DELETE `/{notificationId}`
-
-Retrieves and deletes a notification from `api-notification-queue`
-
-Required Headers:
-  - `X-Client-ID`
-  - `Accept`
-
-```
-curl -v -X DELETE "http://localhost:9649/{notificationId}" \
-  -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
-  -H "Accept: application/vnd.hmrc.1.0+xml"
-```
-
-#### Responses
-
-##### Success
-```
-200 OK
-
-Notification
-```
-
-##### Not Found
-
-`404 Not Found`
-
-### GET `/`
-
-Retrieves all notifications, for a specific client id, from `api-notification-queue`
-
-Required Headers:
-  - `X-Client-ID`
-  - `Accept`
-
-```
-curl -v -X GET "http://localhost:9649/" \
-  -H "X-Client-ID: 580e3940-fb35-4421-b7c7-949f64a97870" \
-  -H "Accept: application/vnd.hmrc.1.0+xml"
-```
-
-#### Response
-```
-200 OK
-
-<resource href="/notifications/">
-   <link rel="self" href="/notifications/"/>
-   <link rel="notification" href="/notifications/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
-</resource>
-```
-
----
-
-### Tests
-There are unit and component tests along with code coverage reports.
-In order to run them, execute this command line:
-```
-./precheck.sh
-```
-
----
 
 ### License
 
