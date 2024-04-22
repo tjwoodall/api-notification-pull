@@ -25,7 +25,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.ContentTypes.XML
 import play.api.http.HeaderNames._
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, _}
+import play.api.http.Status._
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json.{stringify, toJson}

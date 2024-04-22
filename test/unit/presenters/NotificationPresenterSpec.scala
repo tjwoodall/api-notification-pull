@@ -16,6 +16,8 @@
 
 package unit.presenters
 
+import org.apache.pekko.stream.Materializer
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.ContentTypes.XML
 import play.api.http.HeaderNames.CONTENT_TYPE
 import play.api.http.Status._
@@ -25,6 +27,8 @@ import unit.util.MaterializerSupport
 import util.UnitSpec
 
 class NotificationPresenterSpec extends UnitSpec with MaterializerSupport {
+
+  private implicit val mockMaterializer: Materializer = mock[Materializer]
 
    "present" when {
      "no notification" should {

@@ -16,14 +16,17 @@
 
 package uk.gov.hmrc.apinotificationpull.logging
 
-import com.google.inject.Inject
-import javax.inject.Singleton
 import uk.gov.hmrc.apinotificationpull.logging.LoggingHelper.formatWithHeaders
 import uk.gov.hmrc.apinotificationpull.model.SeqOfHeader
-import uk.gov.hmrc.customs.api.common.logging.CdsLogger
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
-class NotificationLogger @Inject()(logger: CdsLogger) {
+class NotificationLogger @Inject()(serviceConfig: ServicesConfig) {
+
+  private lazy val loggerName: String = serviceConfig.getString("application.logger.name")
+  lazy val logger = play.api.Logger(loggerName)
 
   def debug(msg: => String)(implicit headers: SeqOfHeader): Unit = logger.debug(formatWithHeaders(msg, headers))
   def info(msg: => String)(implicit headers: SeqOfHeader): Unit = logger.info(formatWithHeaders(msg, headers))

@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.apinotificationpull.presenters
 
-import akka.util.ByteString
+import org.apache.pekko.util.ByteString
 import play.api.http.HeaderNames.CONTENT_TYPE
 import play.api.http.HttpEntity
 import play.api.http.Status.OK

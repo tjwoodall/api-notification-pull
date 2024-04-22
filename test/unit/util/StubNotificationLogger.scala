@@ -18,10 +18,10 @@ package unit.util
 
 import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 import uk.gov.hmrc.apinotificationpull.model.SeqOfHeader
-import uk.gov.hmrc.customs.api.common.logging.CdsLogger
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 // Use purely to increase coverage
-class StubNotificationLogger(logger: CdsLogger) extends NotificationLogger(logger) {
+class StubNotificationLogger(serviceConfig: ServicesConfig) extends NotificationLogger(serviceConfig) {
 
   override def debug(msg: => String)(implicit headers: SeqOfHeader): Unit =
     println(s"msg: $msg, headers: $headers")

@@ -16,8 +16,7 @@
 
 package unit.controllers
 
-import java.util.UUID
-import java.util.concurrent.TimeoutException
+import org.apache.pekko.stream.Materializer
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -34,7 +33,6 @@ import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
 import uk.gov.hmrc.apinotificationpull.presenters.NotificationPresenter
 import uk.gov.hmrc.apinotificationpull.services.ApiNotificationQueueService
 import uk.gov.hmrc.apinotificationpull.util.XmlBuilder
-import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.fakes.SuccessfulHeaderValidatorFake
@@ -43,15 +41,18 @@ import unit.util.XmlUtil.string2xml
 import unit.util.{MaterializerSupport, StubNotificationLogger}
 import util.UnitSpec
 
-import scala.concurrent.Future
+import java.util.UUID
+import java.util.concurrent.TimeoutException
+import scala.concurrent.{ExecutionContext, Future}
 
 class NotificationsControllerSpec extends UnitSpec with MaterializerSupport with MockitoSugar with BeforeAndAfterEach {
 
-  private implicit val ec = Helpers.stubControllerComponents().executionContext
+  private implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
+  private implicit val mockMaterializer: Materializer = mock[Materializer]
   private val mockApiNotificationQueueService = mock[ApiNotificationQueueService]
   private val notificationPresenter = mock[NotificationPresenter]
   private val mockXmlBuilder = mock[XmlBuilder]
-  private val mockLogger = new StubNotificationLogger(new CdsLogger(mock[ServicesConfig]))
+  private val mockLogger = new StubNotificationLogger(mock[ServicesConfig])
 
   private val errorXml = scala.xml.Utility.trim(
     <error_response>
@@ -69,7 +70,7 @@ class NotificationsControllerSpec extends UnitSpec with MaterializerSupport with
     val clientId = "client_id"
 
     val validHeaders = Seq(ACCEPT_HEADER, X_CLIENT_ID_HEADER)
-    val headerValidator = new SuccessfulHeaderValidatorFake(new StubNotificationLogger(new CdsLogger(mock[ServicesConfig])), Helpers.stubControllerComponents())
+    val headerValidator = new SuccessfulHeaderValidatorFake(new StubNotificationLogger(mock[ServicesConfig]), Helpers.stubControllerComponents())
 
     val controller = new NotificationsController(mockApiNotificationQueueService, headerValidator, notificationPresenter, mockXmlBuilder, Helpers.stubControllerComponents(), mockLogger)
   }

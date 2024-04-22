@@ -16,14 +16,13 @@
 
 package uk.gov.hmrc.apinotificationpull.validators
 
-import com.google.inject.Inject
-import javax.inject.Singleton
 import play.api.http.HeaderNames._
 import play.api.http.Status._
-import play.api.mvc.{ActionBuilder, AnyContent, BodyParser, ControllerComponents, Request, Result, Results}
+import play.api.mvc._
 import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.{ACCEPT_HEADER_VALUE, X_CLIENT_ID_HEADER_NAME, getHeadersFromRequest}
 import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

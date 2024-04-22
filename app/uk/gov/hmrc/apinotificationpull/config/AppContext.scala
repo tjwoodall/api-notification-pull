@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.apinotificationpull.config
 
-import javax.inject.{Inject, Singleton}
-
 import play.api.Configuration
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AppContext @Inject()(configuration: Configuration) {

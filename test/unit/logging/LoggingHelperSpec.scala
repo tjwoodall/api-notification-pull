@@ -17,8 +17,8 @@
 package unit.logging
 
 import uk.gov.hmrc.apinotificationpull.logging.LoggingHelper
-import util.UnitSpec
 import unit.util.RequestHeaders
+import util.UnitSpec
 
 class LoggingHelperSpec extends UnitSpec {
 

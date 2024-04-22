@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.apinotificationpull.util
 
-import java.util.UUID
-
-import javax.inject.Inject
 import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.apinotificationpull.model.{NotificationStatus, Notifications}
+
+import java.util.UUID
+import javax.inject.Inject
 
 class EnhancedXmlBuilder @Inject()(appContext: AppContext) {
 

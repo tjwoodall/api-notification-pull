@@ -1,14 +1,21 @@
-import sbt._
+import sbt.*
 
 object AppDependencies {
 
-  private val testScope = "test,component"
-  private val apiCommonVersion = "1.60.0"
+  val playVersion = "play-30"
+  val bootstrap = "8.5.0"
 
-  val customsApiCommon      = "uk.gov.hmrc"                                %% "customs-api-common"        % apiCommonVersion   withSources()
-  val scalaTestPlusPlay     = "org.scalatestplus.play"                     %% "scalatestplus-play"        % "5.1.0"            % testScope
-  val wireMock              = "com.github.tomakehurst"                     %  "wiremock-standalone"       % "2.27.2"           % testScope
-  val flexmark              = "com.vladsch.flexmark"                       %  "flexmark-all"              % "0.35.10"          % testScope
-  val mockito               = "org.scalatestplus"                          %% "mockito-3-4"               % "3.2.10.0"         % testScope
-  val customsApiCommonTests = "uk.gov.hmrc"                                %% "customs-api-common"        % apiCommonVersion   % testScope classifier "tests"
+  val compile = Seq(
+    "uk.gov.hmrc"                   %% s"bootstrap-backend-$playVersion"   % bootstrap
+  )
+
+  val test: Seq[ModuleID] = Seq(
+    "uk.gov.hmrc"                   %% s"bootstrap-test-$playVersion"    % bootstrap    % Test,
+    "org.mockito"                   %% "mockito-scala-scalatest"         % "1.17.31"    % Test,
+    "org.wiremock"                   % "wiremock-standalone"             % "3.5.3"      % Test,
+    "com.vladsch.flexmark"           % "flexmark-all"                    % "0.64.8"     % Test,
+    "org.scalatestplus"             %% "scalatestplus-mockito"           % "1.0.0-M2"   % Test,
+    "org.scalatestplus.play"        %% "scalatestplus-play"              % "7.0.1"      % Test,
+    "com.fasterxml.jackson.module"  %% "jackson-module-scala"            % "2.17.0"     % Test
+  )
 }

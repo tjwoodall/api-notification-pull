@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package unit.util
+package uk.gov.hmrc.apinotificationpull
 
-import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.stream.{ActorMaterializer, Materializer}
+import play.api.inject.{Binding, Module}
+import play.api.{Configuration, Environment}
+import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
-trait MaterializerSupport {
-  implicit val system: ActorSystem = ActorSystem("Sys")
-  implicit val materializer: Materializer = ActorMaterializer()
+class CustomsApiCommonModule extends Module {
+
+  override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = Seq(
+    bind[HttpClient].to[DefaultHttpClient]
+  )
+
 }

@@ -16,15 +16,15 @@
 
 package uk.gov.hmrc.apinotificationpull.connectors
 
-import javax.inject.Inject
+import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.getHeadersFromHeaderCarrier
 import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
-import play.api.http.Status.NOT_FOUND
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ApiNotificationQueueConnector @Inject()(config: ServicesConfig, http: HttpClient, logger: NotificationLogger)(implicit ec: ExecutionContext) {

@@ -16,8 +16,7 @@
 
 package unit.util
 
-import play.api.http.HeaderNames.ACCEPT
-import play.api.http.HeaderNames.AUTHORIZATION
+import play.api.http.HeaderNames.{ACCEPT, AUTHORIZATION}
 
 object RequestHeaders {
 

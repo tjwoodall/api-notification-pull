@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.apinotificationpull.services
 
-import java.util.UUID
-import javax.inject.Inject
 import uk.gov.hmrc.apinotificationpull.connectors.EnhancedApiNotificationQueueConnector
 import uk.gov.hmrc.apinotificationpull.model.{Notification, NotificationStatus, Notifications}
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 
+import java.util.UUID
+import javax.inject.Inject
 import scala.concurrent.Future
 
 class EnhancedApiNotificationQueueService @Inject()(enhancedApiNotificationQueueConnector: EnhancedApiNotificationQueueConnector) {

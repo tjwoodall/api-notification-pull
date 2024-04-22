@@ -17,6 +17,7 @@
 package unit.controllers
 
 import controllers.Assets
+import org.apache.pekko.stream.Materializer
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
@@ -31,6 +32,7 @@ import views.txt
 
 class DefinitionControllerSpec extends UnitSpec with MaterializerSupport with MockitoSugar {
 
+  private implicit val mockMaterializer: Materializer = mock[Materializer]
   private val apiScope = "scope"
   private val apiContext = "context"
   private val appContext = new AppContext(Configuration("api.definition.scope" -> apiScope, "api.context" -> apiContext))

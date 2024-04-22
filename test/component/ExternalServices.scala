@@ -20,8 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.http.{HttpHeader, HttpHeaders}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.test.Helpers.OK
-import unit.util.RequestHeaders.X_CLIENT_ID_HEADER_NAME
-import unit.util.RequestHeaders.ClientId
+import unit.util.RequestHeaders.{ClientId, X_CLIENT_ID_HEADER_NAME}
 import util.WireMockRunner
 
 trait ExternalServices extends WireMockRunner {

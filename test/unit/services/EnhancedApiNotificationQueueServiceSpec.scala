@@ -16,7 +16,6 @@
 
 package unit.services
 
-import java.util.UUID.fromString
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
@@ -29,6 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import unit.util.RequestHeaders.X_CLIENT_ID_HEADER
 import util.UnitSpec
 
+import java.util.UUID.fromString
 import scala.concurrent.Future
 
 class EnhancedApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar with Eventually {

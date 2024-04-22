@@ -24,15 +24,14 @@ import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.apinotificationpull.validators.HeaderValidator
-import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import util.UnitSpec
 import unit.util.RequestHeaders.{ACCEPT_HEADER, ACCEPT_HEADER_VALUE, X_CLIENT_ID_HEADER, X_CLIENT_ID_HEADER_NAME}
 import unit.util.StubNotificationLogger
+import util.UnitSpec
 
 class HeaderValidatorSpec extends UnitSpec with MockitoSugar {
 
-  private val stubLogger = new StubNotificationLogger(new CdsLogger(mock[ServicesConfig]))
+  private val stubLogger = new StubNotificationLogger(mock[ServicesConfig])
   private val validator = new HeaderValidator(stubLogger, Helpers.stubControllerComponents())
   private val expectedResult = Ok("")
 

@@ -16,19 +16,16 @@
 
 package uk.gov.hmrc.apinotificationpull.connectors
 
-import java.util.UUID
-
-import javax.inject.Inject
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.getHeadersFromHeaderCarrier
 import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 import uk.gov.hmrc.apinotificationpull.model.{Notification, NotificationStatus, Notifications}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, _}
-import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, _}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-
+import java.util.UUID
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class EnhancedApiNotificationQueueConnector @Inject()(config: ServicesConfig, http: HttpClient, logger: NotificationLogger)(implicit ec: ExecutionContext) {

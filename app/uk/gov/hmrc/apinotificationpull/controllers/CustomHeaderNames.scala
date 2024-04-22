@@ -18,7 +18,7 @@ package uk.gov.hmrc.apinotificationpull.controllers
 
 import play.api.mvc.Request
 import uk.gov.hmrc.apinotificationpull.model.SeqOfHeader
-import uk.gov.hmrc.http.{HeaderCarrier,HeaderNames}
+import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
 
 object CustomHeaderNames {
 

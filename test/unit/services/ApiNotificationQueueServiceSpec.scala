@@ -31,13 +31,13 @@ import uk.gov.hmrc.apinotificationpull.services.ApiNotificationQueueService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.UnitSpec
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class ApiNotificationQueueServiceSpec extends UnitSpec with MockitoSugar with Eventually {
 
   private val hc = HeaderCarrier()
 
-  private implicit val ec = Helpers.stubControllerComponents().executionContext
+  private implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
   private val notifications = Notifications(List("/notification/123", "/notification/456"))
 
   trait Setup {
