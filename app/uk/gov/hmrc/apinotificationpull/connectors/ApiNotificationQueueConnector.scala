@@ -33,14 +33,14 @@ class ApiNotificationQueueConnector @Inject()(config: ServicesConfig, http: Http
 
   def getNotifications()(implicit hc: HeaderCarrier): Future[Notifications] = {
     val url = s"$serviceBaseUrl/notifications"
-    logger.debug(s"Calling get notifications using url: $url")
+    logger.info(s"Getting notifications using url: $url")
     http.GET[Notifications](url)
   }
 
   def getById(notificationId: String)(implicit hc: HeaderCarrier): Future[Option[Notification]] = {
 
     val url = s"$serviceBaseUrl/notification/$notificationId"
-    logger.debug(s"Getting notification by id using url: $url")
+    logger.info(s"Getting notification by id using url: $url")
     http.GET[HttpResponse](url)
       .map { r =>
         if (r.status == NOT_FOUND) {throw UpstreamErrorResponse("Notification not found", NOT_FOUND)}

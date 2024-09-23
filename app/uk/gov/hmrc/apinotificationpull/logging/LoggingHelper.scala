@@ -26,7 +26,7 @@ object LoggingHelper {
   private val headersToOverwrite = Set(AUTHORIZATION.toLowerCase, "x-client-authorization-token")
 
   def formatWithHeaders(msg: String, headers: SeqOfHeader): String = {
-    s"${formatLogPrefixWithClientId(headers)} $msg\nheaders=${overwriteHeaderValues(headers, headersToOverwrite)}"
+    s"${formatLogPrefixWithClientId(headers)} $msg, headers=${overwriteHeaderValues(headers, headersToOverwrite)}"
   }
 
   private def formatLogPrefixWithClientId(headers: SeqOfHeader): String = {
