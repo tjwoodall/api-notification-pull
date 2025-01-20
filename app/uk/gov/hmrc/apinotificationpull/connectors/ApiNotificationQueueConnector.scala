@@ -21,27 +21,28 @@ import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.getHeadersF
 import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ApiNotificationQueueConnector @Inject()(config: ServicesConfig, http: HttpClient, logger: NotificationLogger)(implicit ec: ExecutionContext) {
+class ApiNotificationQueueConnector @Inject()(config: ServicesConfig, http: HttpClientV2, logger: NotificationLogger)(implicit ec: ExecutionContext) {
 
   private lazy val serviceBaseUrl: String = config.baseUrl("api-notification-queue")
 
   def getNotifications()(implicit hc: HeaderCarrier): Future[Notifications] = {
     val url = s"$serviceBaseUrl/notifications"
     logger.debug(s"Calling get notifications using url: $url")
-    http.GET[Notifications](url)
+    http.get(url"$url").execute[Notifications]
   }
 
   def getById(notificationId: String)(implicit hc: HeaderCarrier): Future[Option[Notification]] = {
 
     val url = s"$serviceBaseUrl/notification/$notificationId"
     logger.debug(s"Getting notification by id using url: $url")
-    http.GET[HttpResponse](url)
+    http.get(url"$url").execute[HttpResponse]
       .map { r =>
         if (r.status == NOT_FOUND) {throw UpstreamErrorResponse("Notification not found", NOT_FOUND)}
 
@@ -58,7 +59,7 @@ class ApiNotificationQueueConnector @Inject()(config: ServicesConfig, http: Http
   def delete(notification: Notification)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val url = s"$serviceBaseUrl/notification/${notification.id}"
     logger.debug(s"Calling delete notifications using url: $url")
-    http.DELETE[HttpResponse](url)
+    http.delete(url"$url").execute[HttpResponse]
   }
 
 }

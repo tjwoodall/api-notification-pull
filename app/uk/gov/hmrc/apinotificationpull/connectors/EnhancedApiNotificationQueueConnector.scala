@@ -21,14 +21,15 @@ import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.getHeadersF
 import uk.gov.hmrc.apinotificationpull.logging.NotificationLogger
 import uk.gov.hmrc.apinotificationpull.model.{Notification, NotificationStatus, Notifications}
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, _}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, _}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.util.UUID
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class EnhancedApiNotificationQueueConnector @Inject()(config: ServicesConfig, http: HttpClient, logger: NotificationLogger)(implicit ec: ExecutionContext) {
+class EnhancedApiNotificationQueueConnector @Inject()(config: ServicesConfig, http: HttpClientV2, logger: NotificationLogger)(implicit ec: ExecutionContext) {
 
   private lazy val serviceBaseUrl: String = config.baseUrl("api-notification-queue")
 
@@ -36,27 +37,27 @@ class EnhancedApiNotificationQueueConnector @Inject()(config: ServicesConfig, ht
 
     val url = s"$serviceBaseUrl/notifications/conversationId/$conversationId"
     logger.debug(s"Calling get all notifications by using url: $url")
-    http.GET[Notifications](url)
+    http.get(url"$url").execute[Notifications]
   }
 
   def getAllNotificationsBy(conversationId: UUID, notificationStatus: NotificationStatus.Value)(implicit hc: HeaderCarrier): Future[Notifications] = {
 
     val url = s"$serviceBaseUrl/notifications/conversationId/$conversationId/${notificationStatus.toString}"
     logger.debug(s"Calling get all notifications by using url: $url")
-    http.GET[Notifications](url)
+    http.get(url"$url").execute[Notifications]
   }
 
   def getAllNotificationsBy(notificationStatus: NotificationStatus.Value)(implicit hc: HeaderCarrier): Future[Notifications] = {
 
     val url = s"$serviceBaseUrl/notifications/${notificationStatus.toString}"
     logger.debug(s"Calling get all notifications by using url: $url")
-    http.GET[Notifications](url)
+    http.get(url"$url").execute[Notifications]
   }
 
   def getNotificationBy(notificationId: String, notificationStatus: NotificationStatus.Value)(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, Notification]] = {
     val url = s"$serviceBaseUrl/notifications/${notificationStatus.toString}/$notificationId"
     logger.debug(s"Calling get notifications by using url: $url")
-    http.GET[HttpResponse](url)
+    http.get(url"$url").execute[HttpResponse]
       .map {
         case r if r.status == NOT_FOUND => throw UpstreamErrorResponse("Notifications not found", NOT_FOUND)
         case r if r.status == BAD_REQUEST => throw UpstreamErrorResponse("Bad Request to Notifications", BAD_REQUEST)

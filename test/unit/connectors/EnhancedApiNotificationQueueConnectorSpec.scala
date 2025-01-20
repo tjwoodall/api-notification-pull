@@ -26,7 +26,8 @@ import play.api.test.Helpers
 import uk.gov.hmrc.apinotificationpull.connectors.EnhancedApiNotificationQueueConnector
 import uk.gov.hmrc.apinotificationpull.model.NotificationStatus._
 import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
-import uk.gov.hmrc.http.{HttpClient, _}
+import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.util.RequestHeaders.{ClientId, X_CLIENT_ID_HEADER, X_CLIENT_ID_HEADER_NAME}
 import unit.util.StubNotificationLogger
@@ -44,7 +45,7 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
     implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
     val mockServicesConfig: ServicesConfig = mock[ServicesConfig]
-    val mockHttpClient: HttpClient = mock[HttpClient]
+    val mockHttpClient: HttpClientV2 = mock[HttpClientV2]
     val mockHttpResponse: HttpResponse = mock[HttpResponse]
     val notifications = Notifications(List("notification-1", "notification-2"))
 
@@ -54,6 +55,7 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
     val notification = Notification(notificationId, headers.map(h => h._1 -> h._2.head), "notification-payload")
     val stubLogger = new StubNotificationLogger(mock[ServicesConfig])
     val enhancedApiNotificationQueueConnector = new EnhancedApiNotificationQueueConnector(mockServicesConfig, mockHttpClient, stubLogger)
+    val mockRequestBuilder = mock[RequestBuilder]
 
     when(mockServicesConfig.baseUrl("api-notification-queue")).thenReturn("http://api-notification-queue.url")
     when(mockHttpResponse.headers).thenReturn(headers)
@@ -65,8 +67,9 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
     "return a list of unpulled notification" in new Setup {
 
-      when(mockHttpClient.GET[Notifications](meq(s"http://api-notification-queue.url/notifications/unpulled"),any(),any())
-        (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(notifications))
+      val url = s"http://api-notification-queue.url/notifications/unpulled"
+      when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.execute[Notifications](any(), any())).thenReturn(Future.successful(notifications))
 
       val result: Notifications = enhancedApiNotificationQueueConnector.getAllNotificationsBy(Unpulled).futureValue
 
@@ -75,8 +78,9 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
     "return a list of previously pulled notification" in new Setup {
 
-      when(mockHttpClient.GET[Notifications](meq(s"http://api-notification-queue.url/notifications/pulled"),any(),any())
-        (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(notifications))
+      val url = s"http://api-notification-queue.url/notifications/pulled"
+      when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.execute[Notifications](any(), any())).thenReturn(Future.successful(notifications))
 
       val result: Notifications = (enhancedApiNotificationQueueConnector.getAllNotificationsBy(Pulled)).futureValue
 
@@ -85,8 +89,9 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
     "return a list of notifications by conversation id" in new Setup {
 
-      when(mockHttpClient.GET[Notifications](meq(s"http://api-notification-queue.url/notifications/conversationId/0ad764d1-ba29-4bfb-b7f7-25adbede0002"),any(),any())
-        (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(notifications))
+      val url = s"http://api-notification-queue.url/notifications/conversationId/0ad764d1-ba29-4bfb-b7f7-25adbede0002"
+      when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.execute[Notifications](any(), any())).thenReturn(Future.successful(notifications))
 
       val result: Notifications = (enhancedApiNotificationQueueConnector.getAllNotificationsBy(fromString("0ad764d1-ba29-4bfb-b7f7-25adbede0002"))).futureValue
 
@@ -95,8 +100,9 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
     "return the unpulled notification for the specified notification id" in new Setup {
 
-      when(mockHttpClient.GET[HttpResponse](meq(s"http://api-notification-queue.url/notifications/unpulled/$notificationId"),any(),any())
-        (any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(mockHttpResponse))
+      val url = s"http://api-notification-queue.url/notifications/unpulled/$notificationId"
+      when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.execute[HttpResponse](any(), any())).thenReturn(Future.successful(mockHttpResponse))
 
       val result: Either[UpstreamErrorResponse, Notification] = (enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unpulled)).futureValue
 
@@ -105,8 +111,9 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
     "return the previously pulled notification for the specified notification id" in new Setup {
 
-      when(mockHttpClient.GET[HttpResponse](meq(s"http://api-notification-queue.url/notifications/pulled/$notificationId"),any(),any())
-        (any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(mockHttpResponse))
+      val url = s"http://api-notification-queue.url/notifications/pulled/$notificationId"
+      when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.execute[HttpResponse](any(), any())).thenReturn(Future.successful(mockHttpResponse))
 
       val result: Either[UpstreamErrorResponse, Notification] = (enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Pulled)).futureValue
 
@@ -117,8 +124,9 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       private val notFoundException = UpstreamErrorResponse("not found exception",404)
 
-      when(mockHttpClient.GET[HttpResponse](meq(s"http://api-notification-queue.url/notifications/unpulled/$notificationId"),any(),any())
-        (any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.failed(notFoundException))
+      val url = s"http://api-notification-queue.url/notifications/unpulled/$notificationId"
+      when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.execute[HttpResponse](any(), any())).thenReturn(Future.failed(notFoundException))
 
       val result: Either[UpstreamErrorResponse, Notification] = (enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unpulled)).futureValue
 
@@ -129,8 +137,9 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       private val badRequestException = UpstreamErrorResponse("bad request exception", 400)
 
-      when(mockHttpClient.GET[HttpResponse](meq(s"http://api-notification-queue.url/notifications/unpulled/$notificationId"),any(),any())
-        (any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.failed(badRequestException))
+      val url = s"http://api-notification-queue.url/notifications/unpulled/$notificationId"
+      when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.execute[HttpResponse](any(), any())).thenReturn(Future.failed(badRequestException))
 
       val result: Either[UpstreamErrorResponse, Notification] = (enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unpulled)).futureValue
 
@@ -141,8 +150,9 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       private val unauthorisedException = new UnauthorizedException("unauthorised exception")
 
-      when(mockHttpClient.GET[HttpResponse](meq(s"http://api-notification-queue.url/notifications/unpulled/$notificationId"),any(),any())
-        (any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.failed(unauthorisedException))
+      val url = s"http://api-notification-queue.url/notifications/unpulled/$notificationId"
+      when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.execute[HttpResponse](any(), any())).thenReturn(Future.failed(unauthorisedException))
 
       val result: Either[UpstreamErrorResponse, Notification] = enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unpulled).futureValue
 
@@ -152,8 +162,9 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
     "return an empty list of unpulled notifications when the downstream returns an empty list" in new Setup {
 
-      when(mockHttpClient.GET[Notifications](meq(s"http://api-notification-queue.url/notifications/unpulled"),any(),any())
-        (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(Notifications(List())))
+      val url = s"http://api-notification-queue.url/notifications/unpulled"
+      when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.execute[Notifications](any(), any())).thenReturn(Future.successful(Notifications(List())))
 
       val result = enhancedApiNotificationQueueConnector.getAllNotificationsBy(Unpulled).futureValue
 
@@ -162,8 +173,9 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
     "return an empty list of previously pulled notifications when the downstream returns an empty list" in new Setup {
 
-      when(mockHttpClient.GET[Notifications](meq(s"http://api-notification-queue.url/notifications/pulled"),any(),any())
-        (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(Notifications(List())))
+      val url = s"http://api-notification-queue.url/notifications/pulled"
+      when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.execute[Notifications](any(), any())).thenReturn(Future.successful(Notifications(List())))
 
       val result = enhancedApiNotificationQueueConnector.getAllNotificationsBy(Pulled).futureValue
 
@@ -172,8 +184,9 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
     "return an empty list of notifications by conversation id when the downstream returns an empty list" in new Setup {
 
-      when(mockHttpClient.GET[Notifications](meq(s"http://api-notification-queue.url/notifications/conversationId/$conversationId"),any(),any())
-        (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(Notifications(List())))
+      val url = s"http://api-notification-queue.url/notifications/conversationId/$conversationId"
+      when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.execute[Notifications](any(), any())).thenReturn(Future.successful(Notifications(List())))
 
       val result = enhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId).futureValue
 
@@ -182,8 +195,9 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
     "return an empty list of unpulled notifications by conversation id when the downstream returns an empty list" in new Setup {
 
-      when(mockHttpClient.GET[Notifications](meq(s"http://api-notification-queue.url/notifications/conversationId/$conversationId/unpulled"),any(),any())
-        (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(Notifications(List())))
+      val url = s"http://api-notification-queue.url/notifications/conversationId/$conversationId/unpulled"
+      when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.execute[Notifications](any(), any())).thenReturn(Future.successful(Notifications(List())))
 
       val result = enhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId, Unpulled).futureValue
 
@@ -192,8 +206,9 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
     "return an empty list of previously pulled notifications by conversation id when the downstream returns an empty list" in new Setup {
 
-      when(mockHttpClient.GET[Notifications](meq(s"http://api-notification-queue.url/notifications/conversationId/$conversationId/pulled"),any(),any())
-        (any[HttpReads[Notifications]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(Future.successful(Notifications(List())))
+      val url = s"http://api-notification-queue.url/notifications/conversationId/$conversationId/pulled"
+      when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.execute[Notifications](any(), any())).thenReturn(Future.successful(Notifications(List())))
 
       val result = enhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId, Pulled).futureValue
 

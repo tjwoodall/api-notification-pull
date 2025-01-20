@@ -31,8 +31,9 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json.{stringify, toJson}
 import uk.gov.hmrc.apinotificationpull.connectors.ApiNotificationQueueConnector
 import uk.gov.hmrc.apinotificationpull.model.{Notification, Notifications}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, UpstreamErrorResponse}
-import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 import unit.util.RequestHeaders.{ClientId, X_CLIENT_ID_HEADER_NAME}
 import util.ExternalServicesConfig.{Host, Port}
 import util.{UnitSpec, WireMockRunner}
@@ -45,7 +46,7 @@ class ApiNotificationQueueConnectorSpec extends UnitSpec with ScalaFutures with 
       "microservice.services.api-notification-queue.host" -> Host,
       "microservice.services.api-notification-queue.port" -> Port
     ).overrides(
-    bind[HttpClient].to[DefaultHttpClient]
+    bind[HttpClientV2].toProvider[HttpClientV2Provider]
   ).build()
 
   lazy val connector: ApiNotificationQueueConnector = app.injector.instanceOf[ApiNotificationQueueConnector]
