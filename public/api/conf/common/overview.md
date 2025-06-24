@@ -10,6 +10,8 @@ Pull notifications remain queued for 14 days after which they are deleted from t
 
 You can get all of the notifications for your application, or you can get them for a given conversation. We recommend getting them by conversation.
 
+**Note:**  The number of notification identifiers in the list that is returned by the *unpulled* and *pulled* endpoints is limited to 60,000.
+
 ## Getting notifications for a given conversation
 
 1. Get a list of unpulled notification identifiers for a given conversation by calling `GET /notifications/conversationId/{conversationId}/unpulled`

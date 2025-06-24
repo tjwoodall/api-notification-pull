@@ -123,7 +123,9 @@ paths:
       tags:
         - Endpoints
       summary: Get unpulled notifications
-      description: Get a list of unpulled notification identifiers for the subscribed application
+      description: |
+        <p>Get a list of unpulled notification identifiers for the subscribed application.</p>
+        <p><b>Note:</b> The number of notification identifiers that are returned is limited to 60,000.</p>
       operationId: Getalistofunpullednotificationidentifieirsforthesubscribedapplication
       parameters:
         - in: header
@@ -207,7 +209,9 @@ paths:
       tags:
         - Endpoints
       summary: Get pulled notifications
-      description: Get a list of pulled notification identifiers for the subscribed application
+      description: |
+        <p>Get a list of pulled notification identifiers for the subscribed application.</p>
+        <p><b>Note:</b> The number of notification identifiers that are returned is limited to 60,000.</p>
       operationId: Getpullednotifications
       parameters:
         - in: header
