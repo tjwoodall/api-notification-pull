@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.apinotificationpull.model
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 object NotificationStatus extends Enumeration {
   val Unpulled = Value("unpulled")
@@ -26,7 +26,7 @@ object NotificationStatus extends Enumeration {
 case class Notifications(notifications: List[String])
 
 object Notifications {
-  implicit val notificationsJF = Json.format[Notifications]
+  implicit val notificationsJF: OFormat[Notifications] = Json.format[Notifications]
 }
 
 case class Notification(id: String, headers: Map[String, String], payload: String)

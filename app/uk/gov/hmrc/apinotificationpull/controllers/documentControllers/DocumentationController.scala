@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.apinotificationpull.controllers
+package uk.gov.hmrc.apinotificationpull.controllers.documentControllers
 
 import controllers.Assets
 import play.api.mvc.ControllerComponents
