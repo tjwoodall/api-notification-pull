@@ -25,7 +25,7 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.apinotificationpull.config.AppContext
-import uk.gov.hmrc.apinotificationpull.controllers.ApiDocumentationController
+import uk.gov.hmrc.apinotificationpull.controllers.dynamicControllers.ApiDocumentationController
 import unit.util.MaterializerSupport
 import util.UnitSpec
 import views.txt

@@ -1,2 +1,2 @@
-GET    /api/definition                              @uk.gov.hmrc.apinotificationpull.controllers.ApiDocumentationController.definition()
-GET    /api/conf/:version/*file                     @uk.gov.hmrc.apinotificationpull.controllers.ApiDocumentationController.conf(version, file)
+GET    /api/definition                              @uk.gov.hmrc.apinotificationpull.controllers.dynamicControllers.ApiDocumentationController.definition()
+GET    /api/conf/:version/*file                     @uk.gov.hmrc.apinotificationpull.controllers.dynamicControllers.ApiDocumentationController.conf(version, file)

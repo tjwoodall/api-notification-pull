@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.apinotificationpull.controllers
+package uk.gov.hmrc.apinotificationpull.controllers.dynamicControllers
 
 import controllers.Assets
 import play.api.http.{ContentTypes, MimeTypes}
