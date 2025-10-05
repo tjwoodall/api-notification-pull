@@ -6,7 +6,7 @@ info:
 servers:
   - url: https://test-api.service.hmrc.gov.uk
     description: Sandbox
-  - url: https://api.service.hmrc.gov.uk/
+  - url: https://api.service.hmrc.gov.uk
     description: Production
     variables: {}
 paths:
@@ -290,7 +290,7 @@ paths:
                   $ref: '#/components/examples/errorResponseExample2'
       security:
         - Application-Restricted: [ ]
-  /notifications/:
+  /notifications:
     get:
       tags:
         - Endpoints
