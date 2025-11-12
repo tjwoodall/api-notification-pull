@@ -16,7 +16,8 @@
 
 package unit.util
 
-import org.mockito.scalatest.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar.mock
 import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.apinotificationpull.model.NotificationStatus.{Pulled, Unpulled}
 import uk.gov.hmrc.apinotificationpull.model.Notifications
@@ -28,7 +29,7 @@ class EnhancedXmlBuilderSpec extends UnitSpec with MockitoSugar {
   trait Setup {
     val apiContext = "notifications"
     val appContext = mock[AppContext]
-    val xmlBuilder = new EnhancedXmlBuilder(appContext)
+    val xmlBuilder = new EnhancedXmlBuilder
   }
 
   "XmlBuilder.toXml()" should {

@@ -47,7 +47,7 @@ trait ExternalServices extends WireMockRunner {
   def stubForExistingNotification(context: String, notificationId: String, notificationBody: String, headers: Seq[(String, String)]): StubMapping = {
     stubFor(get(urlMatching(s"$context/$notificationId")).withHeader(X_CLIENT_ID_HEADER_NAME, equalTo(ClientId))
       .willReturn(aResponse()
-        .withHeaders(new HttpHeaders(headers.map(h => HttpHeader.httpHeader(h._1, h._2)): _*))
+        .withHeaders(new HttpHeaders(headers.map(h => HttpHeader.httpHeader(h._1, h._2)) *))
         .withBody(notificationBody)
         .withStatus(OK)))
   }
@@ -55,7 +55,7 @@ trait ExternalServices extends WireMockRunner {
   def stubForExistingNotificationsList(context: String, notificationBody: String, headers: Seq[(String, String)]): StubMapping = {
     stubFor(get(urlMatching(s"$context")).withHeader(X_CLIENT_ID_HEADER_NAME, equalTo(ClientId))
       .willReturn(aResponse()
-        .withHeaders(new HttpHeaders(headers.map(h => HttpHeader.httpHeader(h._1, h._2)): _*))
+        .withHeaders(new HttpHeaders(headers.map(h => HttpHeader.httpHeader(h._1, h._2)) *))
         .withBody(notificationBody)
         .withStatus(OK)))
   }

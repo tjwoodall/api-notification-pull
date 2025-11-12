@@ -124,7 +124,7 @@ class EnhancedNotificationsController @Inject()(enhancedApiNotificationQueueServ
             Result(
               header = ResponseHeader(OK),
               body = HttpEntity.Strict(ByteString(n.payload), n.headers.get(CONTENT_TYPE)))
-              .withHeaders(n.headers.toSeq: _*)
+              .withHeaders(n.headers.toSeq *)
           case Left(nfe: UpstreamErrorResponse) if nfe.statusCode == 404 =>
               logger.info(s"Notification not found for id: $notificationId", nfe)
                 ErrorNotFound.XmlResult

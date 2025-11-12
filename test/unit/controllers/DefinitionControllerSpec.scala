@@ -18,11 +18,15 @@ package unit.controllers
 
 import controllers.Assets
 import org.apache.pekko.stream.Materializer
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
-import play.api.http.Status._
+import play.api.http.{ContentTypes, MimeTypes}
+import play.api.http.Status.*
 import play.api.libs.json.Json
+import play.api.mvc.{Codec, Result, Results}
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.apinotificationpull.controllers.dynamicControllers.ApiDocumentationController
@@ -36,10 +40,12 @@ class DefinitionControllerSpec extends UnitSpec with MaterializerSupport with Mo
   private val apiScope = "scope"
   private val apiContext = "context"
   private val appContext = new AppContext(Configuration("api.definition.scope" -> apiScope, "api.context" -> apiContext))
-  private val controller = new ApiDocumentationController(mock[Assets], Helpers.stubControllerComponents(), appContext)
+  private val mockAssets = mock[Assets]
+  private val stubCc = Helpers.stubControllerComponents()
+  private val controller = new ApiDocumentationController(mockAssets, stubCc, appContext)
 
   "DefinitionController.definition" should {
-    lazy val result = getDefinition(controller)
+    lazy val result: Result = getDefinition(controller)
 
     "return OK status" in {
       status(result) shouldBe OK
@@ -54,8 +60,29 @@ class DefinitionControllerSpec extends UnitSpec with MaterializerSupport with Mo
     }
   }
 
+  "DefinitionController.conf" should {
+    lazy val result: Result = getConf(controller, "version", "file.conf")
+
+    when(mockAssets.at(any, any, any)).thenReturn(
+      stubCc.actionBuilder {
+        Results.Ok.as(ContentTypes.withCharset(MimeTypes.JSON)(Codec.utf_8))
+      }
+    )
+
+    "return OK status" in {
+      status(result) shouldBe OK
+    }
+
+    "have a JSON content type" in {
+      result.body.contentType shouldBe Some("application/json; charset=utf-8")
+    }
+  }
+
   private def getDefinition(controller: ApiDocumentationController) = {
     controller.definition().apply(FakeRequest("GET", "/api/definition")).futureValue
   }
 
+  private def getConf(controller: ApiDocumentationController, version: String, file: String) = {
+    controller.conf(version, file).apply(FakeRequest("GET", s"/api/conf/$version/$file ")).futureValue
+  }
 }

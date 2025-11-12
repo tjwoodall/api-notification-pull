@@ -47,15 +47,15 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
     val mockServicesConfig: ServicesConfig = mock[ServicesConfig]
     val mockHttpClient: HttpClientV2 = mock[HttpClientV2]
     val mockHttpResponse: HttpResponse = mock[HttpResponse]
-    val notifications = Notifications(List("notification-1", "notification-2"))
+    val notifications: Notifications = Notifications(List("notification-1", "notification-2"))
 
     val notificationId = "some-notification-id"
-    val conversationId = UUID.fromString("0ad764d1-ba29-4bfb-b7f7-25adbede0002")
-    val headers = Map(X_CLIENT_ID_HEADER_NAME -> Seq(ClientId))
-    val notification = Notification(notificationId, headers.map(h => h._1 -> h._2.head), "notification-payload")
+    val conversationId: UUID = UUID.fromString("0ad764d1-ba29-4bfb-b7f7-25adbede0002")
+    val headers: Map[String, Seq[String]] = Map(X_CLIENT_ID_HEADER_NAME -> Seq(ClientId))
+    val notification: Notification = Notification(notificationId, headers.map(h => h._1 -> h._2.head), "notification-payload")
     val stubLogger = new StubNotificationLogger(mock[ServicesConfig])
-    val enhancedApiNotificationQueueConnector = new EnhancedApiNotificationQueueConnector(mockServicesConfig, mockHttpClient, stubLogger)
-    val mockRequestBuilder = mock[RequestBuilder]
+    val enhancedApiNotificationQueueConnector: EnhancedApiNotificationQueueConnector = new EnhancedApiNotificationQueueConnector(mockServicesConfig, mockHttpClient, stubLogger)
+    val mockRequestBuilder: RequestBuilder = mock[RequestBuilder]
 
     when(mockServicesConfig.baseUrl("api-notification-queue")).thenReturn("http://api-notification-queue.url")
     when(mockHttpResponse.headers).thenReturn(headers)
@@ -69,7 +69,8 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       val url = s"http://api-notification-queue.url/notifications/unpulled"
       when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.execute[Notifications](any(), any())).thenReturn(Future.successful(notifications))
+      when(mockRequestBuilder.execute[Notifications](using any(), any()))
+        .thenReturn(Future.successful(notifications))
 
       val result: Notifications = enhancedApiNotificationQueueConnector.getAllNotificationsBy(Unpulled).futureValue
 
@@ -80,9 +81,10 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       val url = s"http://api-notification-queue.url/notifications/pulled"
       when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.execute[Notifications](any(), any())).thenReturn(Future.successful(notifications))
+      when(mockRequestBuilder.execute[Notifications](using any(), any()))
+        .thenReturn(Future.successful(notifications))
 
-      val result: Notifications = (enhancedApiNotificationQueueConnector.getAllNotificationsBy(Pulled)).futureValue
+      val result: Notifications = enhancedApiNotificationQueueConnector.getAllNotificationsBy(Pulled).futureValue
 
       result shouldBe notifications
     }
@@ -91,9 +93,10 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       val url = s"http://api-notification-queue.url/notifications/conversationId/0ad764d1-ba29-4bfb-b7f7-25adbede0002"
       when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.execute[Notifications](any(), any())).thenReturn(Future.successful(notifications))
+      when(mockRequestBuilder.execute[Notifications](using any(), any()))
+        .thenReturn(Future.successful(notifications))
 
-      val result: Notifications = (enhancedApiNotificationQueueConnector.getAllNotificationsBy(fromString("0ad764d1-ba29-4bfb-b7f7-25adbede0002"))).futureValue
+      val result: Notifications = enhancedApiNotificationQueueConnector.getAllNotificationsBy(fromString("0ad764d1-ba29-4bfb-b7f7-25adbede0002")).futureValue
 
       result shouldBe notifications
     }
@@ -102,9 +105,10 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       val url = s"http://api-notification-queue.url/notifications/unpulled/$notificationId"
       when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.execute[HttpResponse](any(), any())).thenReturn(Future.successful(mockHttpResponse))
+      when(mockRequestBuilder.execute[HttpResponse](using any(), any()))
+        .thenReturn(Future.successful(mockHttpResponse))
 
-      val result: Either[UpstreamErrorResponse, Notification] = (enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unpulled)).futureValue
+      val result: Either[UpstreamErrorResponse, Notification] = enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unpulled).futureValue
 
       result shouldBe Right(notification)
     }
@@ -113,9 +117,10 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       val url = s"http://api-notification-queue.url/notifications/pulled/$notificationId"
       when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.execute[HttpResponse](any(), any())).thenReturn(Future.successful(mockHttpResponse))
+      when(mockRequestBuilder.execute[HttpResponse](using any(), any()))
+        .thenReturn(Future.successful(mockHttpResponse))
 
-      val result: Either[UpstreamErrorResponse, Notification] = (enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Pulled)).futureValue
+      val result: Either[UpstreamErrorResponse, Notification] = enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Pulled).futureValue
 
       result shouldBe Right(notification)
     }
@@ -126,9 +131,10 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       val url = s"http://api-notification-queue.url/notifications/unpulled/$notificationId"
       when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.execute[HttpResponse](any(), any())).thenReturn(Future.failed(notFoundException))
+      when(mockRequestBuilder.execute[HttpResponse](using any(), any()))
+        .thenReturn(Future.failed(notFoundException))
 
-      val result: Either[UpstreamErrorResponse, Notification] = (enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unpulled)).futureValue
+      val result: Either[UpstreamErrorResponse, Notification] = enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unpulled).futureValue
 
       result shouldBe Left(notFoundException)
     }
@@ -139,9 +145,10 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       val url = s"http://api-notification-queue.url/notifications/unpulled/$notificationId"
       when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.execute[HttpResponse](any(), any())).thenReturn(Future.failed(badRequestException))
+      when(mockRequestBuilder.execute[HttpResponse](using any(), any()))
+        .thenReturn(Future.failed(badRequestException))
 
-      val result: Either[UpstreamErrorResponse, Notification] = (enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unpulled)).futureValue
+      val result: Either[UpstreamErrorResponse, Notification] = enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unpulled).futureValue
 
       result shouldBe Left(badRequestException)
     }
@@ -152,7 +159,8 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       val url = s"http://api-notification-queue.url/notifications/unpulled/$notificationId"
       when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.execute[HttpResponse](any(), any())).thenReturn(Future.failed(unauthorisedException))
+      when(mockRequestBuilder.execute[HttpResponse](using any(), any()))
+        .thenReturn(Future.failed(unauthorisedException))
 
       val result: Either[UpstreamErrorResponse, Notification] = enhancedApiNotificationQueueConnector.getNotificationBy(notificationId, Unpulled).futureValue
 
@@ -164,9 +172,10 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       val url = s"http://api-notification-queue.url/notifications/unpulled"
       when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.execute[Notifications](any(), any())).thenReturn(Future.successful(Notifications(List())))
+      when(mockRequestBuilder.execute[Notifications](using any(), any()))
+        .thenReturn(Future.successful(Notifications(List())))
 
-      val result = enhancedApiNotificationQueueConnector.getAllNotificationsBy(Unpulled).futureValue
+      val result: Notifications = enhancedApiNotificationQueueConnector.getAllNotificationsBy(Unpulled).futureValue
 
       result shouldBe Notifications(List())
     }
@@ -175,9 +184,10 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       val url = s"http://api-notification-queue.url/notifications/pulled"
       when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.execute[Notifications](any(), any())).thenReturn(Future.successful(Notifications(List())))
+      when(mockRequestBuilder.execute[Notifications](using any(), any()))
+        .thenReturn(Future.successful(Notifications(List())))
 
-      val result = enhancedApiNotificationQueueConnector.getAllNotificationsBy(Pulled).futureValue
+      val result: Notifications = enhancedApiNotificationQueueConnector.getAllNotificationsBy(Pulled).futureValue
 
       result shouldBe Notifications(List())
     }
@@ -186,9 +196,10 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       val url = s"http://api-notification-queue.url/notifications/conversationId/$conversationId"
       when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.execute[Notifications](any(), any())).thenReturn(Future.successful(Notifications(List())))
+      when(mockRequestBuilder.execute[Notifications](using any(), any()))
+        .thenReturn(Future.successful(Notifications(List())))
 
-      val result = enhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId).futureValue
+      val result: Notifications = enhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId).futureValue
 
       result shouldBe Notifications(List())
     }
@@ -197,9 +208,10 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       val url = s"http://api-notification-queue.url/notifications/conversationId/$conversationId/unpulled"
       when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.execute[Notifications](any(), any())).thenReturn(Future.successful(Notifications(List())))
+      when(mockRequestBuilder.execute[Notifications](using any(), any()))
+        .thenReturn(Future.successful(Notifications(List())))
 
-      val result = enhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId, Unpulled).futureValue
+      val result: Notifications = enhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId, Unpulled).futureValue
 
       result shouldBe Notifications(List())
     }
@@ -208,9 +220,10 @@ class EnhancedApiNotificationQueueConnectorSpec extends UnitSpec with MockitoSug
 
       val url = s"http://api-notification-queue.url/notifications/conversationId/$conversationId/pulled"
       when(mockHttpClient.get(meq(url"$url"))(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.execute[Notifications](any(), any())).thenReturn(Future.successful(Notifications(List())))
+      when(mockRequestBuilder.execute[Notifications](using any(), any()))
+        .thenReturn(Future.successful(Notifications(List())))
 
-      val result = enhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId, Pulled).futureValue
+      val result: Notifications = enhancedApiNotificationQueueConnector.getAllNotificationsBy(conversationId, Pulled).futureValue
 
       result shouldBe Notifications(List())
     }
