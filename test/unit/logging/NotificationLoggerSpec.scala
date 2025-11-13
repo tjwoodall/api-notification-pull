@@ -170,7 +170,7 @@ class NotificationLoggerSpec extends UnitSpec with MockitoSugar {
     }
 
     "error(s: => String, e: => Throwable)(implicit headers: SeqOfHeader) for getting headers from request implicitly" in new SetUp {
-      implicit val mockRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(LoggingHeaders: _*)
+      implicit val mockRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(LoggingHeaders *)
       import uk.gov.hmrc.apinotificationpull.controllers.CustomHeaderNames.getHeadersFromRequest
 
       val exception = new Exception("error")

@@ -25,7 +25,7 @@ import util.UnitSpec
 
 case class IntegrationTestModule(mockLogger: NotificationLogger) extends AbstractModule {
   override def configure(): Unit = {
-    bind(classOf[NotificationLogger]) toInstance mockLogger
+    bind(classOf[NotificationLogger]) `toInstance` mockLogger
   }
 
   def asGuiceableModule: GuiceableModule = GuiceableModule.guiceable(this)

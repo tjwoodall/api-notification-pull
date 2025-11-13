@@ -16,13 +16,11 @@
 
 package uk.gov.hmrc.apinotificationpull.util
 
-import uk.gov.hmrc.apinotificationpull.config.AppContext
 import uk.gov.hmrc.apinotificationpull.model.{NotificationStatus, Notifications}
 
 import java.util.UUID
-import javax.inject.Inject
 
-class EnhancedXmlBuilder @Inject()(appContext: AppContext) {
+class EnhancedXmlBuilder {
 
   private def toXml(notificationLocation: String): scala.xml.Elem =
       <link rel="notification" href={s"$notificationLocation"}/>

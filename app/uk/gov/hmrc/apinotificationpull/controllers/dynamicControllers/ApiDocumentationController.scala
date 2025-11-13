@@ -31,7 +31,8 @@ class ApiDocumentationController @Inject()(assets: Assets, cc: ControllerCompone
   extends BackendController(cc) {
 
   def conf(version: String, file: String): Action[AnyContent] = {
-    assets.at(s"/public/api/conf/$version", file)
+    val res: Action[AnyContent] = assets.at(s"/public/api/conf/$version", file)
+    res
   }
 
   def definition(): Action[AnyContent] = Action.async {

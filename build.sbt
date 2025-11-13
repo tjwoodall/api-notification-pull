@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import sbt.Keys._
-import sbt.Tests.{Group, SubProcess}
-import sbt._
-import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, targetJvm}
-import uk.gov.hmrc.gitstamp.GitStampPlugin._
 import play.sbt.PlayImport.PlayKeys.playDefaultPort
+import sbt.*
+import sbt.Keys.*
+import sbt.Tests.{Group, SubProcess}
+import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
+import uk.gov.hmrc.gitstamp.GitStampPlugin.*
 
 name := "api-notification-pull"
 
@@ -28,10 +28,13 @@ lazy val CdsIntegrationComponentTest = config("component") extend Test
 val testConfig = Seq(CdsIntegrationComponentTest, Test)
 
 def forkedJvmPerTestConfig(tests: Seq[TestDefinition], packages: String*): Seq[Group] =
-  tests.groupBy(_.name.takeWhile(_ != '.')).filter(packageAndTests => packages contains packageAndTests._1) map {
-    case (packg, theTests) =>
-      Group(packg, theTests, SubProcess(ForkOptions()))
-  } toSeq
+  tests
+    .groupBy(_.name.takeWhile(_ != '.'))
+    .filter(packageAndTests => packages contains packageAndTests._1)
+    .map {
+      case (packg: String, theTests: Seq[TestDefinition]) => Group(packg, theTests, SubProcess(ForkOptions()))
+    }
+    .toSeq
 
 lazy val testAll = TaskKey[Unit]("test-all")
 lazy val allTest = Seq(testAll := (CdsIntegrationComponentTest / test).dependsOn(Test / test).value)
@@ -40,9 +43,9 @@ lazy val microservice = (project in file("."))
   .enablePlugins(PlayScala)
   .enablePlugins(SbtDistributablesPlugin)
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
-  .configs(testConfig: _*)
+  .configs(testConfig *)
   .settings(
-    scalaVersion := "2.13.16",
+    scalaVersion := "3.6.1",
     commonSettings,
     unitTestSettings,
     integrationComponentTestSettings,
@@ -73,9 +76,9 @@ lazy val integrationComponentTestSettings =
       CdsIntegrationComponentTest / testGrouping := forkedJvmPerTestConfig((Test / definedTests).value, "integration", "component")
     )
 
-lazy val commonSettings: Seq[Setting[_]] = gitStampSettings
+lazy val commonSettings: Seq[Setting[?]] = gitStampSettings
 
-lazy val scoverageSettings: Seq[Setting[_]] = Seq(
+lazy val scoverageSettings: Seq[Setting[?]] = Seq(
   coverageExcludedPackages := "<empty>;.*(Reverse|Routes).*;com.kenshoo.play.metrics.*;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;views.*;uk.gov.hmrc.apinotificationpull.config.*",
   coverageMinimumStmtTotal := 96,
   coverageFailOnMinimum := true,

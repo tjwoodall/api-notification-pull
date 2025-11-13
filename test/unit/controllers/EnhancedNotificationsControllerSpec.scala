@@ -22,7 +22,6 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.http.HeaderNames.CONTENT_TYPE
 import play.api.http.MimeTypes
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers._
@@ -51,7 +50,7 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
   private implicit val mockMaterializer: Materializer = mock[Materializer]
   private val mockEnhancedApiNotificationQueueService = mock[EnhancedApiNotificationQueueService]
   private val mockAppContext: AppContext = mock[AppContext]
-  private val xmlBuilder = new EnhancedXmlBuilder(mockAppContext)
+  private val xmlBuilder = new EnhancedXmlBuilder
   private val mockLogger = new StubNotificationLogger(mock[ServicesConfig])
 
   private val errorNotFoundXml = scala.xml.Utility.trim(
@@ -133,7 +132,6 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
 
       val result = (controller.unpulledList().apply(validRequest).futureValue)
 
-      println(s"result [$result]")
       status(result) shouldBe OK
 
       private val expectedXml = scala.xml.Utility.trim(
@@ -143,7 +141,6 @@ class EnhancedNotificationsControllerSpec extends UnitSpec with MaterializerSupp
           <link rel="notification" href="/api-notification-pull-context/unpulled/notification-unpulled-2"/>
         </resource>
       )
-     println(s"bodyOf(result) ${bodyOf(result)}")
       string2xml(bodyOf(result)) shouldBe expectedXml
     }
 
