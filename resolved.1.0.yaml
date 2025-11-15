@@ -1,0 +1,1442 @@
+openapi: 3.0.3
+info:
+  title: Pull Notifications API
+  contact: {}
+  version: "1.0"
+servers:
+- url: https://test-api.service.hmrc.gov.uk
+  description: Sandbox
+- url: https://api.service.hmrc.gov.uk/
+  description: Production
+tags:
+- name: Endpoints
+  description: ""
+paths:
+  /notifications/conversationId/{conversationId}:
+    get:
+      tags:
+      - Endpoints
+      summary: Get all notifications for a conversation
+      description: Get a list of all notification identifiers for the given conversation
+        identifier.
+      operationId: Getallnotificationsforaconversation
+      parameters:
+      - name: conversationId
+        in: path
+        description: Conversation identifier UUID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 1446a875-eaa1-4d7a-903e-0604166d9557
+      - name: Accept
+        in: header
+        description: "Specifies the version of the API that you want to call. See\
+          \ [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning)."
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+xml
+      responses:
+        "200":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  href:
+                    type: string
+                    xml:
+                      attribute: true
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rel:
+                          type: string
+                          xml:
+                            attribute: true
+                        href:
+                          type: string
+                          xml:
+                            attribute: true
+              examples:
+                objectExample:
+                  summary: A sample Resource
+                  value: |
+                    <resource href="/notifications/conversationId/4cdc771e-c77a-438f-b293-e11ac4cc4e2e/">
+                      <link rel="self" href="/notifications/conversationId/4cdc771e-c77a-438f-b293-e11ac4cc4e2e"/>
+                      <link rel="notification" href="/notifications/unpulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+                      <link rel="notification" href="/notifications/pulled/1b941d3a-84cd-4127-a80f-36fa1f019359"/>
+                    </resource>
+      security:
+      - applicationRestricted: []
+  /notifications/conversationId/{conversationId}/unpulled:
+    get:
+      tags:
+      - Endpoints
+      summary: Get unpulled notifications for a conversation
+      description: Get a list of unpulled notification identifiers for the given conversation
+        identifier
+      operationId: Getunpullednotificationsforaconversation
+      parameters:
+      - name: conversationId
+        in: path
+        description: Conversation identifier UUID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 1446a875-eaa1-4d7a-903e-0604166d9557
+      - name: Accept
+        in: header
+        description: "Specifies the version of the API that you want to call. See\
+          \ [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning)."
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+xml
+      responses:
+        "200":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  href:
+                    type: string
+                    xml:
+                      attribute: true
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rel:
+                          type: string
+                          xml:
+                            attribute: true
+                        href:
+                          type: string
+                          xml:
+                            attribute: true
+              examples:
+                objectExample:
+                  summary: A sample Resource
+                  value: |
+                    <resource href="/notifications/unpulled/">
+                      <link rel="self" href="/notifications/unpulled/"/>
+                      <link rel="notification" href="/notifications/unpulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+                    </resource>
+      security:
+      - applicationRestricted: []
+  /notifications/conversationId/{conversationId}/pulled:
+    get:
+      tags:
+      - Endpoints
+      summary: Get pulled notifications for a conversation
+      description: Get a list of pulled notification identifiers for the given conversation
+        identifier
+      operationId: Getpullednotificationsforaconversation
+      parameters:
+      - name: conversationId
+        in: path
+        description: Conversation identifier UUID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 1446a875-eaa1-4d7a-903e-0604166d9557
+      - name: Accept
+        in: header
+        description: "Specifies the version of the API that you want to call. See\
+          \ [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning)."
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+xml
+      responses:
+        "200":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  href:
+                    type: string
+                    xml:
+                      attribute: true
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rel:
+                          type: string
+                          xml:
+                            attribute: true
+                        href:
+                          type: string
+                          xml:
+                            attribute: true
+              examples:
+                objectExample:
+                  summary: A sample Resource
+                  value: |
+                    <resource href="/notifications/pulled/">
+                      <link rel="self" href="/notifications/pulled/"/>
+                      <link rel="notification" href="/notifications/pulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+                    </resource>'
+      security:
+      - applicationRestricted: []
+  /notifications/unpulled:
+    get:
+      tags:
+      - Endpoints
+      summary: Get unpulled notifications
+      description: |
+        <p>Get a list of unpulled notification identifiers for the subscribed application.</p>
+        <p><b>Note:</b> The number of notification identifiers that are returned is limited to 60,000.</p>
+      operationId: Getalistofunpullednotificationidentifieirsforthesubscribedapplication
+      parameters:
+      - name: Accept
+        in: header
+        description: "Specifies the version of the API that you want to call. See\
+          \ [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning)."
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+xml
+      responses:
+        "200":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  href:
+                    type: string
+                    xml:
+                      attribute: true
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rel:
+                          type: string
+                          xml:
+                            attribute: true
+                        href:
+                          type: string
+                          xml:
+                            attribute: true
+              examples:
+                objectExample:
+                  summary: A sample Resource
+                  value: |
+                    <resource href="/notifications/unpulled/">
+                      <link rel="self" href="/notifications/unpulled/"/>
+                      <link rel="notification" href="/notifications/unpulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+                    </resource>
+      security:
+      - applicationRestricted: []
+  /notifications/unpulled/{notificationId}:
+    get:
+      tags:
+      - Endpoints
+      summary: Get an unpulled notification
+      description: Get an unpulled notification with the given notification identifier
+      operationId: Getanunpullednotification
+      parameters:
+      - name: notificationId
+        in: path
+        description: Notification identifier UUID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 3851c039-107a-42c9-94a9-180893e5f0d5
+      - name: Accept
+        in: header
+        description: "Specifies the version of the API that you want to call. See\
+          \ [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning)."
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+xml
+      responses:
+        "200":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  WCODataModelVersionCode:
+                    type: string
+                    xml:
+                      prefix: _2
+                  WCOTypeName:
+                    type: string
+                    xml:
+                      prefix: _2
+                  ResponsibleCountryCode:
+                    type: string
+                    properties:
+                      value:
+                        type: string
+                        xml:
+                          attribute: true
+                    xml:
+                      prefix: _2
+                  ResponsibleAgencyName:
+                    type: string
+                    properties:
+                      value:
+                        type: string
+                        xml:
+                          attribute: true
+                    xml:
+                      prefix: _2
+                  AgencyAssignedCustomizationCode:
+                    type: string
+                    properties:
+                      value:
+                        type: string
+                        xml:
+                          attribute: true
+                    xml:
+                      prefix: _2
+                  AgencyAssignedCustomizationVersionCode:
+                    type: string
+                    properties:
+                      value:
+                        type: string
+                        xml:
+                          attribute: true
+                    xml:
+                      prefix: _2
+                  Response:
+                    type: object
+                    properties:
+                      Response:
+                        type: object
+                        properties:
+                          FunctionCode:
+                            type: string
+                            xml:
+                              prefix: _2_1
+                          FunctionalReferenceID:
+                            type: string
+                            xml:
+                              prefix: _2_1
+                          IssueDateTime:
+                            type: object
+                            properties:
+                              IssueDateTime:
+                                type: object
+                                properties:
+                                  DateTimeString:
+                                    type: string
+                                    properties:
+                                      formatCode:
+                                        type: string
+                                        xml:
+                                          attribute: true
+                                    xml:
+                                      namespace: urn:wco:datamodel:WCO:Response_DS:DMS:2
+                                      prefix: _2_2
+                                xml:
+                                  prefix: _2_1
+                          Errors:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                ValidationCode:
+                                  type: string
+                                  xml:
+                                    prefix: _2_1
+                                Pointer:
+                                  type: object
+                                  properties:
+                                    Pointer:
+                                      type: object
+                                      properties:
+                                        DocumentSectionCode:
+                                          type: string
+                                          xml:
+                                            prefix: _2_1
+                                        TagID:
+                                          type: string
+                                          xml:
+                                            prefix: _2_1
+                                      xml:
+                                        prefix: _2_1
+                              xml:
+                                prefix: _2_1
+                          Declaration:
+                            type: object
+                            properties:
+                              Declaration:
+                                type: object
+                                properties:
+                                  FunctionalReferenceID:
+                                    type: string
+                                    xml:
+                                      prefix: _2_1
+                                  ID:
+                                    type: string
+                                    xml:
+                                      prefix: _2_1
+                                  RejectionDateTime:
+                                    type: object
+                                    properties:
+                                      RejectionDateTime:
+                                        type: object
+                                        properties:
+                                          DateTimeString:
+                                            type: string
+                                            properties:
+                                              formatCode:
+                                                type: string
+                                                xml:
+                                                  attribute: true
+                                            xml:
+                                              namespace: urn:wco:datamodel:WCO:Response_DS:DMS:2
+                                              prefix: _2_2
+                                        xml:
+                                          prefix: _2_1
+                                  VersionID:
+                                    type: string
+                                    xml:
+                                      prefix: _2_1
+                                xml:
+                                  prefix: _2_1
+                        xml:
+                          namespace: urn:wco:datamodel:WCO:RES-DMS:2
+                          prefix: _2_1
+                xml:
+                  namespace: urn:wco:datamodel:WCO:DocumentMetaData-DMS:2
+                  prefix: _2
+              examples:
+                objectExample:
+                  summary: A sample MetaData
+                  value: |
+                    <_2:MetaData xmlns:_2="urn:wco:datamodel:WCO:DocumentMetaData-DMS:2">
+                      <_2:WCODataModelVersionCode>3.6</_2:WCODataModelVersionCode>
+                      <_2:WCOTypeName>RES</_2:WCOTypeName>
+                      <_2:ResponsibleCountryCode/>
+                      <_2:ResponsibleAgencyName/>
+                      <_2:AgencyAssignedCustomizationCode/>
+                      <_2:AgencyAssignedCustomizationVersionCode/>
+                      <_2_1:Response xmlns:_2_1="urn:wco:datamodel:WCO:RES-DMS:2">
+                        <_2_1:FunctionCode>03</_2_1:FunctionCode>
+                        <_2_1:FunctionalReferenceID>0f3ec64eec704999995ddf5a3ca9cc0b</_2_1:FunctionalReferenceID>
+                        <_2_1:IssueDateTime>
+                          <_2_2:DateTimeString formatCode="304" xmlns:_2_2="urn:wco:datamodel:WCO:Response_DS:DMS:2">20190220165953Z</_2_2:DateTimeString>
+                        </_2_1:IssueDateTime>
+                        <_2_1:Error>
+                          <_2_1:ValidationCode>CDS12014</_2_1:ValidationCode>
+                          <_2_1:Pointer>
+                            <_2_1:DocumentSectionCode>42A</_2_1:DocumentSectionCode>
+                            <_2_1:TagID>D013</_2_1:TagID>
+                          </_2_1:Pointer>
+                        </_2_1:Error>
+                        <_2_1:Error>
+                          <_2_1:ValidationCode>CDS12015</_2_1:ValidationCode>
+                          <_2_1:Pointer>
+                          <_2_1:DocumentSectionCode>42A</_2_1:DocumentSectionCode>
+                          <_2_1:TagID>D014</_2_1:TagID>
+                          </_2_1:Pointer>
+                        </_2_1:Error>
+                        <_2_1:Declaration>
+                          <_2_1:FunctionalReferenceID>gq8lPty99999NLgUQMSAmg</_2_1:FunctionalReferenceID>
+                          <_2_1:ID>19GB20GF2F99999VR4</_2_1:ID>
+                          <_2_1:RejectionDateTime>
+                            <_2_2:DateTimeString formatCode="304" xmlns:_2_2="urn:wco:datamodel:WCO:Response_DS:DMS:2">20190220165953Z</_2_2:DateTimeString>
+                          </_2_1:RejectionDateTime>
+                          <_2_1:VersionID>1</_2_1:VersionID>
+                         </_2_1:Declaration>
+                      </_2_1:Response>
+                    </_2:MetaData>
+        "400":
+          description: Invalid XML payload
+          content:
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                objectExample:
+                  summary: A sample error response
+                  value: |
+                    <errorResponse>
+                      <code>BAD_REQUEST</code>
+                      <message>Notification is unpulled</message>
+                    </errorResponse>
+        "404":
+          description: Invalid XML payload
+          content:
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                objectExample:
+                  summary: A sample error response
+                  value: |
+                    <errorResponse>
+                      <code>NOT_FOUND</code>
+                      <message>Resource was not found</message>
+                    </errorResponse>
+      security:
+      - applicationRestricted: []
+  /notifications/pulled:
+    get:
+      tags:
+      - Endpoints
+      summary: Get pulled notifications
+      description: |
+        <p>Get a list of pulled notification identifiers for the subscribed application.</p>
+        <p><b>Note:</b> The number of notification identifiers that are returned is limited to 60,000.</p>
+      operationId: Getpullednotifications
+      parameters:
+      - name: Accept
+        in: header
+        description: "Specifies the version of the API that you want to call. See\
+          \ [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning)."
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+xml
+      responses:
+        "200":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  href:
+                    type: string
+                    xml:
+                      attribute: true
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rel:
+                          type: string
+                          xml:
+                            attribute: true
+                        href:
+                          type: string
+                          xml:
+                            attribute: true
+              examples:
+                objectExample:
+                  summary: A sample Resource
+                  value: |
+                    <resource href="/notifications/pulled/">
+                      <link rel="self" href="/notifications/pulled/"/>
+                      <link rel="notification" href="/notifications/pulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+                    </resource>'
+      security:
+      - applicationRestricted: []
+  /notifications/pulled/{notificationId}:
+    get:
+      tags:
+      - Endpoints
+      summary: Get a pulled notification
+      description: Get a pulled notification with the given notification identifier
+      operationId: Getapullednotification
+      parameters:
+      - name: notificationId
+        in: path
+        description: Notification identifier UUID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 3851c039-107a-42c9-94a9-180893e5f0d5
+      - name: Accept
+        in: header
+        description: "Specifies the version of the API that you want to call. See\
+          \ [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning)."
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+xml
+      responses:
+        "200":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  WCODataModelVersionCode:
+                    type: string
+                    xml:
+                      prefix: _2
+                  WCOTypeName:
+                    type: string
+                    xml:
+                      prefix: _2
+                  ResponsibleCountryCode:
+                    type: string
+                    properties:
+                      value:
+                        type: string
+                        xml:
+                          attribute: true
+                    xml:
+                      prefix: _2
+                  ResponsibleAgencyName:
+                    type: string
+                    properties:
+                      value:
+                        type: string
+                        xml:
+                          attribute: true
+                    xml:
+                      prefix: _2
+                  AgencyAssignedCustomizationCode:
+                    type: string
+                    properties:
+                      value:
+                        type: string
+                        xml:
+                          attribute: true
+                    xml:
+                      prefix: _2
+                  AgencyAssignedCustomizationVersionCode:
+                    type: string
+                    properties:
+                      value:
+                        type: string
+                        xml:
+                          attribute: true
+                    xml:
+                      prefix: _2
+                  Response:
+                    type: object
+                    properties:
+                      Response:
+                        type: object
+                        properties:
+                          FunctionCode:
+                            type: string
+                            xml:
+                              prefix: _2_1
+                          FunctionalReferenceID:
+                            type: string
+                            xml:
+                              prefix: _2_1
+                          IssueDateTime:
+                            type: object
+                            properties:
+                              IssueDateTime:
+                                type: object
+                                properties:
+                                  DateTimeString:
+                                    type: string
+                                    properties:
+                                      formatCode:
+                                        type: string
+                                        xml:
+                                          attribute: true
+                                    xml:
+                                      namespace: urn:wco:datamodel:WCO:Response_DS:DMS:2
+                                      prefix: _2_2
+                                xml:
+                                  prefix: _2_1
+                          Errors:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                ValidationCode:
+                                  type: string
+                                  xml:
+                                    prefix: _2_1
+                                Pointer:
+                                  type: object
+                                  properties:
+                                    Pointer:
+                                      type: object
+                                      properties:
+                                        DocumentSectionCode:
+                                          type: string
+                                          xml:
+                                            prefix: _2_1
+                                        TagID:
+                                          type: string
+                                          xml:
+                                            prefix: _2_1
+                                      xml:
+                                        prefix: _2_1
+                              xml:
+                                prefix: _2_1
+                          Declaration:
+                            type: object
+                            properties:
+                              Declaration:
+                                type: object
+                                properties:
+                                  FunctionalReferenceID:
+                                    type: string
+                                    xml:
+                                      prefix: _2_1
+                                  ID:
+                                    type: string
+                                    xml:
+                                      prefix: _2_1
+                                  RejectionDateTime:
+                                    type: object
+                                    properties:
+                                      RejectionDateTime:
+                                        type: object
+                                        properties:
+                                          DateTimeString:
+                                            type: string
+                                            properties:
+                                              formatCode:
+                                                type: string
+                                                xml:
+                                                  attribute: true
+                                            xml:
+                                              namespace: urn:wco:datamodel:WCO:Response_DS:DMS:2
+                                              prefix: _2_2
+                                        xml:
+                                          prefix: _2_1
+                                  VersionID:
+                                    type: string
+                                    xml:
+                                      prefix: _2_1
+                                xml:
+                                  prefix: _2_1
+                        xml:
+                          namespace: urn:wco:datamodel:WCO:RES-DMS:2
+                          prefix: _2_1
+                xml:
+                  namespace: urn:wco:datamodel:WCO:DocumentMetaData-DMS:2
+                  prefix: _2
+              examples:
+                objectExample:
+                  summary: A sample MetaData
+                  value: |
+                    <_2:MetaData xmlns:_2="urn:wco:datamodel:WCO:DocumentMetaData-DMS:2">
+                      <_2:WCODataModelVersionCode>3.6</_2:WCODataModelVersionCode>
+                      <_2:WCOTypeName>RES</_2:WCOTypeName>
+                      <_2:ResponsibleCountryCode/>
+                      <_2:ResponsibleAgencyName/>
+                      <_2:AgencyAssignedCustomizationCode/>
+                      <_2:AgencyAssignedCustomizationVersionCode/>
+                      <_2_1:Response xmlns:_2_1="urn:wco:datamodel:WCO:RES-DMS:2">
+                        <_2_1:FunctionCode>03</_2_1:FunctionCode>
+                        <_2_1:FunctionalReferenceID>0f3ec64eec704999995ddf5a3ca9cc0b</_2_1:FunctionalReferenceID>
+                        <_2_1:IssueDateTime>
+                          <_2_2:DateTimeString formatCode="304" xmlns:_2_2="urn:wco:datamodel:WCO:Response_DS:DMS:2">20190220165953Z</_2_2:DateTimeString>
+                        </_2_1:IssueDateTime>
+                        <_2_1:Error>
+                          <_2_1:ValidationCode>CDS12014</_2_1:ValidationCode>
+                          <_2_1:Pointer>
+                            <_2_1:DocumentSectionCode>42A</_2_1:DocumentSectionCode>
+                            <_2_1:TagID>D013</_2_1:TagID>
+                          </_2_1:Pointer>
+                        </_2_1:Error>
+                        <_2_1:Error>
+                          <_2_1:ValidationCode>CDS12015</_2_1:ValidationCode>
+                          <_2_1:Pointer>
+                          <_2_1:DocumentSectionCode>42A</_2_1:DocumentSectionCode>
+                          <_2_1:TagID>D014</_2_1:TagID>
+                          </_2_1:Pointer>
+                        </_2_1:Error>
+                        <_2_1:Declaration>
+                          <_2_1:FunctionalReferenceID>gq8lPty99999NLgUQMSAmg</_2_1:FunctionalReferenceID>
+                          <_2_1:ID>19GB20GF2F99999VR4</_2_1:ID>
+                          <_2_1:RejectionDateTime>
+                            <_2_2:DateTimeString formatCode="304" xmlns:_2_2="urn:wco:datamodel:WCO:Response_DS:DMS:2">20190220165953Z</_2_2:DateTimeString>
+                          </_2_1:RejectionDateTime>
+                          <_2_1:VersionID>1</_2_1:VersionID>
+                         </_2_1:Declaration>
+                      </_2_1:Response>
+                    </_2:MetaData>
+        "400":
+          description: Invalid XML payload
+          content:
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                objectExample:
+                  summary: A sample error response
+                  value: |
+                    <errorResponse>
+                      <code>BAD_REQUEST</code>
+                      <message>Notification is unpulled</message>
+                    </errorResponse>
+        "404":
+          description: Invalid XML payload
+          content:
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                objectExample:
+                  summary: A sample error response
+                  value: |
+                    <errorResponse>
+                      <code>NOT_FOUND</code>
+                      <message>Resource was not found</message>
+                    </errorResponse>
+      security:
+      - applicationRestricted: []
+  /notifications/:
+    get:
+      tags:
+      - Endpoints
+      summary: Get all available notifications (deprecated)
+      description: |
+        *This endpoint has been deprecated. It will be removed in a future release.*
+
+        Get a list of all notification identifiers for the subscribed application.
+      operationId: Getallnotifications(deprecated)
+      parameters:
+      - name: Accept
+        in: header
+        description: "Specifies the version of the API that you want to call. See\
+          \ [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning)."
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+xml
+      responses:
+        "200":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  href:
+                    type: string
+                    xml:
+                      attribute: true
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rel:
+                          type: string
+                          xml:
+                            attribute: true
+                        href:
+                          type: string
+                          xml:
+                            attribute: true
+              examples:
+                objectExample:
+                  summary: A sample Resource
+                  value: |
+                    <resource href="/notifications/">
+                      <link rel="self" href="/notifications/"/>
+                      <link rel="notification" href="/notifications/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+                    </resource>
+      security:
+      - applicationRestricted: []
+  /notifications/{id}:
+    delete:
+      tags:
+      - Endpoints
+      summary: Retrieve and delete a notification from the queue (deprecated)
+      description: |
+        *This endpoint has been deprecated. It will be removed in a future release.*
+
+        Get a notification with the given notification identifier. The notification will be returned in the response body and then deleted from the queue.
+      operationId: Retrieveanddeleteanotificationfromthequeue(deprecated)
+      parameters:
+      - name: id
+        in: path
+        description: Notification identifier UUID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 3851c039-107a-42c9-94a9-180893e5f0d5
+      - name: Accept
+        in: header
+        description: "Specifies the version of the API that you want to call. See\
+          \ [versioning](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#versioning)."
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+xml
+      responses:
+        "200":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                type: string
+                xml:
+                  name: example
+              examples:
+                objectExample:
+                  summary: A sample error response
+                  value: <example>Saved Message</example>
+      security:
+      - applicationRestricted: []
+components:
+  schemas:
+    resource:
+      type: object
+      properties:
+        href:
+          type: string
+          xml:
+            attribute: true
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              rel:
+                type: string
+                xml:
+                  attribute: true
+              href:
+                type: string
+                xml:
+                  attribute: true
+    link:
+      type: object
+      properties:
+        rel:
+          type: string
+          xml:
+            attribute: true
+        href:
+          type: string
+          xml:
+            attribute: true
+    MetaData:
+      type: object
+      properties:
+        WCODataModelVersionCode:
+          type: string
+          xml:
+            prefix: _2
+        WCOTypeName:
+          type: string
+          xml:
+            prefix: _2
+        ResponsibleCountryCode:
+          type: string
+          properties:
+            value:
+              type: string
+              xml:
+                attribute: true
+          xml:
+            prefix: _2
+        ResponsibleAgencyName:
+          type: string
+          properties:
+            value:
+              type: string
+              xml:
+                attribute: true
+          xml:
+            prefix: _2
+        AgencyAssignedCustomizationCode:
+          type: string
+          properties:
+            value:
+              type: string
+              xml:
+                attribute: true
+          xml:
+            prefix: _2
+        AgencyAssignedCustomizationVersionCode:
+          type: string
+          properties:
+            value:
+              type: string
+              xml:
+                attribute: true
+          xml:
+            prefix: _2
+        Response:
+          type: object
+          properties:
+            Response:
+              type: object
+              properties:
+                FunctionCode:
+                  type: string
+                  xml:
+                    prefix: _2_1
+                FunctionalReferenceID:
+                  type: string
+                  xml:
+                    prefix: _2_1
+                IssueDateTime:
+                  type: object
+                  properties:
+                    IssueDateTime:
+                      type: object
+                      properties:
+                        DateTimeString:
+                          type: string
+                          properties:
+                            formatCode:
+                              type: string
+                              xml:
+                                attribute: true
+                          xml:
+                            namespace: urn:wco:datamodel:WCO:Response_DS:DMS:2
+                            prefix: _2_2
+                      xml:
+                        prefix: _2_1
+                Errors:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      ValidationCode:
+                        type: string
+                        xml:
+                          prefix: _2_1
+                      Pointer:
+                        type: object
+                        properties:
+                          Pointer:
+                            type: object
+                            properties:
+                              DocumentSectionCode:
+                                type: string
+                                xml:
+                                  prefix: _2_1
+                              TagID:
+                                type: string
+                                xml:
+                                  prefix: _2_1
+                            xml:
+                              prefix: _2_1
+                    xml:
+                      prefix: _2_1
+                Declaration:
+                  type: object
+                  properties:
+                    Declaration:
+                      type: object
+                      properties:
+                        FunctionalReferenceID:
+                          type: string
+                          xml:
+                            prefix: _2_1
+                        ID:
+                          type: string
+                          xml:
+                            prefix: _2_1
+                        RejectionDateTime:
+                          type: object
+                          properties:
+                            RejectionDateTime:
+                              type: object
+                              properties:
+                                DateTimeString:
+                                  type: string
+                                  properties:
+                                    formatCode:
+                                      type: string
+                                      xml:
+                                        attribute: true
+                                  xml:
+                                    namespace: urn:wco:datamodel:WCO:Response_DS:DMS:2
+                                    prefix: _2_2
+                              xml:
+                                prefix: _2_1
+                        VersionID:
+                          type: string
+                          xml:
+                            prefix: _2_1
+                      xml:
+                        prefix: _2_1
+              xml:
+                namespace: urn:wco:datamodel:WCO:RES-DMS:2
+                prefix: _2_1
+      xml:
+        namespace: urn:wco:datamodel:WCO:DocumentMetaData-DMS:2
+        prefix: _2
+    Response:
+      type: object
+      properties:
+        FunctionCode:
+          type: string
+          xml:
+            prefix: _2_1
+        FunctionalReferenceID:
+          type: string
+          xml:
+            prefix: _2_1
+        IssueDateTime:
+          type: object
+          properties:
+            IssueDateTime:
+              type: object
+              properties:
+                DateTimeString:
+                  type: string
+                  properties:
+                    formatCode:
+                      type: string
+                      xml:
+                        attribute: true
+                  xml:
+                    namespace: urn:wco:datamodel:WCO:Response_DS:DMS:2
+                    prefix: _2_2
+              xml:
+                prefix: _2_1
+        Errors:
+          type: array
+          items:
+            type: object
+            properties:
+              ValidationCode:
+                type: string
+                xml:
+                  prefix: _2_1
+              Pointer:
+                type: object
+                properties:
+                  Pointer:
+                    type: object
+                    properties:
+                      DocumentSectionCode:
+                        type: string
+                        xml:
+                          prefix: _2_1
+                      TagID:
+                        type: string
+                        xml:
+                          prefix: _2_1
+                    xml:
+                      prefix: _2_1
+            xml:
+              prefix: _2_1
+        Declaration:
+          type: object
+          properties:
+            Declaration:
+              type: object
+              properties:
+                FunctionalReferenceID:
+                  type: string
+                  xml:
+                    prefix: _2_1
+                ID:
+                  type: string
+                  xml:
+                    prefix: _2_1
+                RejectionDateTime:
+                  type: object
+                  properties:
+                    RejectionDateTime:
+                      type: object
+                      properties:
+                        DateTimeString:
+                          type: string
+                          properties:
+                            formatCode:
+                              type: string
+                              xml:
+                                attribute: true
+                          xml:
+                            namespace: urn:wco:datamodel:WCO:Response_DS:DMS:2
+                            prefix: _2_2
+                      xml:
+                        prefix: _2_1
+                VersionID:
+                  type: string
+                  xml:
+                    prefix: _2_1
+              xml:
+                prefix: _2_1
+      xml:
+        namespace: urn:wco:datamodel:WCO:RES-DMS:2
+        prefix: _2_1
+    Error:
+      type: object
+      properties:
+        ValidationCode:
+          type: string
+          xml:
+            prefix: _2_1
+        Pointer:
+          type: object
+          properties:
+            Pointer:
+              type: object
+              properties:
+                DocumentSectionCode:
+                  type: string
+                  xml:
+                    prefix: _2_1
+                TagID:
+                  type: string
+                  xml:
+                    prefix: _2_1
+              xml:
+                prefix: _2_1
+      xml:
+        prefix: _2_1
+    Pointer:
+      type: object
+      properties:
+        DocumentSectionCode:
+          type: string
+          xml:
+            prefix: _2_1
+        TagID:
+          type: string
+          xml:
+            prefix: _2_1
+      xml:
+        prefix: _2_1
+    Declaration:
+      type: object
+      properties:
+        FunctionalReferenceID:
+          type: string
+          xml:
+            prefix: _2_1
+        ID:
+          type: string
+          xml:
+            prefix: _2_1
+        RejectionDateTime:
+          type: object
+          properties:
+            RejectionDateTime:
+              type: object
+              properties:
+                DateTimeString:
+                  type: string
+                  properties:
+                    formatCode:
+                      type: string
+                      xml:
+                        attribute: true
+                  xml:
+                    namespace: urn:wco:datamodel:WCO:Response_DS:DMS:2
+                    prefix: _2_2
+              xml:
+                prefix: _2_1
+        VersionID:
+          type: string
+          xml:
+            prefix: _2_1
+      xml:
+        prefix: _2_1
+    IssueDateTime:
+      type: object
+      properties:
+        DateTimeString:
+          type: string
+          properties:
+            formatCode:
+              type: string
+              xml:
+                attribute: true
+          xml:
+            namespace: urn:wco:datamodel:WCO:Response_DS:DMS:2
+            prefix: _2_2
+      xml:
+        prefix: _2_1
+    RejectionDateTime:
+      type: object
+      properties:
+        DateTimeString:
+          type: string
+          properties:
+            formatCode:
+              type: string
+              xml:
+                attribute: true
+          xml:
+            namespace: urn:wco:datamodel:WCO:Response_DS:DMS:2
+            prefix: _2_2
+      xml:
+        prefix: _2_1
+    DateTimeString:
+      type: string
+      properties:
+        formatCode:
+          type: string
+          xml:
+            attribute: true
+      xml:
+        namespace: urn:wco:datamodel:WCO:Response_DS:DMS:2
+        prefix: _2_2
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    TestResponse:
+      type: string
+      xml:
+        name: example
+  examples:
+    resourceExample1:
+      summary: A sample Resource
+      value: |
+        <resource href="/notifications/conversationId/4cdc771e-c77a-438f-b293-e11ac4cc4e2e/">
+          <link rel="self" href="/notifications/conversationId/4cdc771e-c77a-438f-b293-e11ac4cc4e2e"/>
+          <link rel="notification" href="/notifications/unpulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+          <link rel="notification" href="/notifications/pulled/1b941d3a-84cd-4127-a80f-36fa1f019359"/>
+        </resource>
+    resourceExample2:
+      summary: A sample Resource
+      value: |
+        <resource href="/notifications/unpulled/">
+          <link rel="self" href="/notifications/unpulled/"/>
+          <link rel="notification" href="/notifications/unpulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+        </resource>
+    resourceExample3:
+      summary: A sample Resource
+      value: |
+        <resource href="/notifications/pulled/">
+          <link rel="self" href="/notifications/pulled/"/>
+          <link rel="notification" href="/notifications/pulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+        </resource>'
+    resourceExample4:
+      summary: A sample Resource
+      value: |
+        <resource href="/notifications/">
+          <link rel="self" href="/notifications/"/>
+          <link rel="notification" href="/notifications/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
+        </resource>
+    metaDataExample1:
+      summary: A sample MetaData
+      value: |
+        <_2:MetaData xmlns:_2="urn:wco:datamodel:WCO:DocumentMetaData-DMS:2">
+          <_2:WCODataModelVersionCode>3.6</_2:WCODataModelVersionCode>
+          <_2:WCOTypeName>RES</_2:WCOTypeName>
+          <_2:ResponsibleCountryCode/>
+          <_2:ResponsibleAgencyName/>
+          <_2:AgencyAssignedCustomizationCode/>
+          <_2:AgencyAssignedCustomizationVersionCode/>
+          <_2_1:Response xmlns:_2_1="urn:wco:datamodel:WCO:RES-DMS:2">
+            <_2_1:FunctionCode>03</_2_1:FunctionCode>
+            <_2_1:FunctionalReferenceID>0f3ec64eec704999995ddf5a3ca9cc0b</_2_1:FunctionalReferenceID>
+            <_2_1:IssueDateTime>
+              <_2_2:DateTimeString formatCode="304" xmlns:_2_2="urn:wco:datamodel:WCO:Response_DS:DMS:2">20190220165953Z</_2_2:DateTimeString>
+            </_2_1:IssueDateTime>
+            <_2_1:Error>
+              <_2_1:ValidationCode>CDS12014</_2_1:ValidationCode>
+              <_2_1:Pointer>
+                <_2_1:DocumentSectionCode>42A</_2_1:DocumentSectionCode>
+                <_2_1:TagID>D013</_2_1:TagID>
+              </_2_1:Pointer>
+            </_2_1:Error>
+            <_2_1:Error>
+              <_2_1:ValidationCode>CDS12015</_2_1:ValidationCode>
+              <_2_1:Pointer>
+              <_2_1:DocumentSectionCode>42A</_2_1:DocumentSectionCode>
+              <_2_1:TagID>D014</_2_1:TagID>
+              </_2_1:Pointer>
+            </_2_1:Error>
+            <_2_1:Declaration>
+              <_2_1:FunctionalReferenceID>gq8lPty99999NLgUQMSAmg</_2_1:FunctionalReferenceID>
+              <_2_1:ID>19GB20GF2F99999VR4</_2_1:ID>
+              <_2_1:RejectionDateTime>
+                <_2_2:DateTimeString formatCode="304" xmlns:_2_2="urn:wco:datamodel:WCO:Response_DS:DMS:2">20190220165953Z</_2_2:DateTimeString>
+              </_2_1:RejectionDateTime>
+              <_2_1:VersionID>1</_2_1:VersionID>
+             </_2_1:Declaration>
+          </_2_1:Response>
+        </_2:MetaData>
+    errorResponseExample1:
+      summary: A sample error response
+      value: |
+        <errorResponse>
+          <code>BAD_REQUEST</code>
+          <message>Notification is unpulled</message>
+        </errorResponse>
+    errorResponseExample2:
+      summary: A sample error response
+      value: |
+        <errorResponse>
+          <code>NOT_FOUND</code>
+          <message>Resource was not found</message>
+        </errorResponse>
+    testResponseExample:
+      summary: A sample error response
+      value: <example>Saved Message</example>
+  securitySchemes:
+    applicationRestricted:
+      type: oauth2
+      description: |
+        HMRC supports OAuth 2.0 for authenticating application restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.
+        See https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints for details.
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          scopes: {}
