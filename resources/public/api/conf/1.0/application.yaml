@@ -585,7 +585,7 @@ components:
         <resource href="/notifications/pulled/">
           <link rel="self" href="/notifications/pulled/"/>
           <link rel="notification" href="/notifications/pulled/7ab99957-b138-4f09-888e-ab4e8107bbe0"/>
-        </resource>'
+        </resource>
     resourceExample4:
       summary: A sample Resource
       value: |
