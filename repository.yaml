@@ -3,3 +3,4 @@ repoVisibility: public_0C3F0CE3E6E6448FAD341E7BFA50FCD333E06A20CFF05FCACE61154DD
 description: The Pull Notifications API is used by external client applications to pull business event notifications that CDS generates in response to requests submitted using the CDS APIs.
 test-repositories:
   - customs-automation-test
+serviceNowMapping: SNSVC0019200
